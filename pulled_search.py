@@ -145,7 +145,7 @@ def run_program(args_array, **kwargs):
 
     # Remove those files in file list.
     for fname in file_remove:
-        remove_file(fname)
+        gen_libs.rm_file(fname)
         new_files.pop(fname)
 
     # Any files not processed - move to error directory and send email.
