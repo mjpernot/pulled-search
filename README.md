@@ -25,6 +25,7 @@
 
   * Local class/library dependencies within the program structure.
     - lib/arg_parser
+    - lib/gen_class
     - lib/gen_libs
     - checklog/check_log
 
@@ -53,10 +54,8 @@ exit
 Install supporting classes and libraries.
 ```
 pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
-git clone git@sc.appdev.proj.coe.ic.gov:JAC-DSXD/check-log.git checklog
+pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
-cd checklog
-touch __init__.py
 ```
 
 
@@ -101,10 +100,8 @@ exit
 Install supporting classes and libraries.
 ```
 pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
-git clone git@sc.appdev.proj.coe.ic.gov:JAC-DSXD/check-log.git checklog
+pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
-cd checklog
-touch __init__.py
 ```
 
 # Unit test runs for pulled_search.py:
