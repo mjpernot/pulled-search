@@ -150,7 +150,7 @@ def run_program(args_array, **kwargs):
 
     # Any files not processed - move to error directory and send email.
     if new_files:
-        non_processed_files(new_files, mail)
+        non_processed_files(new_files, mail, cfg.error_dir)
 
 
 def main():
