@@ -92,7 +92,7 @@ def run_program(args_array, **kwargs):
                                     subj=args_array.get("-s", None))
 
     # Detect new files.
-    new_files = detect_files()
+    new_files = gen_libs.list_files(args_array["-m"])
 
     # Loop on files detected:
     for fname in new_files:
