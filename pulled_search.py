@@ -116,7 +116,11 @@ def run_program(args_array, **kwargs):
         check_log.run_program(search_args)
 
         # Open return file from check_log and read in any data.
-        file_log = read_file(cfg.outfile)
+        if gen_libs.is_empty_file(cfg.outfile):
+            file_log = []
+
+        else:
+            file_log = read_file(cfg.outfile)
 
         # Remove cfg.outfile.
         remove_file(cfg.outfile)
