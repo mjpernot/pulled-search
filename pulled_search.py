@@ -45,6 +45,7 @@ import socket
 import getpass
 
 # Third-party
+import json
 
 # Local
 import lib.arg_parser as arg_parser
@@ -91,25 +92,31 @@ def run_program(args_array, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-t"),
                                     subj=args_array.get("-s", None))
 
-    # Detect new files.
-    new_files = gen_libs.list_files(args_array["-m"])
+    if args_array.get("-m", None):
+        cfg.docid_dir = args_array["-m"]
 
-    # Loop on files detected:
-    for fname in new_files:
+    # Detect new docid files.
+    docid_files = gen_libs.list_files(cfg.docid_dir)
+    # Or
+    # docid_files = gen_libs.dir_file_match(cfg.docid_dir, cfg.file_reg)
 
-        # Read file.
-        file_docid = read_file(fname)
+    # Loop on files detected.
+    for fname in docid_files:
 
-        # Parse from file docid, command, and postdate.
-        docid = file_docid["docid"]
-        command = file_docid["command"]
-        postdate = file_docid["postdate"]
+        # Read and parse the file.
+        file_list = gen_libs.file_2_list(fname)
+        docid_dict = json.loads(gen_libs.list_2_str(file_list))
+
+        # Assign variables: docid, command, and postdate.
+        docid = docid_dict["docid"]
+        command = docid_dict["command"]
+        postdate = docid_dict["postdate"]
 
         # Create list of files to check.
-        log_list = get_logs(cfg)
+        log_files = gen_libs.dir_file_match(cfg.log_dir, command)
 
         # Create search dictionary to pass to check_log.
-        search_args = {"-g": "w", "-f": log_list, "-S": [docid], "-k": "or",
+        search_args = {"-g": "w", "-f": log_files, "-S": [docid], "-k": "or",
                        "-o": cfg.outfile, "-z": True}
 
         # Call check_log passing search dictionary to program.
@@ -120,16 +127,13 @@ def run_program(args_array, **kwargs):
             file_log = []
 
         else:
-            file_log = read_file(cfg.outfile)
+            file_log = gen_libs.file_2_list(cfg.outfile)
 
         # Remove cfg.outfile.
-        remove_file(cfg.outfile)
+        err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
         # If data is present then
         if file_log:
-
-            # Convert data to list
-                # Might already be a list.
 
             # Create JSON document containing log entries, docid, servername,
             #   enclave, postdate, command, and currentdate.
@@ -146,11 +150,11 @@ def run_program(args_array, **kwargs):
     # Remove those files in file list.
     for fname in file_remove:
         gen_libs.rm_file(fname)
-        new_files.pop(fname)
+        docid_files.pop(fname)
 
     # Any files not processed - move to error directory and send email.
-    if new_files:
-        non_processed_files(new_files, mail, cfg.error_dir)
+    if docid_files:
+        non_processed_files(docid_files, mail, cfg.error_dir)
 
 
 def main():
