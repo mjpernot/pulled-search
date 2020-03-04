@@ -70,18 +70,6 @@ def help_message():
     print(__doc__)
 
 
-def holdme(**kwargs):
-
-    # Send output to email.
-    host = socket.gethostname()
-    frm_line = getpass.getuser() + "@" + host
-
-    mail = gen_class.Mail(args_array["-t"], "".join(args_array.get("-s",
-        "pulled_search: " + host)), frm_line)
-    mail.add_2_msg("\n".join(log.loglist))
-    mail.send_mail()
-
-
 def run_program(args_array, **kwargs):
 
     """Function:  run_program
@@ -93,30 +81,72 @@ def run_program(args_array, **kwargs):
 
     """
 
+    mail = None
+    file_remove = list()
     args_array = dict(args_array)
 
-    if "-c" in args_array and "-m" in args_array:
-        gen_libs.clear_file(args_array["-m"])
+    cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
 
-    else:
-        log = gen_class.LogFile()
-        load_attributes(log, args_array)
+    if args_array.get("-t", None):
+        mail = gen_class.setup_mail(args_array.get("-t"),
+                                    subj=args_array.get("-s", None))
 
-        if "-f" in args_array:
-            fetch_log(log, args_array)
+    # Detect new files.
+    new_files = detect_files()
 
-        elif not sys.stdin.isatty():
-            fetch_log_stdin(log)
+    # Loop on files detected:
+    for fname in new_files:
 
-        if log.loglist:
-            if not full_chk(args_array):
-                find_marker(log)
+        # Read file.
+        file_docid = read_file(fname)
 
-            log.filter_keyword()
-            log.filter_ignore()
-            log.filter_regex()
-            log_2_output(log, args_array)
-            update_marker(args_array, log.lastline)
+        # Parse from file docid, command, and postdate.
+        docid = file_docid["docid"]
+        command = file_docid["command"]
+        postdate = file_docid["postdate"]
+
+        # Create list of files to check.
+        log_list = get_logs(cfg)
+
+        # Create search dictionary to pass to check_log.
+        search_args = {"-g": "w", "-f": log_list, "-S": [docid], "-k": "or",
+                       "-o": cfg.outfile, "-z": True}
+
+        # Call check_log passing search dictionary to program.
+        check_log.run_program(search_args)
+
+        # Open return file from check_log and read in any data.
+        file_log = read_file(cfg.outfile)
+
+        # Remove cfg.outfile.
+        remove_file(cfg.outfile)
+
+        # If data is present then
+        if file_log:
+
+            # Convert data to list
+                # Might already be a list.
+
+            # Create JSON document containing log entries, docid, servername,
+            #   enclave, postdate, command, and currentdate.
+            log_json = create_json(docid, postdate, command,
+                                   socket.gethostname(), cfg.enclave,
+                                   current_dtg) # Get current_dtg
+
+            # Send JSON to RabbitMQ for further processing.
+            send_rabbitmq(cfg, log_json)
+
+            # Create file list from processed file.
+            file_remove.append(fname)
+
+    # Remove those files in file list.
+    for fname in file_remove:
+        remove_file(fname)
+        new_files.pop(fname)
+
+    # Any files not processed - move to error directory and send email.
+    if new_files:
+        non_processed_files(new_files, mail)
 
 
 def main():
@@ -139,7 +169,7 @@ def main():
     """
 
     dir_chk_list = ["-d", "-m"]
-    #opt_con_req_dict = {"-s": ["-t"]}
+    opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
     opt_val_list = ["-c", "-d", "-m", "-s", "-t", "-y"]
