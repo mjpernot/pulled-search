@@ -8,7 +8,7 @@ coverage erase
 
 echo ""
 echo "Running unit test modules in conjunction with coverage"
-coverage run -a --source=check_log test/unit/check_log/help_message.py
+coverage run -a --source=pulled_search test/unit/pulled_search/help_message.py
 
 echo ""
 echo "Producing code coverage report"
