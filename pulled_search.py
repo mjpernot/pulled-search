@@ -72,10 +72,11 @@ def help_message():
     print(__doc__)
 
 
-# Look at creating a RabbitMQ library - setup todo item for this.
-def create_rq(cfg, q_name, r_key, **kwargs):
+# Look at creating a function in RabbitMQ class - setup todo item for this.
+# See mail_2_rmq.create_rq for details too.
+def create_rmq(cfg, q_name, r_key, **kwargs):
 
-    """Function:  create_rq
+    """Function:  create_rmq
 
     Description:  Create and return a RabbitMQ Publisher instance.
 
@@ -93,9 +94,37 @@ def create_rq(cfg, q_name, r_key, **kwargs):
                                       cfg.q_durable, cfg.auto_delete)
 
 
+# Look at creating a function in RabbitMQ class - setup todo item for this.
+# See mail_2_rmq.connect_process for details too.
 def send_2_rabbitmq(cfg, log_json, **kwargs):
 
-    rmq = create_rq(cfg, cfg.queue, cfg.r_key)
+    """Function:  send_2_rabbitmq
+
+    Description:  Connect to RabbitMQ and injest message.
+
+    Arguments:
+        (input) cfg -> Configuration settings module for the program.
+        (input) q_name -> Queue name in RabbitMQ.
+        (input) r_key -> Routing key in RabbitMQ.
+        (output) RabbitMQ instance.
+
+    """
+
+    rmq = create_rmq(cfg, cfg.queue, cfg.r_key)
+    connect_status, err_msg = rmq.create_connection()
+    
+    if connect_status and rmq.channel.is_open:
+        if rq.publish_msg(log_json):
+            # Published good.
+            status = True
+
+        else:
+            # Published bad.
+            status = False
+
+    else:
+        # Failed to connect.
+        status = False
 
     return status
 
