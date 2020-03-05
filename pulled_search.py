@@ -43,6 +43,7 @@ import sys
 import os
 import socket
 import getpass
+import datetime
 
 # Third-party
 import json
@@ -80,14 +81,18 @@ def create_json(cfg, docid_dict, **kwargs):
     Arguments:
         (input) cfg -> Configuration setup.
         (input) docid_dict -> Dictionary of docid file.
-        (output) docid_dict -> Dictionary of docid file and log entries.
+        (output) log_json -> Dictionary of docid file and log entries.
 
     """
     
     docid_dict = dict(docid_dict)
-    #log_json = create_json(docid, postdate, command,
-    #                       socket.gethostname(), cfg.enclave,
-    #                       current_dtg) # Get current_dtg
+    dtg = datetime.datetime.strfname(datetime.datetime.now(), "%Y%m%d %H%M%S")
+    log_json = {"docID": docid_dict["docid"],
+                "command": docid_dict["command"],
+                "postDate": docid_dict["postdate"],
+                "securityEnclave": cfg.enclave,
+                "asOf": dtg,
+                "serverName": socket.gethostname()}
 
 
 def process_docid(cfg, fname, **kwargs):
