@@ -70,34 +70,16 @@ def help_message():
 
     print(__doc__)
 
-
-def run_program(args_array, **kwargs):
-
-    """Function:  run_program
-
-    Description:  Controls the running of the program by...
-
-    Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-
-    """
-
+def process_docid(args_array, cfg, **kwargs):
     mail = None
     file_remove = list()
     args_array = dict(args_array)
-
-    cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
 
     if args_array.get("-t", None):
         mail = gen_class.setup_mail(args_array.get("-t"),
                                     subj=args_array.get("-s", None))
 
-    if args_array.get("-m", None):
-        cfg.docid_dir = args_array["-m"]
-
     # Detect new docid files.
-    # docid_files = gen_libs.list_files(cfg.docid_dir)
-    # Or
     docid_files = gen_libs.dir_file_match(cfg.docid_dir, cfg.file_regex)
 
     # Loop on files detected.
@@ -157,6 +139,37 @@ def run_program(args_array, **kwargs):
     # Any files not processed - move to error directory and send email.
     if docid_files:
         non_processed_files(docid_files, mail, cfg.error_dir)
+
+
+def run_program(args_array, **kwargs):
+
+    """Function:  run_program
+
+    Description:  Controls the running of the program by loading and
+        validating the configuration file and calling the function to
+        process the docid files.
+
+    Arguments:
+        (input) args_array -> Dictionary of command line options and values.
+
+    """
+
+    args_array = dict(args_array)
+
+    cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
+    
+    if args_array.get("-m", None):
+        cfg.docid_dir = args_array["-m"]
+
+    # Check for directory existence on cfg.
+    #   doc_dir
+    #   log_dir
+    #   outfile (base part)
+    #   error_dir
+    
+    # If any of the above checks fail then email admin and exit program
+    #   else call function to process_docid.
+    process_docid(args_array, cfg)
 
 
 def main():
