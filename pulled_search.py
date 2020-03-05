@@ -70,9 +70,83 @@ def help_message():
 
     print(__doc__)
 
-def process_docid(args_array, cfg, **kwargs):
+
+def process_docid(cfg, fname, **kwargs):
+
+    """Function:  process_docid
+
+    Description:  Processes the docid.
+
+    Arguments:
+        (input) cfg -> Configuration setup.
+        (input) fname -> Docid file name.
+        (output) status -> True|False - File has successfully processed.
+
+    """
+
+    status = False
+
+    # Read and parse the file.
+    data_list = gen_libs.file_2_list(fname)
+    docid_dict = json.loads(gen_libs.list_2_str(data_list))
+
+    # Assign variables: docid, command, and postdate.
+    docid = docid_dict["docid"]
+    command = docid_dict["command"]
+    postdate = docid_dict["postdate"]
+
+    # Create list of files to check.
+    # Command will need to be changed to "command*access_log*"
+    cmd_regex = command + "*" + cfg.log_type + "*"
+    log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
+
+    # Create search dictionary to pass to check_log.
+    search_args = {"-g": "w", "-f": log_files, "-S": [docid], "-k": "or",
+                   "-o": cfg.outfile, "-z": True}
+
+    # Call check_log passing search dictionary to program.
+    check_log.run_program(search_args)
+
+    # Open return file from check_log and read in any data.
+    if gen_libs.is_empty_file(cfg.outfile):
+        file_log = []
+
+    else:
+        file_log = gen_libs.file_2_list(cfg.outfile)
+
+    # Remove cfg.outfile.
+    err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
+
+    # If data is present then
+    if file_log:
+
+        # Create JSON document containing log entries, docid, servername,
+        #   enclave, postdate, command, and currentdate.
+        log_json = create_json(docid, postdate, command,
+                               socket.gethostname(), cfg.enclave,
+                               current_dtg) # Get current_dtg
+
+        # Send JSON to RabbitMQ for further processing.
+        send_rabbitmq(cfg, log_json)
+        status = True
+
+    return status
+
+
+def process_files(args_array, cfg, **kwargs):
+
+    """Function:  process_files
+
+    Description:  Processes the docid files.
+
+    Arguments:
+        (input) args_array -> Dictionary of command line options and values.
+        (input) cfg -> Configuration setup.
+
+    """
+
+    remove_list = list()
     mail = None
-    file_remove = list()
     args_array = dict(args_array)
 
     if args_array.get("-t", None):
@@ -84,55 +158,16 @@ def process_docid(args_array, cfg, **kwargs):
 
     # Loop on files detected.
     for fname in docid_files:
+        
+        status = process_docid(cfg, fname)
 
-        # Read and parse the file.
-        file_list = gen_libs.file_2_list(fname)
-        docid_dict = json.loads(gen_libs.list_2_str(file_list))
-
-        # Assign variables: docid, command, and postdate.
-        docid = docid_dict["docid"]
-        command = docid_dict["command"]
-        postdate = docid_dict["postdate"]
-
-        # Create list of files to check.
-        # Command will need to be changed to "command*access_log*"
-        cmd_regex = command + "*" + cfg.log_type + "*"
-        log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
-
-        # Create search dictionary to pass to check_log.
-        search_args = {"-g": "w", "-f": log_files, "-S": [docid], "-k": "or",
-                       "-o": cfg.outfile, "-z": True}
-
-        # Call check_log passing search dictionary to program.
-        check_log.run_program(search_args)
-
-        # Open return file from check_log and read in any data.
-        if gen_libs.is_empty_file(cfg.outfile):
-            file_log = []
-
-        else:
-            file_log = gen_libs.file_2_list(cfg.outfile)
-
-        # Remove cfg.outfile.
-        err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
-
-        # If data is present then
-        if file_log:
-
-            # Create JSON document containing log entries, docid, servername,
-            #   enclave, postdate, command, and currentdate.
-            log_json = create_json(docid, postdate, command,
-                                   socket.gethostname(), cfg.enclave,
-                                   current_dtg) # Get current_dtg
-
-            # Send JSON to RabbitMQ for further processing.
-            send_rabbitmq(cfg, log_json)
-
+        if status:
             # Create file list from processed file.
-            file_remove.append(fname)
+            remove_list.append(fname)
+    
 
     # Remove those files in file list.
-    for fname in file_remove:
+    for fname in remove_list:
         gen_libs.rm_file(fname)
         docid_files.pop(fname)
 
@@ -169,7 +204,7 @@ def run_program(args_array, **kwargs):
     
     # If any of the above checks fail then email admin and exit program
     #   else call function to process_docid.
-    process_docid(args_array, cfg)
+    process_files(args_array, cfg)
 
 
 def main():
