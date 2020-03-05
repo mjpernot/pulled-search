@@ -163,7 +163,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.rmq.conn_status = False
+        self.rmq.pub_status = False
         mock_rmq.return_value = self.rmq
 
         self.assertEqual(pulled_search.send_2_rabbitmq(
