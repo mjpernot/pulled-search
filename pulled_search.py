@@ -261,7 +261,7 @@ def process_files(args_array, cfg, log, **kwargs):
 
     # Loop on files detected.
     for fname in docid_files:
-        log.log_info("process_files:  Processing file: %s" %(fname))
+        log.log_info("process_files:  Processing file: %s" % (fname))
         status = process_docid(cfg, fname, log)
 
         if status:
