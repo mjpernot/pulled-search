@@ -96,9 +96,9 @@ def run_program(args_array, **kwargs):
         cfg.docid_dir = args_array["-m"]
 
     # Detect new docid files.
-    docid_files = gen_libs.list_files(cfg.docid_dir)
+    # docid_files = gen_libs.list_files(cfg.docid_dir)
     # Or
-    # docid_files = gen_libs.dir_file_match(cfg.docid_dir, cfg.file_reg)
+    docid_files = gen_libs.dir_file_match(cfg.docid_dir, cfg.file_regex)
 
     # Loop on files detected.
     for fname in docid_files:
@@ -113,7 +113,9 @@ def run_program(args_array, **kwargs):
         postdate = docid_dict["postdate"]
 
         # Create list of files to check.
-        log_files = gen_libs.dir_file_match(cfg.log_dir, command)
+        # Command will need to be changed to "command*access_log*"
+        cmd_regex = command + "*" + cfg.log_type + "*"
+        log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
 
         # Create search dictionary to pass to check_log.
         search_args = {"-g": "w", "-f": log_files, "-S": [docid], "-k": "or",
