@@ -140,9 +140,7 @@ def process_docid(cfg, fname, **kwargs):
 
     # If data is present then
     if file_log:
-
-        # Create JSON document containing log entries, docid, servername,
-        #   enclave, postdate, command, and currentdate.
+        # Create JSON document.
         log_json = create_json(cfg, docid_dict, file_log)
 
         # Send JSON to RabbitMQ for further processing.
