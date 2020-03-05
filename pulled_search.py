@@ -72,7 +72,7 @@ def help_message():
     print(__doc__)
 
 
-def create_json(cfg, docid_dict, **kwargs):
+def create_json(cfg, docid_dict, file_log, **kwargs):
 
     """Function:  create_json
 
@@ -81,18 +81,23 @@ def create_json(cfg, docid_dict, **kwargs):
     Arguments:
         (input) cfg -> Configuration setup.
         (input) docid_dict -> Dictionary of docid file.
+        (input) file_log -> List of log file entries.
         (output) log_json -> Dictionary of docid file and log entries.
 
     """
     
     docid_dict = dict(docid_dict)
+    file_log = list(file_log)
     dtg = datetime.datetime.strfname(datetime.datetime.now(), "%Y%m%d %H%M%S")
     log_json = {"docID": docid_dict["docid"],
                 "command": docid_dict["command"],
                 "postDate": docid_dict["postdate"],
                 "securityEnclave": cfg.enclave,
                 "asOf": dtg,
-                "serverName": socket.gethostname()}
+                "serverName": socket.gethostname(),
+                "logEntries": file_log}
+
+    return log_json
 
 
 def process_docid(cfg, fname, **kwargs):
@@ -138,7 +143,7 @@ def process_docid(cfg, fname, **kwargs):
 
         # Create JSON document containing log entries, docid, servername,
         #   enclave, postdate, command, and currentdate.
-        log_json = create_json(cfg, docid_dict)
+        log_json = create_json(cfg, docid_dict, file_log)
 
         # Send JSON to RabbitMQ for further processing.
         # Need to create send_rabbitmq function.
