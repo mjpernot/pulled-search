@@ -272,6 +272,49 @@ def process_files(args_array, cfg, **kwargs):
         non_processed(docid_files, cfg.error_dir, mail)
 
 
+def validate_dirs(cfg, **kwargs):
+
+    """Function:  validate_dirs
+
+    Description:  Validate the directories in the configuration file.
+
+    Arguments:
+        (input) cfg -> Configuration setup.
+        (output) msg_dict -> Dictionary of any error messages detected.
+
+    """
+
+    msg_dict = dict()
+
+    # Check for directory existence in cfg configuration.
+    status, err_msg = gen_libs.chk_crt_file(cfg.doc_dir, write=True,
+                                            no_print=True)
+
+    if not status:
+        msg_dict[cfg.doc_dir] = msg
+
+    status, err_msg = gen_libs.chk_crt_file(cfg.log_dir, read=True,
+                                            no_print=True)
+
+    if not status:
+        msg_dict[cfg.log_dir] = msg
+
+    basepath = gen_libs.get_base_dir(cfg.outfile)
+    status, err_msg = gen_libs.chk_crt_file(basepath, write=True,
+                                            create=True, no_print=True)
+
+    if not status:
+        msg_dict[basepath] = msg
+
+    status, err_msg = gen_libs.chk_crt_file(cfg.error_dir, write=True,
+                                            create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.error_dir] = msg
+
+    return msg_dict
+
+
 def run_program(args_array, **kwargs):
 
     """Function:  run_program
@@ -285,47 +328,35 @@ def run_program(args_array, **kwargs):
 
     """
 
-    msg_dict = dict()
     args_array = dict(args_array)
     cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
-    
-    if args_array.get("-m", None):
-        cfg.docid_dir = args_array["-m"]
-
-    # Check for directory existence in cfg configuration.
-    status, err_msg = gen_libs.chk_crt_file(cfg.doc_dir, write=True,
-                                              no_print=True)
+    status, err_msg = gen_libs.chk_crt_file(cfg.log_file, write=True,
+                                            create=True, no_print=True)
 
     if status:
-        msg_dict[cfg.doc_dir] = msg
+        log = gen_class.Logger(cfg.log_file, cfg.log_file, "INFO",
+                               "%(asctime)s %(levelname)s %(message)s",
+                               "%Y-%m-%dT%H:%M:%SZ")
 
-    status, err_msg = gen_libs.chk_crt_file(cfg.log_dir, read=True,
-                                              no_print=True)
+        if args_array.get("-m", None):
+            cfg.docid_dir = args_array["-m"]
 
-    if status:
-        msg_dict[cfg.log_dir] = msg
+        msg_dict = validate_dirs(cfg)
 
-    basepath = gen_libs.get_base_dir(cfg.outfile)
-    status, err_msg = gen_libs.chk_crt_file(basepath, write=True,
-                                              create=True, no_print=True)
+        if msg_dict:
+            mail = gen_class.setup_mail(cfg.admin_email,
+                                        subj="Directory Check Failure")
+            mail.add_2_msg(msg_dict)
+            mail.send_mail()
 
-    if status:
-        msg_dict[basepath] = msg
-
-    status, err_msg = gen_libs.chk_crt_file(cfg.error_dir, write=True,
-                                              create=True, no_print=True)
-
-    if status:
-        msg_dict[cfg.error_dir] = msg
-
-    if msg_dict:
-        mail = gen_class.setup_mail(cfg.admin_email,
-                                    subj="Directory Check Failure")
-        mail.add_2_msg(msg_dict)
-        mail.send_mail()
+        else:
+            process_files(args_array, cfg)
 
     else:
-        process_files(args_array, cfg)
+        mail = gen_class.setup_mail(cfg.admin_email,
+                                    subj="Logger Directory Check Failure")
+        mail.add_2_msg(err_msg)
+        mail.send_mail()
 
 
 def main():
