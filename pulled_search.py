@@ -52,6 +52,7 @@ import json
 import lib.arg_parser as arg_parser
 import lib.gen_libs as gen_libs
 import lib.gen_class as gen_class
+import rabbit_lib.rabbitmq_class as rabbitmq_class
 import checklog.check_log as check_log
 import version
 
