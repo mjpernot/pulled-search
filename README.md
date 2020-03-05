@@ -109,6 +109,7 @@ pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host 
 
 ```
 cd {Python_Project}/pulled-search
+test/unit/pulled_search/create_rmq.py
 test/unit/pulled_search/help_message.py
 test/unit/pulled_search/main.py
 test/unit/pulled_search/non_processed.py
