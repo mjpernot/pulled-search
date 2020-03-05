@@ -84,7 +84,7 @@ def process_docid(cfg, fname, **kwargs):
 
     """
 
-    status = False
+    file_log = []
 
     # Read and parse the file.
     data_list = gen_libs.file_2_list(fname)
@@ -108,13 +108,11 @@ def process_docid(cfg, fname, **kwargs):
     check_log.run_program(search_args)
 
     # Open return file from check_log and read in any data.
-    if gen_libs.is_empty_file(cfg.outfile):
-        file_log = []
-
-    else:
+    if not gen_libs.is_empty_file(cfg.outfile):
         file_log = gen_libs.file_2_list(cfg.outfile)
 
     # Remove cfg.outfile.
+    #   Do I want to do anything with err_flag and err_msg?
     err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
     # If data is present then
@@ -127,7 +125,9 @@ def process_docid(cfg, fname, **kwargs):
                                current_dtg) # Get current_dtg
 
         # Send JSON to RabbitMQ for further processing.
-        send_rabbitmq(cfg, log_json)
+        status = send_rabbitmq(cfg, log_json)
+    
+    else:
         status = True
 
     return status
