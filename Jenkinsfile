@@ -20,6 +20,7 @@ pipeline {
                 sh """
                 pip2 install mock==2.0.0 --user
                 ./test/unit/pulled_search/help_message.py
+                ./test/unit/pulled_search/non_processed.py
                 """
             }
         }
