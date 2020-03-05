@@ -107,7 +107,7 @@ def create_rmq(cfg, q_name, r_key, **kwargs):
         (input) cfg -> Configuration settings module for the program.
         (input) q_name -> Queue name in RabbitMQ.
         (input) r_key -> Routing key in RabbitMQ.
-        (output) RabbitMQ instance.
+        (output) RabbitMQ Publisher instance.
 
     """
 
@@ -123,13 +123,12 @@ def send_2_rabbitmq(cfg, log_json, **kwargs):
 
     """Function:  send_2_rabbitmq
 
-    Description:  Connect to RabbitMQ and injest message.
+    Description:  Connect to RabbitMQ and publish message.
 
     Arguments:
         (input) cfg -> Configuration settings module for the program.
-        (input) q_name -> Queue name in RabbitMQ.
-        (input) r_key -> Routing key in RabbitMQ.
-        (output) RabbitMQ instance.
+        (input) log_json -> JSON document of log entries.
+        (output) status -> True|False - Success of publishing to RabbitMQ.
 
     """
 
