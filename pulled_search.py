@@ -72,6 +72,25 @@ def help_message():
     print(__doc__)
 
 
+def non_processed(docid_files, error_dir, mail=None **kwargs):
+
+    """Function:  non_processed
+
+    Description:  Process non-processed files.
+
+    Arguments:
+        (input) docid_files -> List of files not processed.
+        (input) error_dir -> Error directory for storing non-processed files.
+        (input) mail -> Mail instance.
+
+    """
+
+    docid_files = list(docid_files)
+    
+    # Copy/move files to error directory.
+    # Send email, if possible about files moved.
+
+
 # Look at creating a function in RabbitMQ class - setup todo item for this.
 # See mail_2_rmq.create_rq for details too.
 def create_rmq(cfg, q_name, r_key, **kwargs):
@@ -200,8 +219,7 @@ def process_docid(cfg, fname, **kwargs):
         # Create JSON document.
         log_json = create_json(cfg, docid_dict, file_log)
 
-        # Send JSON to RabbitMQ for further processing.
-        # Need to create send_rabbitmq function.
+        # Send JSON to RabbitMQ.
         status = send_2_rabbitmq(cfg, log_json)
     
     else:
@@ -249,7 +267,7 @@ def process_files(args_array, cfg, **kwargs):
     # Any files not processed - move to error directory and send email.
     if docid_files:
         # Still need to create non_processed_files function
-        non_processed_files(docid_files, mail, cfg.error_dir)
+        non_processed(docid_files, cfg.error_dir, mail)
 
 
 def run_program(args_array, **kwargs):
