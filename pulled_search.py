@@ -90,7 +90,7 @@ def non_processed(docid_files, error_dir, mail=None, **kwargs):
     for fname in docid_files:
         gen_libs.mv_file2(fname, cfg.error_dir)
     
-    if mail:
+    if docid_files and mail:
         mail.add_2_msg(docid_files)
         mail.send_mail()
 
