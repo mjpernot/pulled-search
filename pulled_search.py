@@ -71,6 +71,25 @@ def help_message():
     print(__doc__)
 
 
+def create_json(cfg, docid_dict, **kwargs):
+
+    """Function:  create_json
+
+    Description:  Create the JSON from the docid file and log entries.
+
+    Arguments:
+        (input) cfg -> Configuration setup.
+        (input) docid_dict -> Dictionary of docid file.
+        (output) docid_dict -> Dictionary of docid file and log entries.
+
+    """
+    
+    docid_dict = dict(docid_dict)
+    #log_json = create_json(docid, postdate, command,
+    #                       socket.gethostname(), cfg.enclave,
+    #                       current_dtg) # Get current_dtg
+
+
 def process_docid(cfg, fname, **kwargs):
 
     """Function:  process_docid
@@ -90,19 +109,13 @@ def process_docid(cfg, fname, **kwargs):
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
 
-    # Assign variables: docid, command, and postdate.
-    docid = docid_dict["docid"]
-    command = docid_dict["command"]
-    postdate = docid_dict["postdate"]
-
     # Create list of files to check.
-    # Command will need to be changed to "command*access_log*"
-    cmd_regex = command + "*" + cfg.log_type + "*"
+    cmd_regex = docid_dict["command"] + "*" + cfg.log_type + "*"
     log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
 
     # Create search dictionary to pass to check_log.
-    search_args = {"-g": "w", "-f": log_files, "-S": [docid], "-k": "or",
-                   "-o": cfg.outfile, "-z": True}
+    search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
+                   "-k": "or", "-o": cfg.outfile, "-z": True}
 
     # Call check_log passing search dictionary to program.
     check_log.run_program(search_args)
@@ -120,11 +133,10 @@ def process_docid(cfg, fname, **kwargs):
 
         # Create JSON document containing log entries, docid, servername,
         #   enclave, postdate, command, and currentdate.
-        log_json = create_json(docid, postdate, command,
-                               socket.gethostname(), cfg.enclave,
-                               current_dtg) # Get current_dtg
+        log_json = create_json(cfg, docid_dict)
 
         # Send JSON to RabbitMQ for further processing.
+        # Need to create send_rabbitmq function.
         status = send_rabbitmq(cfg, log_json)
     
     else:
@@ -158,13 +170,11 @@ def process_files(args_array, cfg, **kwargs):
 
     # Loop on files detected.
     for fname in docid_files:
-        
         status = process_docid(cfg, fname)
 
         if status:
             # Create file list from processed file.
             remove_list.append(fname)
-    
 
     # Remove those files in file list.
     for fname in remove_list:
@@ -173,6 +183,7 @@ def process_files(args_array, cfg, **kwargs):
 
     # Any files not processed - move to error directory and send email.
     if docid_files:
+        # Still need to create non_processed_files function
         non_processed_files(docid_files, mail, cfg.error_dir)
 
 
@@ -190,7 +201,6 @@ def run_program(args_array, **kwargs):
     """
 
     args_array = dict(args_array)
-
     cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
     
     if args_array.get("-m", None):
@@ -203,7 +213,7 @@ def run_program(args_array, **kwargs):
     #   error_dir
     
     # If any of the above checks fail then email admin and exit program
-    #   else call function to process_docid.
+    #   else call function to process_files.
     process_files(args_array, cfg)
 
 
