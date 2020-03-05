@@ -72,7 +72,7 @@ def help_message():
     print(__doc__)
 
 
-def non_processed(docid_files, error_dir, mail=None **kwargs):
+def non_processed(docid_files, error_dir, mail=None, **kwargs):
 
     """Function:  non_processed
 
@@ -390,7 +390,7 @@ def main():
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
-       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
+       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list) \
        and arg_parser.arg_cond_req_or(args_array, opt_con_req_dict):
 
         try:
