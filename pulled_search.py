@@ -93,6 +93,13 @@ def create_rq(cfg, q_name, r_key, **kwargs):
                                       cfg.q_durable, cfg.auto_delete)
 
 
+def send_2_rabbitmq(cfg, log_json, **kwargs):
+
+    rmq = create_rq(cfg, cfg.queue, cfg.r_key)
+
+    return status
+
+
 def create_json(cfg, docid_dict, file_log, **kwargs):
 
     """Function:  create_json
@@ -166,7 +173,7 @@ def process_docid(cfg, fname, **kwargs):
 
         # Send JSON to RabbitMQ for further processing.
         # Need to create send_rabbitmq function.
-        status = send_rabbitmq(cfg, log_json)
+        status = send_2_rabbitmq(cfg, log_json)
     
     else:
         status = True
