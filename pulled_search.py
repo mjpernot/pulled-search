@@ -179,7 +179,7 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     return log_json
 
 
-def process_docid(cfg, fname, **kwargs):
+def process_docid(cfg, fname, log, **kwargs):
 
     """Function:  process_docid
 
@@ -188,6 +188,7 @@ def process_docid(cfg, fname, **kwargs):
     Arguments:
         (input) cfg -> Configuration setup.
         (input) fname -> Docid file name.
+        (input) log -> Log class instance.
         (output) status -> True|False - File has successfully processed.
 
     """
@@ -211,6 +212,7 @@ def process_docid(cfg, fname, **kwargs):
 
     # Open return file from check_log and read in any data.
     if not gen_libs.is_empty_file(cfg.outfile):
+        log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
 
     # Remove cfg.outfile.
@@ -223,6 +225,7 @@ def process_docid(cfg, fname, **kwargs):
         log_json = create_json(cfg, docid_dict, file_log)
 
         # Send JSON to RabbitMQ.
+        log.log_info("process_docid:  Log entries publishing to RabbitMQ.")
         status = send_2_rabbitmq(cfg, log_json)
     
     else:
@@ -231,7 +234,7 @@ def process_docid(cfg, fname, **kwargs):
     return status
 
 
-def process_files(args_array, cfg, **kwargs):
+def process_files(args_array, cfg, log, **kwargs):
 
     """Function:  process_files
 
@@ -240,6 +243,7 @@ def process_files(args_array, cfg, **kwargs):
     Arguments:
         (input) args_array -> Dictionary of command line options and values.
         (input) cfg -> Configuration setup.
+        (input) log -> Log class instance.
 
     """
 
@@ -256,7 +260,8 @@ def process_files(args_array, cfg, **kwargs):
 
     # Loop on files detected.
     for fname in docid_files:
-        status = process_docid(cfg, fname)
+        log.log_info("process_files:  Processing file: %s" %(fname))
+        status = process_docid(cfg, fname, log)
 
         if status:
             # Create file list from processed file.
@@ -269,6 +274,7 @@ def process_files(args_array, cfg, **kwargs):
 
     # Any files not processed - move to error directory and send email.
     if docid_files:
+        log.log_info("process_files:  Non-processed files detected.")
         non_processed(docid_files, cfg.error_dir, mail)
 
 
@@ -337,6 +343,7 @@ def run_program(args_array, **kwargs):
         log = gen_class.Logger(cfg.log_file, cfg.log_file, "INFO",
                                "%(asctime)s %(levelname)s %(message)s",
                                "%Y-%m-%dT%H:%M:%SZ")
+        log.log_info("Program initialization...")
 
         if args_array.get("-m", None):
             cfg.docid_dir = args_array["-m"]
@@ -344,13 +351,16 @@ def run_program(args_array, **kwargs):
         msg_dict = validate_dirs(cfg)
 
         if msg_dict:
+            log.log_err("Validation of configuration directories failed")
+            log.log_err("Message: %s" % (msg_dict))
             mail = gen_class.setup_mail(cfg.admin_email,
                                         subj="Directory Check Failure")
             mail.add_2_msg(msg_dict)
             mail.send_mail()
 
         else:
-            process_files(args_array, cfg)
+            log.log_info("Detecting files...")
+            process_files(args_array, cfg, log)
 
     else:
         mail = gen_class.setup_mail(cfg.admin_email,
@@ -400,7 +410,7 @@ def main():
             del prog_lock
 
         except gen_class.SingleInstanceException:
-            print("WARNING:  lock in place for pulled_search with id of: %s"
+            print("WARNING:  Lock in place for pulled_search with id of: %s"
                   % (args_array.get("-y", "")))
 
 
