@@ -22,6 +22,7 @@ pipeline {
                 ./test/unit/pulled_search/create_rmq.py
                 ./test/unit/pulled_search/help_message.py
                 ./test/unit/pulled_search/non_processed.py
+                ./test/unit/pulled_search/send_2_rabbitmq.py
                 """
             }
         }

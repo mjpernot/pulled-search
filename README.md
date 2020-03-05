@@ -114,6 +114,7 @@ test/unit/pulled_search/help_message.py
 test/unit/pulled_search/main.py
 test/unit/pulled_search/non_processed.py
 test/unit/pulled_search/run_program.py
+test/unit/pulled_search/send_2_rabbitmq.py
 ```
 
 ### All unit testing
