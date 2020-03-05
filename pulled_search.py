@@ -270,7 +270,6 @@ def process_files(args_array, cfg, **kwargs):
 
     # Any files not processed - move to error directory and send email.
     if docid_files:
-        # Still need to create non_processed_files function
         non_processed(docid_files, cfg.error_dir, mail)
 
 
@@ -287,21 +286,47 @@ def run_program(args_array, **kwargs):
 
     """
 
+    msg_dict = dict()
     args_array = dict(args_array)
     cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
     
     if args_array.get("-m", None):
         cfg.docid_dir = args_array["-m"]
 
-    # Check for directory existence on cfg.
-    #   doc_dir
-    #   log_dir
-    #   outfile (base part)
-    #   error_dir
-    
-    # If any of the above checks fail then email admin and exit program
-    #   else call function to process_files.
-    process_files(args_array, cfg)
+    # Check for directory existence in cfg configuration.
+    status, err_msg = gen_libs.chk_crt_file(cfg.doc_dir, write=True,
+                                              no_print=True)
+
+    if status:
+        msg_dict[cfg.doc_dir] = msg
+
+    status, err_msg = gen_libs.chk_crt_file(cfg.log_dir, read=True,
+                                              no_print=True)
+
+    if status:
+        msg_dict[cfg.log_dir] = msg
+
+    basepath = gen_libs.get_base_dir(cfg.outfile)
+    status, err_msg = gen_libs.chk_crt_file(basepath, write=True,
+                                              create=True, no_print=True)
+
+    if status:
+        msg_dict[basepath] = msg
+
+    status, err_msg = gen_libs.chk_crt_file(cfg.error_dir, write=True,
+                                              create=True, no_print=True)
+
+    if status:
+        msg_dict[cfg.error_dir] = msg
+
+    if msg_dict:
+        mail = gen_class.setup_mail(cfg.admin_email,
+                                    subj="Directory Check Failure")
+        mail.add_2_msg(msg_dict)
+        mail.send_mail()
+
+    else:
+        process_files(args_array, cfg)
 
 
 def main():
