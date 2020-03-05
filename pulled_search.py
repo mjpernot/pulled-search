@@ -137,7 +137,7 @@ def send_2_rabbitmq(cfg, log_json, **kwargs):
     connect_status, err_msg = rmq.create_connection()
     
     if connect_status and rmq.channel.is_open:
-        if rq.publish_msg(log_json):
+        if rmq.publish_msg(log_json):
             # Published good.
             status = True
 
