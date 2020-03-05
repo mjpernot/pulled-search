@@ -87,8 +87,12 @@ def non_processed(docid_files, error_dir, mail=None **kwargs):
 
     docid_files = list(docid_files)
     
-    # Copy/move files to error directory.
-    # Send email, if possible about files moved.
+    for fname in docid_files:
+        gen_libs.mv_file2(fname, cfg.error_dir)
+    
+    if mail:
+        mail.add_2_msg(docid_files)
+        mail.send_mail()
 
 
 # Look at creating a function in RabbitMQ class - setup todo item for this.
