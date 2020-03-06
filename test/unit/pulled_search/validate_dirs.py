@@ -84,9 +84,9 @@ class UnitTest(unittest.TestCase):
                 """
 
                 self.doc_dir = "/dir_path/doc_dir"
-                self.log_dir = "/dir/path/log_dir"
+                self.log_dir = "/dir_path/log_dir"
                 self.outfile = "/dir_path/outfile_dir/outfile"
-                self.error_dir = "/dir/path/error_dir"
+                self.error_dir = "/dir_path/error_dir"
 
         self.cfg = CfgTest()
         self.chk = (True, None)
@@ -96,10 +96,10 @@ class UnitTest(unittest.TestCase):
         self.chk5 = (False, "Error_dir failure")
         self.results2 = {"/dir_path/doc_dir": "Doc_dir failure"}
         self.results3 = {"/dir_path/log_dir": "Log_dir failure"}
-        self.results4 = {"/dir_path/outfile": "Outfile failure"}
-        self.results5 = {"/dir_path/outfile": "Error_dir failure"}
+        self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
+        self.results5 = {"/dir_path/error_dir": "Error_dir failure"}
         self.results6 = {"/dir_path/doc_dir": "Doc_dir failure",
-                         "/dir_path/outfile": "Error_dir failure"}
+                         "/dir_path/error_dir": "Error_dir failure"}
 
     @mock.patch("pulled_search.gen_libs.chk_crt_file")
     def test_multiple_failures(self, mock_chk):
