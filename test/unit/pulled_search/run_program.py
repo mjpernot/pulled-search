@@ -85,6 +85,7 @@ class MailTest(object):
 
         pass
 
+
 def setup_mail():
 
     """Method:  setup_mail
@@ -96,6 +97,7 @@ def setup_mail():
     """
 
     return MailTest()
+
 
 class UnitTest(unittest.TestCase):
 
@@ -205,8 +207,8 @@ class UnitTest(unittest.TestCase):
         self.args_array2 = {"-c": "configfile", "-d": "/dir/config",
                             "-m": "/dir/newdir"}
 
-    @mock.patch("pulled_search.validate_dirs",
-        mock.Mock(return_value={"/dir_path/doc_dir": "Doc_dir failure"}))
+    @mock.patch("pulled_search.validate_dirs", mock.Mock(
+        return_value={"/dir_path/doc_dir": "Doc_dir failure"}))
     @mock.patch("pulled_search.gen_libs.chk_crt_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_class.setup_mail")
