@@ -87,10 +87,10 @@ def non_processed(docid_files, error_dir, mail=None, **kwargs):
     """
 
     docid_files = list(docid_files)
-    
+
     for fname in docid_files:
         gen_libs.mv_file2(fname, error_dir)
-    
+
     if docid_files and mail:
         mail.add_2_msg(docid_files)
         mail.send_mail()
@@ -135,7 +135,7 @@ def send_2_rabbitmq(cfg, log_json, **kwargs):
 
     rmq = create_rmq(cfg, cfg.queue, cfg.r_key)
     connect_status, err_msg = rmq.create_connection()
-    
+
     if connect_status and rmq.channel.is_open:
         if rmq.publish_msg(log_json):
             # Published good.
@@ -165,7 +165,7 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
         (output) log_json -> Dictionary of docid file and log entries.
 
     """
-    
+
     docid_dict = dict(docid_dict)
     file_log = list(file_log)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
@@ -228,7 +228,7 @@ def process_docid(cfg, fname, log, **kwargs):
         # Send JSON to RabbitMQ.
         log.log_info("process_docid:  Log entries publishing to RabbitMQ.")
         status = send_2_rabbitmq(cfg, log_json)
-    
+
     else:
         status = True
 
