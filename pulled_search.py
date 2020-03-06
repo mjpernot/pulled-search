@@ -138,15 +138,12 @@ def send_2_rabbitmq(cfg, log_json, **kwargs):
 
     if connect_status and rmq.channel.is_open:
         if rmq.publish_msg(log_json):
-            # Published good.
             status = True
 
         else:
-            # Published bad.
             status = False
 
     else:
-        # Failed to connect.
         status = False
 
     return status
@@ -195,37 +192,25 @@ def process_docid(cfg, fname, log, **kwargs):
     """
 
     file_log = list()
-
-    # Read and parse the file.
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
-
-    # Create list of files to check.
     cmd_regex = docid_dict["command"] + "*" + cfg.log_type + "*"
     log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
 
-    # Create search dictionary to pass to check_log.
+    # Create argument list for check_log program.
     search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
                    "-k": "or", "-o": cfg.outfile, "-z": True}
-
-    # Call check_log passing search dictionary to program.
     check_log.run_program(search_args)
 
-    # Open return file from check_log and read in any data.
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
 
-    # Remove cfg.outfile.
     #   Do I want to do anything with err_flag and err_msg?
     err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
-    # If data is present then
     if file_log:
-        # Create JSON document.
         log_json = create_json(cfg, docid_dict, file_log)
-
-        # Send JSON to RabbitMQ.
         log.log_info("process_docid:  Log entries publishing to RabbitMQ.")
         status = send_2_rabbitmq(cfg, log_json)
 
@@ -256,24 +241,19 @@ def process_files(args_array, cfg, log, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-t"),
                                     subj=args_array.get("-s", None))
 
-    # Detect new docid files.
     docid_files = gen_libs.dir_file_match(cfg.docid_dir, cfg.file_regex)
 
-    # Loop on files detected.
     for fname in docid_files:
         log.log_info("process_files:  Processing file: %s" % (fname))
         status = process_docid(cfg, fname, log)
 
         if status:
-            # Create file list from processed file.
             remove_list.append(fname)
 
-    # Remove those files in file list.
     for fname in remove_list:
         gen_libs.rm_file(fname)
         docid_files.remove(fname)
 
-    # Any files not processed - move to error directory and send email.
     if docid_files:
         log.log_info("process_files:  Non-processed files detected.")
         non_processed(docid_files, cfg.error_dir, mail)
@@ -293,7 +273,6 @@ def validate_dirs(cfg, **kwargs):
 
     msg_dict = dict()
 
-    # Check for directory existence in cfg configuration.
     status, msg = gen_libs.chk_crt_file(cfg.doc_dir, write=True, no_print=True)
 
     if not status:
