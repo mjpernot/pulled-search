@@ -107,6 +107,9 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_validation_failure -> Test with directory validation failure.
+        test_m_override -> Test with -m option override.
+        test_status_false -> Test with status set to False.
         test_status_true -> Test with status set to True.
 
     """
@@ -206,7 +209,71 @@ class UnitTest(unittest.TestCase):
         self.log = LoggerTest()
         self.setupmail = setup_mail
         self.args_array = {"-c": "configfile", "-d": "/dir/config"}
+        self.args_array2 = {"-c": "configfile", "-d": "/dir/config",
+                            "-m": "/dir/newdir"}
 
+    @mock.patch("pulled_search.validate_dirs",
+        mock.Mock(return_value={"/dir_path/doc_dir": "Doc_dir failure"}))
+    @mock.patch("pulled_search.gen_libs.chk_crt_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_class.setup_mail")
+    @mock.patch("pulled_search.gen_libs.load_module")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_validation_failure(self, mock_log, mock_cfg, mock_mail):
+
+        """Function:  test_validation_failure
+
+        Description:  Test with directory validation failure.
+
+        Arguments:
+
+        """
+
+        mock_mail.return_value = self.setupmail
+        mock_log.return_value = self.log
+        mock_cfg.return_value = self.cfg
+
+        self.assertFalse(pulled_search.run_program(self.args_array))
+
+    @mock.patch("pulled_search.process_files", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
+    @mock.patch("pulled_search.gen_libs.chk_crt_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.load_module")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_m_override(self, mock_log, mock_cfg):
+
+        """Function:  test_m_override
+
+        Description:  Test with -m option override.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = self.log
+        mock_cfg.return_value = self.cfg
+
+        self.assertFalse(pulled_search.run_program(self.args_array2))
+
+    @mock.patch("pulled_search.gen_libs.load_module")
+    @mock.patch("pulled_search.gen_class.setup_mail")
+    def test_status_false(self, mock_mail, mock_cfg):
+
+        """Function:  test_status_false
+
+        Description:  Test with status set to False.
+
+        Arguments:
+
+        """
+
+        mock_mail.return_value = self.setupmail
+        mock_cfg.return_value = self.cfg
+
+        self.assertFalse(pulled_search.run_program(self.args_array))
+
+    @mock.patch("pulled_search.process_files", mock.Mock(return_value=True))
     @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_file",
                 mock.Mock(return_value=(True, None)))
