@@ -43,6 +43,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_rabbitmq_failed -> Test with failure to send to RabbitMQ.
         test_file_empty -> Test with no log entries returned.
         test_with_data -> Test with successful log file check.
 
@@ -99,6 +100,32 @@ class UnitTest(unittest.TestCase):
                          "asOf": "20200306 084503", "serverName": "SERVERNAME",
                          "logEntries": ["line1", "line2", "line3"]}
         self.log_files = ["/path/logfile1", "/path/logfile2"]
+
+    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=False))
+    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_rabbitmq_failed(self, mock_log, mock_list, mock_match):
+
+        """Function:  test_rabbitmq_failed
+
+        Description:  Test with failure to send to RabbitMQ.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_list.side_effect = [self.data_list, self.file_log]
+        mock_match.return_value = self.log_files
+
+        self.assertEqual(pulled_search.process_docid(self.cfg, self.fname,
+            mock_log), False)
 
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
