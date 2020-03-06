@@ -271,7 +271,7 @@ def process_files(args_array, cfg, log, **kwargs):
     # Remove those files in file list.
     for fname in remove_list:
         gen_libs.rm_file(fname)
-        docid_files.pop(fname)
+        docid_files.remove(fname)
 
     # Any files not processed - move to error directory and send email.
     if docid_files:
