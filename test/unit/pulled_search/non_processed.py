@@ -125,8 +125,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.non_processed(self.docid_files2,
-            self.error_dir, self.mail))
+        self.assertFalse(pulled_search.non_processed(
+            self.docid_files2, self.error_dir, self.mail))
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
@@ -140,8 +140,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.non_processed(self.docid_files,
-            self.error_dir, None))
+        self.assertFalse(pulled_search.non_processed(
+            self.docid_files, self.error_dir, None))
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
@@ -155,8 +155,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.non_processed(self.docid_files,
-            self.error_dir, self.mail))
+        self.assertFalse(pulled_search.non_processed(
+            self.docid_files, self.error_dir, self.mail))
 
 
 if __name__ == "__main__":
