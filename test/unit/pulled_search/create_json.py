@@ -89,12 +89,12 @@ class UnitTest(unittest.TestCase):
                         "securityEnclave": "ENCLAVE",
                         "asOf": "20200306 084503", "serverName": "SERVERNAME",
                         "logEntries": ["line1", "line2", "line3"]}
+        self.indate = "20200306 084503"
 
     @mock.patch("pulled_search.socket.gethostname",
                 mock.Mock(return_value="SERVERNAME"))
-    @mock.patch("pulled_search.datetime.datetime.now",
-                mock.Mock(return_value="20200306 084503"))
-    def test_with_data(self):
+    @mock.patch("pulled_search.datetime.datetime")
+    def test_with_data(self, mock_date):
 
         """Function:  test_with_data
 
@@ -103,6 +103,9 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
+        mock_date.now.return_value = "(2020, 3, 6, 13, 51, 42, 852147)"
+        mock_date.strftime.return_value = self.indate
 
         self.assertEqual(pulled_search.create_json(self.cfg, self.docid_dict,
             self.file_log), self.results)
