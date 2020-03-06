@@ -148,7 +148,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_match.return_value = self.log_files
 
-        self.assertFalse(pulled_search.process_files(self.args_array self.cfg,
+        self.assertFalse(pulled_search.process_files(self.args_array, self.cfg,
                                                      mock_log))
 
     @mock.patch("pulled_search.gen_libs.rm_file",
