@@ -53,7 +53,7 @@ class UnitTest(unittest.TestCase):
         Description:  Initialization for unit testing.
 
         Arguments:
- 
+
         """
 
         class CfgTest(object):
@@ -104,9 +104,8 @@ class UnitTest(unittest.TestCase):
 
         mock_rmq.return_value = "RabbitMQ_Instance"
 
-        self.assertEqual(pulled_search.create_rmq(self.cfg, self.cfg.queue,
-                                              self.cfg.r_key),
-                         "RabbitMQ_Instance")
+        self.assertEqual(pulled_search.create_rmq(
+            self.cfg, self.cfg.queue, self.cfg.r_key), "RabbitMQ_Instance")
 
 
 if __name__ == "__main__":
