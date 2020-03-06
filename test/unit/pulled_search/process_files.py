@@ -43,6 +43,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_with_mail -> Test with mail setup.
         test_with_data -> Test with successful log file check.
 
     """
@@ -85,6 +86,30 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.log_files = ["/path/logfile1", "/path/logfile2"]
         self.args_array = {"-t": "name@domain"}
+
+    @mock.patch("pulled_search.gen_class.setup_mail",
+                mock.Mock(return_value="MailInstance"))
+    @mock.patch("pulled_search.non_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_with_mail(self, mock_log, mock_match):
+
+        """Function:  test_with_mail
+
+        Description:  Test with mail setup.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_match.return_value = self.log_files
+
+        self.assertFalse(pulled_search.process_files(self.args_array self.cfg,
+                                                     mock_log))
 
     @mock.patch("pulled_search.non_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
