@@ -126,8 +126,8 @@ class UnitTest(unittest.TestCase):
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
-        self.assertEqual(pulled_search.process_docid(self.cfg, self.fname,
-            mock_log), False)
+        self.assertEqual(pulled_search.process_docid(
+            self.cfg, self.fname, mock_log), False)
 
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -152,8 +152,8 @@ class UnitTest(unittest.TestCase):
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
-        self.assertEqual(pulled_search.process_docid(self.cfg, self.fname,
-            mock_log), True)
+        self.assertEqual(pulled_search.process_docid(
+            self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -180,8 +180,8 @@ class UnitTest(unittest.TestCase):
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
-        self.assertEqual(pulled_search.process_docid(self.cfg, self.fname,
-            mock_log), True)
+        self.assertEqual(pulled_search.process_docid(
+            self.cfg, self.fname, mock_log), True)
 
 
 if __name__ == "__main__":
