@@ -43,6 +43,11 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_multiple_failures -> Test with multiple failures.
+        test_error_dir_failure -> Test with failure on error_dir check.
+        test_outfile_failure -> Test with failure on outfile check.
+        test_log_dir_failure -> Test with failure on log_dir check.
+        test_doc_dir_failure -> Test with failure on doc_dir check.
         test_no_failures -> Test with no failures on directory checks.
 
     """
@@ -85,6 +90,91 @@ class UnitTest(unittest.TestCase):
 
         self.cfg = CfgTest()
         self.chk = (True, None)
+        self.chk2 = (False, "Doc_dir failure")
+        self.chk3 = (False, "Log_dir failure")
+        self.chk4 = (False, "Outfile failure")
+        self.chk5 = (False, "Error_dir failure")
+        self.results2 = {"/dir_path/doc_dir": "Doc_dir failure"}
+        self.results3 = {"/dir_path/log_dir": "Log_dir failure"}
+        self.results4 = {"/dir_path/outfile": "Outfile failure"}
+        self.results5 = {"/dir_path/outfile": "Error_dir failure"}
+        self.results6 = {"/dir_path/doc_dir": "Doc_dir failure",
+                         "/dir_path/outfile": "Error_dir failure"}
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    def test_multiple_failures(self, mock_chk):
+
+        """Function:  test_multiple_failures
+
+        Description:  Test with multiple failures.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk5]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results6)
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    def test_error_dir_failure(self, mock_chk):
+
+        """Function:  test_error_dir_failure
+
+        Description:  Test with failure on error_dir check.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk5]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results5)
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    def test_outfile_failure(self, mock_chk):
+
+        """Function:  test_outfile_failure
+
+        Description:  Test with failure on outfile check.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [self.chk, self.chk, self.chk4, self.chk]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results4)
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    def test_log_dir_failure(self, mock_chk):
+
+        """Function:  test_log_dir_failure
+
+        Description:  Test with failure on log_dir check.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [self.chk, self.chk3, self.chk, self.chk]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results3)
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    def test_doc_dir_failure(self, mock_chk):
+
+        """Function:  test_doc_dir_failure
+
+        Description:  Test with failure on doc_dir check.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2)
 
     @mock.patch("pulled_search.gen_libs.chk_crt_file")
     def test_no_failures(self, mock_chk):
