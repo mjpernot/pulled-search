@@ -41,6 +41,7 @@ pipeline {
                 sh './test/unit/sonarqube_code_coverage.sh'
                 sh 'rm -rf lib'
                 sh 'rm -rf checklog'
+                sh 'rm -rf rabbit_lib'
                 script {
                     scannerHome = tool 'sonar-scanner';
                 }
