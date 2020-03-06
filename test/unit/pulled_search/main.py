@@ -261,7 +261,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.main())
 
-    @mock.patch("pulled_search.gen_class")
+    @mock.patch("pulled_search.gen_class.ProgramLock")
     @mock.patch("pulled_search.gen_libs.help_func")
     @mock.patch("pulled_search.arg_parser")
     def test_exception_handler(self, mock_arg, mock_help, mock_lock):
@@ -282,7 +282,8 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_cond_req_or.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
 
-        self.assertFalse(pulled_search.main())
+        with gen_libs.no_std_out():
+            self.assertFalse(pulled_search.main())
 
 
 if __name__ == "__main__":
