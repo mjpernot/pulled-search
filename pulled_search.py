@@ -168,7 +168,7 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     
     docid_dict = dict(docid_dict)
     file_log = list(file_log)
-    dtg = datetime.datetime.strfname(datetime.datetime.now(), "%Y%m%d %H%M%S")
+    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
     log_json = {"docID": docid_dict["docid"],
                 "command": docid_dict["command"],
                 "postDate": docid_dict["postdate"],
