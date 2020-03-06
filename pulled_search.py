@@ -401,8 +401,8 @@ def main():
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
-       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list) \
-       and arg_parser.arg_cond_req_or(args_array, opt_con_req_dict):
+       and arg_parser.arg_cond_req_or(args_array, opt_con_req_dict) \
+       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
 
         try:
             prog_lock = gen_class.ProgramLock(sys.argv,
