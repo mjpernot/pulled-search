@@ -43,6 +43,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_no_log_files -> Test with no log files detected.
         test_with_mail -> Test with mail setup.
         test_with_data -> Test with successful log file check.
 
@@ -87,9 +88,25 @@ class UnitTest(unittest.TestCase):
         self.log_files = ["/path/logfile1", "/path/logfile2"]
         self.args_array = {"-t": "name@domain"}
 
+    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_no_log_files(self, mock_log, mock_match):
+
+        """Function:  test_no_log_files
+
+        Description:  Test with no log files detected.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_match.return_value = []
+
+        self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
+
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value="MailInstance"))
-    @mock.patch("pulled_search.non_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
