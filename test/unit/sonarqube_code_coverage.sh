@@ -11,8 +11,8 @@ echo "Running unit test modules in conjunction with coverage"
 coverage run -a --source=pulled_search test/unit/pulled_search/create_json.py
 coverage run -a --source=pulled_search test/unit/pulled_search/create_rmq.py
 coverage run -a --source=pulled_search test/unit/pulled_search/help_message.py
-coverage run -a --source=pulled_search test/unit/pulled_search/non_processed.py
 coverage run -a --source=pulled_search test/unit/pulled_search/main.py
+coverage run -a --source=pulled_search test/unit/pulled_search/non_processed.py
 coverage run -a --source=pulled_search test/unit/pulled_search/process_docid.py
 coverage run -a --source=pulled_search test/unit/pulled_search/process_files.py
 coverage run -a --source=pulled_search test/unit/pulled_search/run_program.py
