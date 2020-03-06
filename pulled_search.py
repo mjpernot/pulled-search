@@ -194,7 +194,7 @@ def process_docid(cfg, fname, log, **kwargs):
 
     """
 
-    file_log = []
+    file_log = list()
 
     # Read and parse the file.
     data_list = gen_libs.file_2_list(fname)
