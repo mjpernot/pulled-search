@@ -107,8 +107,8 @@ class UnitTest(unittest.TestCase):
         mock_date.now.return_value = "(2020, 3, 6, 13, 51, 42, 852147)"
         mock_date.strftime.return_value = self.indate
 
-        self.assertEqual(pulled_search.create_json(self.cfg, self.docid_dict,
-            self.file_log), self.results)
+        self.assertEqual(pulled_search.create_json(
+            self.cfg, self.docid_dict, self.file_log), self.results)
 
 
 if __name__ == "__main__":
