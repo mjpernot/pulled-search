@@ -86,8 +86,8 @@ class UnitTest(unittest.TestCase):
 
         self.cfg = CfgTest()
         self.data_list = ['{',
-                          '"docid": "weotiuer"',
-                          '"command": "COMMAND"',
+                          '"docid": "weotiuer",',
+                          '"command": "COMMAND",',
                           '"postdate": "20200102-101134"',
                           '}']
         self.file_log = ["Line1", "Line2", "Line3"]
@@ -101,6 +101,8 @@ class UnitTest(unittest.TestCase):
                          "logEntries": ["line1", "line2", "line3"]}
         self.log_files = ["/path/logfile1", "/path/logfile2"]
 
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=False))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
@@ -127,6 +129,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_docid(self.cfg, self.fname,
             mock_log), False)
 
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
@@ -151,6 +155,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_docid(self.cfg, self.fname,
             mock_log), True)
 
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
