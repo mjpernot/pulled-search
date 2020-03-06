@@ -85,15 +85,13 @@ class MailTest(object):
 
         pass
 
-def setup_mail(self, address, subject):
+def setup_mail():
 
     """Method:  setup_mail
 
     Description:  Stub holder for gen_class.setup_mail function.
 
     Arguments:
-        (input) address -> Email address.
-        (input) subject -> Subject line.
 
     """
 
@@ -137,18 +135,13 @@ class UnitTest(unittest.TestCase):
 
             """
 
-            def __init__(self, name, filename, logtype, logformat, dateformat):
+            def __init__(self):
 
                 """Method:  __init__
 
                 Description:  Initialization instance of the LoggerTest class.
 
                 Arguments:
-                    (input) name -> Name of logger instance.
-                    (input) filename -> Log file name.
-                    (input) logtype -> Level of reporting.
-                    (input) logformat -> Format of the log entry.
-                    (input) dateformat -> Datetime format.
 
                 """
 
@@ -207,7 +200,7 @@ class UnitTest(unittest.TestCase):
 
         self.cfg = CfgTest()
         self.log = LoggerTest()
-        self.setupmail = setup_mail
+        self.setupmail = setup_mail()
         self.args_array = {"-c": "configfile", "-d": "/dir/config"}
         self.args_array2 = {"-c": "configfile", "-d": "/dir/config",
                             "-m": "/dir/newdir"}
