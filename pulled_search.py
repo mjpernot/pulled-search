@@ -194,12 +194,14 @@ def get_archive_files(archive_dir, cmd, postdate, cmd_regex, **kwargs):
     """
 
     log_files = []
+    cmd_dir = os.path.join(archive_dir, cmd)
+    start_dt = datetime.datetime.strptime(postdate[0:6], "%Y%m")
+    end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
 
-    # Combine base dir with command.
-    # Get list of years/months between postdate and current date.
-    #   Note if current date is YYYY/MM/01 - then do not check that month.
-    # Loop on year/mm range:
-    #   Get list of files with base_dir/command/yyyy/mm
+    for x in month_range(start_dt, end_dt):
+        yearmon = datetime.date.strftime(x, "%Y/%m")
+        full_dir = os.path.join(cmd_dir, yearmon)
+        log_files.append(gen_libs.dir_file_match(full_dir, cmd_regex))
 
     return log_files
 
