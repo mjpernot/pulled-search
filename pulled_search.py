@@ -178,6 +178,26 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     return log_json
 
 
+def get_archive_files(archive_dir, cmd, postdate, cmd_regex, **kwargs):
+
+    """Function:  get_archive_files
+
+    Description:  Get list of archive log files.
+
+    Arguments:
+        (input) archive_dir -> Directory path to base archive logs.
+        (input) cmd -> Command to search in.
+        (input) postdate -> Published date of document.
+        (input) cmd_regex -> Regular expression of log file name.
+        (output) log_files -> List of archive log files to search.
+
+    """
+
+    log_files = []
+
+    return log_files
+
+
 def process_docid(args_array, cfg, fname, log, **kwargs):
 
     """Function:  process_docid
