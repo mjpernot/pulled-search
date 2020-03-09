@@ -3,4 +3,8 @@
 *.swp
 *.HOLD
 coverage.xml
+config/*.py
+config/*.pyc
 lib
+rabbit_lib
+checklog
