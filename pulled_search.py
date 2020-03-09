@@ -194,7 +194,7 @@ def process_docid(cfg, fname, log, **kwargs):
     file_log = list()
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
-    cmd_regex = docid_dict["command"] + "*" + cfg.log_type + "*"
+    cmd_regex = docid_dict["command"].lower() + "*" + cfg.log_type + "*"
     log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
 
     # Create argument list for check_log program.
