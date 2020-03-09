@@ -6,6 +6,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.0.2] - 2020-03-09
 ### Added
+- date_range:  Return a list of year-month combinations between two dates.
 - get_archive_files:  Added function to search of list of archive log files.
 - month_days:  Return the number of days in the month in the date.
 
