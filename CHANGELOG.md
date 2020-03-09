@@ -10,6 +10,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid:  Special case exception for one command.
 - process_docid:  Setup cmd variable separately for later use in archive searches.
 - process_docid:  Added args_array to args parameter list.
+- process_docid:  Added call to get archive log files to search.
 - process_files:  Added args_array to process_docid call.
 
 
