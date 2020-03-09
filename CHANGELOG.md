@@ -7,6 +7,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [0.0.2] - 2020-03-09
 ### Changed
 - process_docid:  Converted command name to lowercase for log file search.
+- process_docid:  Special case exception for one command.
 
 
 ## [0.0.1] - 2020-03-03
