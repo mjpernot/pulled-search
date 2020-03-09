@@ -48,6 +48,7 @@ import datetime
 
 # Third-party
 import json
+import calendar
 
 # Local
 import lib.arg_parser as arg_parser
@@ -176,6 +177,22 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
                 "logEntries": file_log}
 
     return log_json
+
+
+# Move to python_libs.gen_libs module.
+def month_days(dt, **kwargs):
+
+    """Function:  month_days
+
+    Description:  Return the number of days in the month for the date.
+
+    Arguments:
+        (input) dt -> Date, must be a datetime class instance.
+        (output) -> Number of days in the month for the date.
+
+    """
+
+    return calendar.monthrange(dt.year, dt.month)[1]
 
 
 def get_archive_files(archive_dir, cmd, postdate, cmd_regex, **kwargs):
