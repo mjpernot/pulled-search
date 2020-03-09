@@ -192,6 +192,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     """
 
+    args_array = dict(args_array)
     file_log = list()
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
