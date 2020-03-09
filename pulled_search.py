@@ -194,7 +194,14 @@ def process_docid(cfg, fname, log, **kwargs):
     file_log = list()
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
-    cmd_regex = docid_dict["command"].lower() + "*" + cfg.log_type + "*"
+
+    # Special case exception for one command.
+    if docid_dict["command"].lower() == "eucom":
+        cmd_regex = "intelink" + "*" + cfg.log_type + "*"
+
+    else:
+        cmd_regex = docid_dict["command"].lower() + "*" + cfg.log_type + "*"
+
     log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
 
     # Create argument list for check_log program.
