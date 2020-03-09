@@ -254,7 +254,7 @@ def process_files(args_array, cfg, log, **kwargs):
 
     for fname in docid_files:
         log.log_info("process_files:  Processing file: %s" % (fname))
-        status = process_docid(cfg, fname, log)
+        status = process_docid(args_array, cfg, fname, log)
 
         if status:
             remove_list.append(fname)
