@@ -195,6 +195,12 @@ def get_archive_files(archive_dir, cmd, postdate, cmd_regex, **kwargs):
 
     log_files = []
 
+    # Combine base dir with command.
+    # Get list of years/months between postdate and current date.
+    #   Note if current date is YYYY/MM/01 - then do not check that month.
+    # Loop on year/mm range:
+    #   Get list of files with base_dir/command/yyyy/mm
+
     return log_files
 
 
