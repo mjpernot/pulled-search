@@ -5,6 +5,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [0.0.2] - 2020-03-09
+### Added
+- get_archive_files:  Added function to search of list of archive log files.
+
 ### Changed
 - process_docid:  Converted command name to lowercase for log file search.
 - process_docid:  Special case exception for one command.
