@@ -8,13 +8,14 @@
         and if detected will send these log entries to a RabbitMQ queue.
 
     Usage:
-        pulled_search.py -c file -d path [-m path | -z | -y flavor_id ]
+        pulled_search.py -c file -d path [-m path | -z | -y flavor_id | -a]
             [-t email {email2 email3 ...} {-s subject_line}] [-v | -h]
 
     Arguments:
         -c file => Configuration file.  Required argument.
         -d dir_path => Directory path for option '-c'.  Required argument.
         -m dir_path => Directory to monitor.
+        -a => This is an archive log search.
         -z => Use the zgrep option instead of check_log to check GZipped files.
         -t email_address(es) => Send output to one or more email addresses.
         -s subject_line => Subject line of email.  Requires -t option.
@@ -206,7 +207,12 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     cmd_regex = cmd + "*" + cfg.log_type + "*"
 
-    log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
+    if args_array.get("-a", None):
+        log_files = get_archive_files(cfg.archive_dir, cmd,
+                                      docid_dict[postdate], cmd_regex)
+
+    else:
+        log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
 
     # Create argument list for check_log program.
     search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
