@@ -177,13 +177,14 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     return log_json
 
 
-def process_docid(cfg, fname, log, **kwargs):
+def process_docid(args_array, cfg, fname, log, **kwargs):
 
     """Function:  process_docid
 
     Description:  Processes the docid.
 
     Arguments:
+        (input) args_array -> Dictionary of command line options and values.
         (input) cfg -> Configuration setup.
         (input) fname -> Docid file name.
         (input) log -> Log class instance.
