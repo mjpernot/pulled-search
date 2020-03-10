@@ -251,6 +251,8 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.run_program(self.args_array2))
 
+    @mock.patch("pulled_search.gen_libs.chk_crt_file",
+                mock.Mock(return_value=(False, "Error Message")))
     @mock.patch("pulled_search.gen_libs.load_module")
     @mock.patch("pulled_search.gen_class.setup_mail")
     def test_status_false(self, mock_mail, mock_cfg):
