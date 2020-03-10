@@ -20,13 +20,9 @@ enclave = "ENCLAVE"
 error_dir = "ERROR_DIR_PATH"
 # Logger file for the storage of log entries.
 # File name including directory path.
-logfile = "DIR_PATH/pulled_search.log"
+log_file = "DIR_PATH/pulled_search.log"
 # Administrator email for reporting errors detected during the program run.
 admin_email = "USERNAME@EMAIL_DOMAIN"
-# Directory path and file name to the program log.
-log_file = "/DIRECTORY_PATH/mail_rabbitmq/logs/mail_2_rmq.log"
-# Archive directory path for non-processed email files.
-email_dir = "/DIRECTORY_PATH/mail_rabbitmq/email_dir"
 
 # RabbitMQ Configuration section.
 user = "USER"
