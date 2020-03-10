@@ -412,8 +412,9 @@ def run_program(args_array, **kwargs):
 
     args_array = dict(args_array)
     cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
-    status, err_msg = gen_libs.chk_crt_file(cfg.log_file, write=True,
-                                            create=True, no_print=True)
+    basepath = gen_libs.get_base_dir(cfg.log_file)
+    status, err_msg = gen_libs.chk_crt_dir(basepath, write=True, create=True,
+                                           no_print=True)
 
     if status:
         log = gen_class.Logger(cfg.log_file, cfg.log_file, "INFO",
