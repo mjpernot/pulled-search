@@ -170,7 +170,7 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
     log_json = {"docID": docid_dict["docid"],
                 "command": docid_dict["command"],
-                "postDate": docid_dict["postdate"],
+                "pubDate": docid_dict["pubdate"],
                 "securityEnclave": cfg.enclave,
                 "asOf": dtg,
                 "serverName": socket.gethostname(),
@@ -231,7 +231,7 @@ def date_range(start_dt, end_dt, **kwargs):
             finish = dt < end_dt
 
 
-def get_archive_files(archive_dir, cmd, postdate, cmd_regex, **kwargs):
+def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
 
     """Function:  get_archive_files
 
@@ -240,7 +240,7 @@ def get_archive_files(archive_dir, cmd, postdate, cmd_regex, **kwargs):
     Arguments:
         (input) archive_dir -> Directory path to base archive logs.
         (input) cmd -> Command to search in.
-        (input) postdate -> Published date of document.
+        (input) pubdate -> Published date of document.
         (input) cmd_regex -> Regular expression of log file name.
         (output) log_files -> List of archive log files to search.
 
@@ -248,7 +248,7 @@ def get_archive_files(archive_dir, cmd, postdate, cmd_regex, **kwargs):
 
     log_files = []
     cmd_dir = os.path.join(archive_dir, cmd)
-    start_dt = datetime.datetime.strptime(postdate[0:6], "%Y%m")
+    start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
     end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
 
     for x in month_range(start_dt, end_dt):
@@ -290,7 +290,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     if args_array.get("-a", None):
         log_files = get_archive_files(cfg.archive_dir, cmd,
-                                      docid_dict[postdate], cmd_regex)
+                                      docid_dict[pubdate], cmd_regex)
 
     else:
         log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
