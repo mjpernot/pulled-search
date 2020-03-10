@@ -82,7 +82,7 @@ class UnitTest(unittest.TestCase):
                 """
 
                 self.file_regex = "*_docid.json"
-                self.docid_dir = "/dir_path/docid_dir"
+                self.doc_dir = "/dir_path/doc_dir"
                 self.error_dir = "/dir/path/error_dir"
 
         self.cfg = CfgTest()
