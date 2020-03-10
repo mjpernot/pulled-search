@@ -339,7 +339,7 @@ def process_files(args_array, cfg, log, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-t"),
                                     subj=args_array.get("-s", None))
 
-    docid_files = gen_libs.dir_file_match(cfg.docid_dir, cfg.file_regex)
+    docid_files = gen_libs.dir_file_match(cfg.doc_dir, cfg.file_regex)
 
     for fname in docid_files:
         log.log_info("process_files:  Processing file: %s" % (fname))
@@ -422,7 +422,7 @@ def run_program(args_array, **kwargs):
         log.log_info("Program initialization...")
 
         if args_array.get("-m", None):
-            cfg.docid_dir = args_array["-m"]
+            cfg.doc_dir = args_array["-m"]
 
         msg_dict = validate_dirs(cfg)
 
