@@ -18,6 +18,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid:  Added call to get archive log files to search.
 - process_files:  Added args_array to process_docid call.
 
+### Fixed
+- config/search.py.TEMPLATE:  Changed logfile to log_file.
+
 
 ## [0.0.1] - 2020-03-03
 - Initial creation.
