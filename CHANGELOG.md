@@ -19,6 +19,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_files:  Added args_array to process_docid call.
 
 ### Fixed
+- validate_dirs:  Replaced gen_libs.chk_crt_file calls with gen_libs.chk_crt_dir calls.
 - Changed cfg.docid_dir to cfg.doc_dir to fix incorrect reference.
 - Replaced postdate with pubdate to be in align with the Doc ID file.
 - config/search.py.TEMPLATE:  Changed logfile to log_file.
