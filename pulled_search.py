@@ -371,25 +371,25 @@ def validate_dirs(cfg, **kwargs):
 
     msg_dict = dict()
 
-    status, msg = gen_libs.chk_crt_file(cfg.doc_dir, write=True, no_print=True)
+    status, msg = gen_libs.chk_crt_dir(cfg.doc_dir, write=True, no_print=True)
 
     if not status:
         msg_dict[cfg.doc_dir] = msg
 
-    status, msg = gen_libs.chk_crt_file(cfg.log_dir, read=True, no_print=True)
+    status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
 
     if not status:
         msg_dict[cfg.log_dir] = msg
 
     basepath = gen_libs.get_base_dir(cfg.outfile)
-    status, msg = gen_libs.chk_crt_file(basepath, write=True, create=True,
-                                        no_print=True)
+    status, msg = gen_libs.chk_crt_dir(basepath, write=True, create=True,
+                                       no_print=True)
 
     if not status:
         msg_dict[basepath] = msg
 
-    status, msg = gen_libs.chk_crt_file(cfg.error_dir, write=True, create=True,
-                                        no_print=True)
+    status, msg = gen_libs.chk_crt_dir(cfg.error_dir, write=True, create=True,
+                                       no_print=True)
 
     if not status:
         msg_dict[cfg.error_dir] = msg
