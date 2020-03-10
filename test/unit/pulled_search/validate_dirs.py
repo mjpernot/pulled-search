@@ -101,7 +101,7 @@ class UnitTest(unittest.TestCase):
         self.results6 = {"/dir_path/doc_dir": "Doc_dir failure",
                          "/dir_path/error_dir": "Error_dir failure"}
 
-    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_multiple_failures(self, mock_chk):
 
         """Function:  test_multiple_failures
@@ -116,7 +116,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results6)
 
-    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_error_dir_failure(self, mock_chk):
 
         """Function:  test_error_dir_failure
@@ -131,7 +131,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results5)
 
-    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_outfile_failure(self, mock_chk):
 
         """Function:  test_outfile_failure
@@ -146,7 +146,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results4)
 
-    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_log_dir_failure(self, mock_chk):
 
         """Function:  test_log_dir_failure
@@ -161,7 +161,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results3)
 
-    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_doc_dir_failure(self, mock_chk):
 
         """Function:  test_doc_dir_failure
@@ -176,7 +176,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2)
 
-    @mock.patch("pulled_search.gen_libs.chk_crt_file")
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_no_failures(self, mock_chk):
 
         """Function:  test_no_failures
