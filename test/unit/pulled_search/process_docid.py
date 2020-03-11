@@ -43,6 +43,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_exception_cmd -> Test with exception command passed.
+        test_rm_file_failed -> Test with failure to remove outfile.
         test_rabbitmq_failed -> Test with failure to send to RabbitMQ.
         test_file_empty -> Test with no log entries returned.
         test_with_data -> Test with successful log file check.
@@ -83,23 +85,115 @@ class UnitTest(unittest.TestCase):
                 self.log_type = "access_log"
                 self.log_dir = "/dir_path/log"
                 self.outfile = "/dir/path/outfile"
+                self.archive_dir = "/dir/archive_dir"
 
         self.cfg = CfgTest()
+        self.args_array = {}
+        self.args_array2 = {"-a": True}
         self.data_list = ['{',
                           '"docid": "weotiuer",',
                           '"command": "COMMAND",',
-                          '"postdate": "20200102-101134"',
+                          '"pubdate": "20200102-101134"',
                           '}']
+        self.data_list2 = ['{',
+                           '"docid": "weotiuer",',
+                           '"command": "EUCOM",',
+                           '"pubdate": "20200102-101134"',
+                           '}']
         self.file_log = ["Line1", "Line2", "Line3"]
         self.fname = "/dir_path/092438k234_docid.json"
         self.docid_dict = {"docid": "weotiuer", "command": "COMMAND",
-                           "postdate": "20200102-101134"}
+                           "pubdate": "20200102-101134"}
         self.log_json = {"docID": "weotiuer", "command": "COMMAND",
-                         "postDate": "20200102-101134",
+                         "pubDate": "20200102-101134",
                          "securityEnclave": "ENCLAVE",
                          "asOf": "20200306 084503", "serverName": "SERVERNAME",
                          "logEntries": ["line1", "line2", "line3"]}
         self.log_files = ["/path/logfile1", "/path/logfile2"]
+
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.get_archive_files")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_archive_option(self, mock_log, mock_list, mock_match):
+
+        """Function:  test_archive_option
+
+        Description:  Test with archive option set.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_list.side_effect = [self.data_list, self.file_log]
+        mock_match.return_value = self.log_files
+
+        self.assertEqual(pulled_search.process_docid(
+            self.args_array2, self.cfg, self.fname, mock_log), True)
+
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_exception_cmd(self, mock_log, mock_list, mock_match):
+
+        """Function:  test_exception_cmd
+
+        Description:  Test with exception command passed.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_list.side_effect = [self.data_list2, self.file_log]
+        mock_match.return_value = self.log_files
+
+        self.assertEqual(pulled_search.process_docid(
+            self.args_array, self.cfg, self.fname, mock_log), True)
+
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(False, "Error Message")))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_rm_file_failed(self, mock_log, mock_list, mock_match):
+
+        """Function:  test_rm_file_failed
+
+        Description:  Test with failure to remove outfile.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_list.side_effect = [self.data_list, self.file_log]
+        mock_match.return_value = self.log_files
+
+        self.assertEqual(pulled_search.process_docid(
+            self.args_array, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -109,7 +203,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_rabbitmq_failed(self, mock_log, mock_list, mock_match):
@@ -127,7 +221,7 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.cfg, self.fname, mock_log), False)
+            self.args_array, self.cfg, self.fname, mock_log), False)
 
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -135,7 +229,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_file_empty(self, mock_log, mock_list, mock_match):
@@ -153,7 +247,7 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.cfg, self.fname, mock_log), True)
+            self.args_array, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -163,7 +257,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_data(self, mock_log, mock_list, mock_match):
@@ -181,7 +275,7 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.cfg, self.fname, mock_log), True)
+            self.args_array, self.cfg, self.fname, mock_log), True)
 
 
 if __name__ == "__main__":
