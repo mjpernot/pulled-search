@@ -84,8 +84,8 @@ class UnitTest(unittest.TestCase):
 
         mock_list.return_value = self.list_files
 
-        self.assertEqual(gen_libs.dir_file_search(self.dir_path,
-                                                  self.file_str, True),
+        self.assertEqual(pulled_search.dir_file_search(self.dir_path,
+                                                       self.file_str, True),
                          self.results4)
 
     @mock.patch("gen_libs.list_files")
@@ -101,8 +101,8 @@ class UnitTest(unittest.TestCase):
 
         mock_list.return_value = self.list_files
 
-        self.assertEqual(gen_libs.dir_file_search(self.dir_path,
-                                                  self.file_str2),
+        self.assertEqual(pulled_search.dir_file_search(self.dir_path,
+                                                       self.file_str2),
                          self.results)
 
     @mock.patch("gen_libs.list_files")
@@ -118,8 +118,8 @@ class UnitTest(unittest.TestCase):
 
         mock_list.return_value = self.list_files
 
-        self.assertEqual(gen_libs.dir_file_search(self.dir_path,
-                                                  self.file_str3),
+        self.assertEqual(pulled_search.dir_file_search(self.dir_path,
+                                                       self.file_str3),
                          self.results3)
 
     @mock.patch("gen_libs.list_files")
@@ -135,8 +135,8 @@ class UnitTest(unittest.TestCase):
 
         mock_list.return_value = self.list_files
 
-        self.assertEqual(gen_libs.dir_file_search(self.dir_path,
-                                                  self.file_str),
+        self.assertEqual(pulled_search.dir_file_search(self.dir_path,
+                                                       self.file_str),
                          self.results2)
 
 
