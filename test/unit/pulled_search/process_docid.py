@@ -43,6 +43,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_exception_cmd -> Test with exception command passed.
         test_rm_file_failed -> Test with failure to remove outfile.
         test_rabbitmq_failed -> Test with failure to send to RabbitMQ.
         test_file_empty -> Test with no log entries returned.
@@ -84,9 +85,11 @@ class UnitTest(unittest.TestCase):
                 self.log_type = "access_log"
                 self.log_dir = "/dir_path/log"
                 self.outfile = "/dir/path/outfile"
+                self.archive_dir = "/dir/archive_dir"
 
         self.cfg = CfgTest()
         self.args_array = {}
+        self.args_array2 = {"-a": True}
         self.data_list = ['{',
                           '"docid": "weotiuer",',
                           '"command": "COMMAND",',
@@ -107,6 +110,34 @@ class UnitTest(unittest.TestCase):
                          "asOf": "20200306 084503", "serverName": "SERVERNAME",
                          "logEntries": ["line1", "line2", "line3"]}
         self.log_files = ["/path/logfile1", "/path/logfile2"]
+
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.get_archive_files")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_archive_option(self, mock_log, mock_list, mock_match):
+
+        """Function:  test_archive_option
+
+        Description:  Test with archive option set.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_list.side_effect = [self.data_list, self.file_log]
+        mock_match.return_value = self.log_files
+
+        self.assertEqual(pulled_search.process_docid(
+            self.args_array2, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
