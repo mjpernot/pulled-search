@@ -268,6 +268,8 @@ def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
     Description:  Return a list of file names from a directory that contain
         a the search string somewhere in the name.
 
+    NOTE:  file_str can handle regular expressions.
+
     Arguments:
         (input) dir_path -> Directory path to search in.
         (input) file_str -> Name of search string.
