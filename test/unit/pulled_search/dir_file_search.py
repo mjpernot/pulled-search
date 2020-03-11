@@ -59,7 +59,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.dir_path = "test/unit/gen_libs/tmp/"
+        self.dir_path = "test/unit/pulled_search/tmp/"
         self.list_files = ["file1.txt", "file2.txt", "test.txt"]
         self.results = []
         self.results2 = ["file1.txt", "file2.txt"]
