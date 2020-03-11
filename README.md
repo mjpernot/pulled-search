@@ -8,6 +8,7 @@
   * Features
   * Prerequisites
   * Installation
+  * Configuration
   * Program Help Function
   * Testing
     - Unit
@@ -59,6 +60,39 @@ pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host 
 pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
+
+# Configuration:
+
+Initialize configuration file.
+```
+cd config
+cp search.py.TEMPLATE search.py
+```
+
+Make the appropriate changes to the environment.
+  * Make the appropriate changes to connect to General setup section.
+    - doc_dir = "DOC_DIR_PATH"
+    - file_regex = "_docid.json"
+    - log_dir = "LOG_DIR_PATH"
+    - log_type = "access_log"
+    - outfile = "DIR_PATH/checklog.out"
+    - enclave = "ENCLAVE"
+    - error_dir = "ERROR_DIR_PATH"
+    - log_file = "DIR_PATH/pulled_search.log"
+    - admin_email = "USERNAME@EMAIL_DOMAIN"
+
+  * Make the appropriate changes to connect to RabbitMQ section.
+    - user = "USER"
+    - pswd = "PSWD"
+    - host = "HOSTNAME"
+    - queue = "QUEUENAME"
+    - r_key = "RKEYNAME" (Normally the same as the queue name.)
+    - exchange_name = "EXCHANGE_NAME"
+
+```
+vim search.py
+chmod 600 search.py
+```
 
 # Program Help Function:
 
