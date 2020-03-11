@@ -100,6 +100,7 @@ import datetime
 # Third-party
 import json
 import calendar
+import re
 
 # Local
 import lib.arg_parser as arg_parser
