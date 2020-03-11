@@ -12,6 +12,7 @@ coverage run -a --source=pulled_search test/unit/pulled_search/create_json.py
 coverage run -a --source=pulled_search test/unit/pulled_search/create_rmq.py
 coverage run -a --source=pulled_search test/unit/pulled_search/date_range.py
 coverage run -a --source=pulled_search test/unit/pulled_search/dir_file_search.py
+coverage run -a --source=pulled_search test/unit/pulled_search/get_archive_files.py
 coverage run -a --source=pulled_search test/unit/pulled_search/help_message.py
 coverage run -a --source=pulled_search test/unit/pulled_search/main.py
 coverage run -a --source=pulled_search test/unit/pulled_search/month_days.py
