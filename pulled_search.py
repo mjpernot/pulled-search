@@ -313,7 +313,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     else:
         cmd = docid_dict["command"].lower()
 
-    cmd_regex = cmd + "*" + cfg.log_type + "*"
+    cmd_regex = cmd + ".*" + cfg.log_type
 
     if args_array.get("-a", None):
         log_files = get_archive_files(cfg.archive_dir, cmd,
