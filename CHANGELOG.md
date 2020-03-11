@@ -12,6 +12,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - month_days:  Return the number of days in the month in the date.
 
 ### Changed
+- validate_dirs:  Added archive directory check.
 - process_docid:  Added exception handling for removing files.
 - process_files:  Changed gen_libs.dir_file_match to dir_file_search.
 - process_docid:  Changed gen_libs.dir_file_match to dir_file_search.
