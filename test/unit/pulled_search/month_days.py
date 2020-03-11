@@ -30,7 +30,7 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import gen_libs
+import pulled_search
 import version
 
 __version__ = version.__version__
@@ -59,7 +59,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.dt = datetime.datetime.strptime("20200301", "%Y%m%d")
-        self.results = "31"
+        self.results = 31
 
     def test_month_days(self):
 
