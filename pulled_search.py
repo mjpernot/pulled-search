@@ -195,6 +195,7 @@ def month_days(dt, **kwargs):
     return calendar.monthrange(dt.year, dt.month)[1]
 
 
+# Move to python_libs.gen_libs module.
 def date_range(start_dt, end_dt, **kwargs):
 
     """Function:  date_range
@@ -251,7 +252,7 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
     end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
 
-    for x in month_range(start_dt, end_dt):
+    for x in date_range(start_dt, end_dt):
         yearmon = datetime.date.strftime(x, "%Y/%m")
         full_dir = os.path.join(cmd_dir, yearmon)
         log_files.append(gen_libs.dir_file_match(full_dir, cmd_regex))
