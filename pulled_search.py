@@ -320,7 +320,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
                                       docid_dict[pubdate], cmd_regex)
 
     else:
-        log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
+        log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
 
     # Create argument list for check_log program.
     search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
