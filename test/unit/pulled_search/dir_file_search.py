@@ -6,7 +6,7 @@
     Description:  Unit testing of dir_file_search in gen_libs.py.
 
     Usage:
-        test/unit/gen_libs/dir_file_search.py
+        test/unit/pulled_search/dir_file_search.py
 
     Arguments:
 
