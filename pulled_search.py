@@ -431,7 +431,7 @@ def process_files(args_array, cfg, log, **kwargs):
             remove_list.append(fname)
 
     for fname in remove_list:
-        gen_libs.rm_file(fname)
+        gen_libs.mv_file2(fname, cfg.archive_dir)
         docid_files.remove(fname)
 
     if docid_files:
