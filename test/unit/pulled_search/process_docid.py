@@ -92,6 +92,11 @@ class UnitTest(unittest.TestCase):
                           '"command": "COMMAND",',
                           '"pubdate": "20200102-101134"',
                           '}']
+        self.data_list2 = ['{',
+                           '"docid": "weotiuer",',
+                           '"command": "EUCOM",',
+                           '"pubdate": "20200102-101134"',
+                           '}']
         self.file_log = ["Line1", "Line2", "Line3"]
         self.fname = "/dir_path/092438k234_docid.json"
         self.docid_dict = {"docid": "weotiuer", "command": "COMMAND",
@@ -102,6 +107,34 @@ class UnitTest(unittest.TestCase):
                          "asOf": "20200306 084503", "serverName": "SERVERNAME",
                          "logEntries": ["line1", "line2", "line3"]}
         self.log_files = ["/path/logfile1", "/path/logfile2"]
+
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_exception_cmd(self, mock_log, mock_list, mock_match):
+
+        """Function:  test_exception_cmd
+
+        Description:  Test with exception command passed.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_list.side_effect = [self.data_list2, self.file_log]
+        mock_match.return_value = self.log_files
+
+        self.assertEqual(pulled_search.process_docid(
+            self.args_array, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
