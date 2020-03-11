@@ -383,6 +383,9 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     #   Do I want to do anything with err_flag and err_msg?
     err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
+    
+    if err_flag:
+        log.log_warn("process_docid:  %s" % (err_msg))
 
     if file_log:
         log_json = create_json(cfg, docid_dict, file_log)
