@@ -3,7 +3,7 @@
 
 """Program:  dir_file_search.py
 
-    Description:  Unit testing of dir_file_search in gen_libs.py.
+    Description:  Unit testing of dir_file_search in pulled_search.py.
 
     Usage:
         test/unit/pulled_search/dir_file_search.py
@@ -29,7 +29,7 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import gen_libs
+import pulled_search
 import version
 
 __version__ = version.__version__
@@ -71,7 +71,7 @@ class UnitTest(unittest.TestCase):
         self.file_str2 = "none"
         self.file_str3 = "le1"
 
-    @mock.patch("gen_libs.list_files")
+    @mock.patch("pulled_search.gen_libs.list_files")
     def test_file_search_path(self, mock_list):
 
         """Function:  test_file_search_path
@@ -88,7 +88,7 @@ class UnitTest(unittest.TestCase):
                                                        self.file_str, True),
                          self.results4)
 
-    @mock.patch("gen_libs.list_files")
+    @mock.patch("pulled_search.gen_libs.list_files")
     def test_no_file_search(self, mock_list):
 
         """Function:  test_no_file_search
@@ -105,7 +105,7 @@ class UnitTest(unittest.TestCase):
                                                        self.file_str2),
                          self.results)
 
-    @mock.patch("gen_libs.list_files")
+    @mock.patch("pulled_search.gen_libs.list_files")
     def test_file_search2(self, mock_list):
 
         """Function:  test_file_search2
@@ -122,7 +122,7 @@ class UnitTest(unittest.TestCase):
                                                        self.file_str3),
                          self.results3)
 
-    @mock.patch("gen_libs.list_files")
+    @mock.patch("pulled_search.gen_libs.list_files")
     def test_file_search(self, mock_list):
 
         """Function:  test_file_search
