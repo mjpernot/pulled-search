@@ -278,7 +278,7 @@ def date_range(start_dt, end_dt, **kwargs):
             finish = dt > end_dt
 
         else:
-            _tmp_dt = dt.replace(days=1) - datetime.timedelta(days=1)
+            _tmp_dt = dt.replace(day=1) - datetime.timedelta(days=1)
             dt = (_tmp_dt.replace(day=dt.day))
             finish = dt < end_dt
 
