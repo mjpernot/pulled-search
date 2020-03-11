@@ -30,7 +30,7 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import gen_libs
+import pulled_search
 import version
 
 __version__ = version.__version__
@@ -61,8 +61,14 @@ class UnitTest(unittest.TestCase):
         self.start_dt = datetime.datetime.strptime("20191011", "%Y%m%d")
         self.end_dt = datetime.datetime.strptime("20200309", "%Y%m%d")
         self.datelist = []
-        self.results = ["20191001", "20191101", "20200101", "20200201",
-                        "20200301"]
+        self.dt1 = datetime.datetime.strptime("20191001", "%Y%m%d")
+        self.dt2 = datetime.datetime.strptime("20191101", "%Y%m%d")
+        self.dt3 = datetime.datetime.strptime("20191201", "%Y%m%d")
+        self.dt4 = datetime.datetime.strptime("20200101", "%Y%m%d")
+        self.dt5 = datetime.datetime.strptime("20200201", "%Y%m%d")
+        self.dt6 = datetime.datetime.strptime("20200301", "%Y%m%d")
+        self.results = [self.dt1.date(), self.dt2.date(), self.dt3.date(),
+                        self.dt4.date(), self.dt5.date(), self.dt6.date()]
 
     def test_month_days(self):
 
