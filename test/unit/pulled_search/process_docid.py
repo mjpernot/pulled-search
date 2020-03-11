@@ -111,7 +111,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(False, "Error Message")))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_rm_file_failed(self, mock_log, mock_list, mock_match):
@@ -139,7 +139,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_rabbitmq_failed(self, mock_log, mock_list, mock_match):
@@ -165,7 +165,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_file_empty(self, mock_log, mock_list, mock_match):
@@ -193,7 +193,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_data(self, mock_log, mock_list, mock_match):
