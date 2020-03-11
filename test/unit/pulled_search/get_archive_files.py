@@ -30,7 +30,7 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import gen_libs
+import pulled_search
 import version
 
 __version__ = version.__version__
@@ -66,7 +66,9 @@ class UnitTest(unittest.TestCase):
         self.now_dt.replace(day=10)
         self.now_dt.replace(month=3)
         self.now_dt.replace(year=2020)
-        self.range = ["20200201", "20200301"]
+        self.dt1 = datetime.datetime.strptime("20200201", "%Y%m%d")
+        self.dt2 = datetime.datetime.strptime("20200301", "%Y%m%d")
+        self.range = [self.dt1.date(), self.dt2.date()]
         self.subresult1 = ["/dir/archive/command/2020/02/file1.txt",
                            "/dir/archive/command/2020/02/file2.txt"]
         self.subresult2 = ["/dir/archive/command/2020/03/file3.txt",
@@ -77,7 +79,7 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.date_range")
-    @mock.patch("pulled_search.datetime.datetime.now")
+    @mock.patch("pulled_search.datetime.datetime")
     def test_two_months(self, mock_now, mock_range, mock_search):
 
         """Function:  test_two_months
@@ -88,7 +90,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_now.return_value = self.now_dt
+        mock_now.now.return_value = self.now_dt
         mock_range.return_value = self.range
         mock_search.side_effect = [self.subresult1, self.subresult2]
 
