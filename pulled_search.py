@@ -366,7 +366,7 @@ def process_files(args_array, cfg, log, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-t"),
                                     subj=args_array.get("-s", None))
 
-    docid_files = gen_libs.dir_file_match(cfg.doc_dir, cfg.file_regex)
+    docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
 
     for fname in docid_files:
         log.log_info("process_files:  Processing file: %s" % (fname))
