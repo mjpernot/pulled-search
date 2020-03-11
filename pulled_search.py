@@ -29,7 +29,7 @@
         NOTE 3:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
-    
+
     Configuration file:
         Configuration file format (search.py).  The configuration file format
         is for the environment setup for the program.
@@ -50,7 +50,8 @@
             enclave = "ENCLAVE"
             # Directory path to where error and non-processed files are.
             error_dir = "ERROR_DIR_PATH"
-            # Directory path to where error and non-processed files are saved to.
+            # Directory path to where error and non-processed files are saved
+            #   to.
             archive_dir = "ARCHIVE_DIR_PATH"
             # Logger file for the storage of log entries.
             # File name including directory path.
@@ -388,7 +389,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     #   Do I want to do anything with err_flag and err_msg?
     err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
-    
+
     if err_flag:
         log.log_warn("process_docid:  %s" % (err_msg))
 
