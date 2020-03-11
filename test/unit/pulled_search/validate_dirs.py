@@ -88,6 +88,7 @@ class UnitTest(unittest.TestCase):
                 self.log_dir = "/dir_path/log_dir"
                 self.outfile = "/dir_path/outfile_dir/outfile"
                 self.error_dir = "/dir_path/error_dir"
+                self.archive_dir = "/dir_path/archive_dir"
 
         self.cfg = CfgTest()
         self.chk = (True, None)
@@ -95,7 +96,7 @@ class UnitTest(unittest.TestCase):
         self.chk3 = (False, "Log_dir failure")
         self.chk4 = (False, "Outfile failure")
         self.chk5 = (False, "Error_dir failure")
-        self.chk6 = (False, "Archive_dir failure")
+        self.chk7 = (False, "Archive_dir failure")
         self.results2 = {"/dir_path/doc_dir": "Doc_dir failure"}
         self.results3 = {"/dir_path/log_dir": "Log_dir failure"}
         self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
@@ -115,7 +116,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk7]
+        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
+                                self.chk7]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results7)
 
@@ -130,7 +132,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk5]
+        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk5,
+                                self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results6)
 
@@ -145,7 +148,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk5]
+        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk5,
+                                self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results5)
 
@@ -160,7 +164,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk4, self.chk]
+        mock_chk.side_effect = [self.chk, self.chk, self.chk4, self.chk,
+                                self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results4)
 
@@ -175,7 +180,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk3, self.chk, self.chk]
+        mock_chk.side_effect = [self.chk, self.chk3, self.chk, self.chk,
+                                self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results3)
 
@@ -190,7 +196,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk]
+        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk,
+                                self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2)
 
@@ -205,7 +212,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk]
+        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
+                                self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), {})
 
