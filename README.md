@@ -78,6 +78,7 @@ Make the appropriate changes to the environment.
     - outfile = "DIR_PATH/checklog.out"
     - enclave = "ENCLAVE"
     - error_dir = "ERROR_DIR_PATH"
+    - archive_dir = "ARCHIVE_DIR_PATH"
     - log_file = "DIR_PATH/pulled_search.log"
     - admin_email = "USERNAME@EMAIL_DOMAIN"
 
