@@ -29,6 +29,55 @@
         NOTE 3:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
+    
+    Configuration file:
+        Configuration file format (search.py).  The configuration file format
+        is for the environment setup for the program.
+
+            # Program Configuration section.
+            # Directory where docid files to be processed are.
+            doc_dir = "DOC_DIR_PATH"
+            # Regular expression for search for log file names.
+            file_regex = "*_docid.json"
+            # Directory where log files to be searched are.
+            log_dir = "LOG_DIR_PATH"
+            # Type of log files to checked.
+            log_type = "access_log"
+            # Temporary file where check_log will write to.
+            # File name including directory path.
+            outfile = "DIR_PATH/checklog.out"
+            # Security enclave these files are being processed on.
+            enclave = "ENCLAVE"
+            # Directory path to where error and non-processed files are.
+            error_dir = "ERROR_DIR_PATH"
+            # Logger file for the storage of log entries.
+            # File name including directory path.
+            log_file = "DIR_PATH/pulled_search.log"
+            # Administrator email for reporting errors detected during the
+            #   program run.
+            admin_email = "USERNAME@EMAIL_DOMAIN"
+
+            # RabbitMQ Configuration section.
+            user = "USER"
+            pswd = "PSWD"
+            host = "HOSTNAME"
+            # RabbitMQ Queue name.
+            queue = "QUEUENAME"
+            # RabbitMQ R-Key name (normally same as queue name).
+            r_key = "RKEYNAME"
+            # RabbitMQ Exchange name for each instance run.
+            exchange_name = "EXCHANGE_NAME"
+            # RabbitMQ listening port, default is 5672.
+            port = 5672
+            # Type of exchange:  direct, topic, fanout, headers
+            exchange_type = "direct"
+            # Is exchange durable: True|False
+            x_durable = True
+            # Are queues durable: True|False
+            q_durable = True
+            # Do queues automatically delete once message is
+            #   processed:  True|False
+            auto_delete = False
 
     Examples:
         pulled_search.py -c search -d config
