@@ -255,7 +255,8 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     for x in date_range(start_dt, end_dt):
         yearmon = datetime.date.strftime(x, "%Y/%m")
         full_dir = os.path.join(cmd_dir, yearmon)
-        log_files.append(gen_libs.dir_file_match(full_dir, cmd_regex))
+        log_files = log_files + dir_file_search(full_dir, cmd_regex,
+                                                add_path=True)
 
     return log_files
 
