@@ -151,6 +151,7 @@ test/unit/pulled_search/create_rmq.py
 test/unit/pulled_search/dir_file_search.py
 test/unit/pulled_search/help_message.py
 test/unit/pulled_search/main.py
+test/unit/pulled_search/month_days.py
 test/unit/pulled_search/non_processed.py
 test/unit/pulled_search/process_docid.py
 test/unit/pulled_search/process_files.py
