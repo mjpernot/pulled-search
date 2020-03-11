@@ -50,6 +50,8 @@
             enclave = "ENCLAVE"
             # Directory path to where error and non-processed files are.
             error_dir = "ERROR_DIR_PATH"
+            # Directory path to where error and non-processed files are saved to.
+            archive_dir = "ARCHIVE_DIR_PATH"
             # Logger file for the storage of log entries.
             # File name including directory path.
             log_file = "DIR_PATH/pulled_search.log"
