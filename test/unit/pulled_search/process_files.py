@@ -90,7 +90,7 @@ class UnitTest(unittest.TestCase):
         self.args_array = {"-t": "name@domain"}
 
     @mock.patch("pulled_search.non_processed", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.rm_file",
+    @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_docid")
     @mock.patch("pulled_search.gen_libs.dir_file_match")
@@ -130,7 +130,7 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value="MailInstance"))
-    @mock.patch("pulled_search.gen_libs.rm_file",
+    @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.dir_file_match")
@@ -151,7 +151,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(pulled_search.process_files(self.args_array, self.cfg,
                                                      mock_log))
 
-    @mock.patch("pulled_search.gen_libs.rm_file",
+    @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.dir_file_match")
