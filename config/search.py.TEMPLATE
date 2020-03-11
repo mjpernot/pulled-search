@@ -6,7 +6,7 @@
 # Directory where docid files to be processed are.
 doc_dir = "DOC_DIR_PATH"
 # Regular expression for search for log file names.
-file_regex = "*_docid.json"
+file_regex = "_docid.json"
 # Directory where log files to be searched are.
 log_dir = "LOG_DIR_PATH"
 # Type of log files to checked.
