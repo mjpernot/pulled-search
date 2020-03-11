@@ -43,6 +43,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_archive_dir_failure -> Test with failure on archive_dir check.
         test_multiple_failures -> Test with multiple failures.
         test_error_dir_failure -> Test with failure on error_dir check.
         test_outfile_failure -> Test with failure on outfile check.
@@ -94,12 +95,29 @@ class UnitTest(unittest.TestCase):
         self.chk3 = (False, "Log_dir failure")
         self.chk4 = (False, "Outfile failure")
         self.chk5 = (False, "Error_dir failure")
+        self.chk6 = (False, "Archive_dir failure")
         self.results2 = {"/dir_path/doc_dir": "Doc_dir failure"}
         self.results3 = {"/dir_path/log_dir": "Log_dir failure"}
         self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
         self.results5 = {"/dir_path/error_dir": "Error_dir failure"}
         self.results6 = {"/dir_path/doc_dir": "Doc_dir failure",
                          "/dir_path/error_dir": "Error_dir failure"}
+        self.results7 = {"/dir_path/archive_dir": "Archive_dir failure"}
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
+    def test_archive_dir_failure(self, mock_chk):
+
+        """Function:  test_archive_dir_failure
+
+        Description:  Test with failure on archive_dir check.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk7]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results7)
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_multiple_failures(self, mock_chk):
