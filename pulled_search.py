@@ -476,6 +476,12 @@ def validate_dirs(cfg, **kwargs):
     if not status:
         msg_dict[cfg.error_dir] = msg
 
+    status, msg = gen_libs.chk_crt_dir(cfg.archive_dir, write=True,
+                                       create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.archive_dir] = msg
+
     return msg_dict
 
 
