@@ -83,9 +83,9 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.file_log = ["line1", "line2", "line3"]
         self.docid_dict = {"docid": "weotiuer", "command": "COMMAND",
-                           "postdate": "20200102-101134"}
+                           "pubdate": "20200102-101134"}
         self.results = {"docID": "weotiuer", "command": "COMMAND",
-                        "postDate": "20200102-101134",
+                        "pubDate": "20200102-101134",
                         "securityEnclave": "ENCLAVE",
                         "asOf": "20200306 084503", "serverName": "SERVERNAME",
                         "logEntries": ["line1", "line2", "line3"]}

@@ -8,6 +8,7 @@
   * Features
   * Prerequisites
   * Installation
+  * Configuration
   * Program Help Function
   * Testing
     - Unit
@@ -56,8 +57,43 @@ Install supporting classes and libraries.
 pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
+
+# Configuration:
+
+Initialize configuration file.
+```
+cd config
+cp search.py.TEMPLATE search.py
+```
+
+Make the appropriate changes to the environment.
+  * Make the appropriate changes to connect to General setup section.
+    - doc_dir = "DOC_DIR_PATH"
+    - file_regex = "_docid.json"
+    - log_dir = "LOG_DIR_PATH"
+    - log_type = "access_log"
+    - outfile = "DIR_PATH/checklog.out"
+    - enclave = "ENCLAVE"
+    - error_dir = "ERROR_DIR_PATH"
+    - archive_dir = "ARCHIVE_DIR_PATH"
+    - log_file = "DIR_PATH/pulled_search.log"
+    - admin_email = "USERNAME@EMAIL_DOMAIN"
+
+  * Make the appropriate changes to connect to RabbitMQ section.
+    - user = "USER"
+    - pswd = "PSWD"
+    - host = "HOSTNAME"
+    - queue = "QUEUENAME"
+    - r_key = "RKEYNAME" (Normally the same as the queue name.)
+    - exchange_name = "EXCHANGE_NAME"
+
+```
+vim search.py
+chmod 600 search.py
+```
 
 # Program Help Function:
 
@@ -102,6 +138,7 @@ Install supporting classes and libraries.
 pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
 # Unit test runs for pulled_search.py:
@@ -111,8 +148,12 @@ pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host 
 cd {Python_Project}/pulled-search
 test/unit/pulled_search/create_json.py
 test/unit/pulled_search/create_rmq.py
+test/unit/pulled_search/date_range.py
+test/unit/pulled_search/dir_file_search.py
+test/unit/pulled_search/get_archive_files.py
 test/unit/pulled_search/help_message.py
 test/unit/pulled_search/main.py
+test/unit/pulled_search/month_days.py
 test/unit/pulled_search/non_processed.py
 test/unit/pulled_search/process_docid.py
 test/unit/pulled_search/process_files.py

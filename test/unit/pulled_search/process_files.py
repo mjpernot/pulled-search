@@ -82,18 +82,19 @@ class UnitTest(unittest.TestCase):
                 """
 
                 self.file_regex = "*_docid.json"
-                self.docid_dir = "/dir_path/docid_dir"
+                self.doc_dir = "/dir_path/doc_dir"
                 self.error_dir = "/dir/path/error_dir"
+                self.archive_dir = "/dir/path/archive_dir"
 
         self.cfg = CfgTest()
         self.log_files = ["/path/logfile1", "/path/logfile2"]
         self.args_array = {"-t": "name@domain"}
 
     @mock.patch("pulled_search.non_processed", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.rm_file",
+    @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_docid")
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_nonprocessed_files(self, mock_log, mock_match, mock_process):
 
@@ -111,7 +112,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
 
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_no_log_files(self, mock_log, mock_match):
 
@@ -130,10 +131,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value="MailInstance"))
-    @mock.patch("pulled_search.gen_libs.rm_file",
+    @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_mail(self, mock_log, mock_match):
 
@@ -151,10 +152,10 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(pulled_search.process_files(self.args_array, self.cfg,
                                                      mock_log))
 
-    @mock.patch("pulled_search.gen_libs.rm_file",
+    @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.dir_file_match")
+    @mock.patch("pulled_search.dir_file_search")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_data(self, mock_log, mock_match):
 

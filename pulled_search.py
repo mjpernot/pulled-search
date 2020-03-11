@@ -8,13 +8,14 @@
         and if detected will send these log entries to a RabbitMQ queue.
 
     Usage:
-        pulled_search.py -c file -d path [-m path | -z | -y flavor_id ]
+        pulled_search.py -c file -d path [-m path | -z | -y flavor_id | -a]
             [-t email {email2 email3 ...} {-s subject_line}] [-v | -h]
 
     Arguments:
         -c file => Configuration file.  Required argument.
         -d dir_path => Directory path for option '-c'.  Required argument.
         -m dir_path => Directory to monitor.
+        -a => This is an archive log search.
         -z => Use the zgrep option instead of check_log to check GZipped files.
         -t email_address(es) => Send output to one or more email addresses.
         -s subject_line => Subject line of email.  Requires -t option.
@@ -28,6 +29,58 @@
         NOTE 3:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
+
+    Configuration file:
+        Configuration file format (search.py).  The configuration file format
+        is for the environment setup for the program.
+
+            # Program Configuration section.
+            # Directory where docid files to be processed are.
+            doc_dir = "DOC_DIR_PATH"
+            # Regular expression for search for log file names.
+            file_regex = "_docid.json"
+            # Directory where log files to be searched are.
+            log_dir = "LOG_DIR_PATH"
+            # Type of log files to checked.
+            log_type = "access_log"
+            # Temporary file where check_log will write to.
+            # File name including directory path.
+            outfile = "DIR_PATH/checklog.out"
+            # Security enclave these files are being processed on.
+            enclave = "ENCLAVE"
+            # Directory path to where error and non-processed files are.
+            error_dir = "ERROR_DIR_PATH"
+            # Directory path to where error and non-processed files are saved
+            #   to.
+            archive_dir = "ARCHIVE_DIR_PATH"
+            # Logger file for the storage of log entries.
+            # File name including directory path.
+            log_file = "DIR_PATH/pulled_search.log"
+            # Administrator email for reporting errors detected during the
+            #   program run.
+            admin_email = "USERNAME@EMAIL_DOMAIN"
+
+            # RabbitMQ Configuration section.
+            user = "USER"
+            pswd = "PSWD"
+            host = "HOSTNAME"
+            # RabbitMQ Queue name.
+            queue = "QUEUENAME"
+            # RabbitMQ R-Key name (normally same as queue name).
+            r_key = "RKEYNAME"
+            # RabbitMQ Exchange name for each instance run.
+            exchange_name = "EXCHANGE_NAME"
+            # RabbitMQ listening port, default is 5672.
+            port = 5672
+            # Type of exchange:  direct, topic, fanout, headers
+            exchange_type = "direct"
+            # Is exchange durable: True|False
+            x_durable = True
+            # Are queues durable: True|False
+            q_durable = True
+            # Do queues automatically delete once message is
+            #   processed:  True|False
+            auto_delete = False
 
     Examples:
         pulled_search.py -c search -d config
@@ -47,6 +100,8 @@ import datetime
 
 # Third-party
 import json
+import calendar
+import re
 
 # Local
 import lib.arg_parser as arg_parser
@@ -168,7 +223,7 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
     log_json = {"docID": docid_dict["docid"],
                 "command": docid_dict["command"],
-                "postDate": docid_dict["postdate"],
+                "pubDate": docid_dict["pubdate"],
                 "securityEnclave": cfg.enclave,
                 "asOf": dtg,
                 "serverName": socket.gethostname(),
@@ -177,13 +232,124 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     return log_json
 
 
-def process_docid(cfg, fname, log, **kwargs):
+# Move to python_libs.gen_libs module.
+def month_days(dt, **kwargs):
+
+    """Function:  month_days
+
+    Description:  Return the number of days in the month for the date.
+
+    Arguments:
+        (input) dt -> Date, must be a datetime class instance.
+        (output) -> Number of days in the month for the date.
+
+    """
+
+    return calendar.monthrange(dt.year, dt.month)[1]
+
+
+# Move to python_libs.gen_libs module.
+def date_range(start_dt, end_dt, **kwargs):
+
+    """Function:  date_range
+
+    Description:  Generators a list of year-month combinations between two
+        dates.
+        NOTE:  The day will be included in the datetime instance, but all days
+            will be set to the beginning of each month (e.g. YYYY-MM-01).
+
+    Arguments:
+        (input) start_dt -> Start date - datetime class instance.
+        (input) end_dt -> End date - datetime class instance.
+        (output) Generator list of datetime instances.
+
+    """
+
+    start_dt = start_dt.replace(day=1)
+    end_dt = end_dt.replace(day=1)
+    forward = end_dt >= start_dt
+    finish = False
+    dt = start_dt
+
+    while not finish:
+        yield dt.date()
+
+        if forward:
+            days = month_days(dt)
+            dt = dt + datetime.timedelta(days=days)
+            finish = dt > end_dt
+
+        else:
+            _tmp_dt = dt.replace(day=1) - datetime.timedelta(days=1)
+            dt = (_tmp_dt.replace(day=dt.day))
+            finish = dt < end_dt
+
+
+def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
+
+    """Function:  get_archive_files
+
+    Description:  Get list of archive log files.
+
+    Arguments:
+        (input) archive_dir -> Directory path to base archive logs.
+        (input) cmd -> Command to search in.
+        (input) pubdate -> Published date of document.
+        (input) cmd_regex -> Regular expression of log file name.
+        (output) log_files -> List of archive log files to search.
+
+    """
+
+    log_files = []
+    cmd_dir = os.path.join(archive_dir, cmd)
+    start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
+    end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
+
+    for x in date_range(start_dt, end_dt):
+        yearmon = datetime.date.strftime(x, "%Y/%m")
+        full_dir = os.path.join(cmd_dir, yearmon)
+        log_files = log_files + dir_file_search(full_dir, cmd_regex,
+                                                add_path=True)
+
+    return log_files
+
+
+# Move to python-lib.gen_libs.py.
+def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
+
+    """Function:  dir_file_search
+
+    Description:  Return a list of file names from a directory that contain
+        a the search string somewhere in the name.
+
+    NOTE:  file_str can handle regular expressions.
+
+    Arguments:
+        (input) dir_path -> Directory path to search in.
+        (input) file_str -> Name of search string.
+        (input) add_path -> True|False - Add path name to file name.
+        (output) Return a list of (path/)file names with search string.
+
+    """
+
+    if add_path:
+        return [os.path.join(dir_path, x)
+                for x in gen_libs.list_files(dir_path)
+                if re.search(file_str, x)]
+
+    else:
+        return [x for x in gen_libs.list_files(dir_path)
+                if re.search(file_str, x)]
+
+
+def process_docid(args_array, cfg, fname, log, **kwargs):
 
     """Function:  process_docid
 
     Description:  Processes the docid.
 
     Arguments:
+        (input) args_array -> Dictionary of command line options and values.
         (input) cfg -> Configuration setup.
         (input) fname -> Docid file name.
         (input) log -> Log class instance.
@@ -191,11 +357,26 @@ def process_docid(cfg, fname, log, **kwargs):
 
     """
 
+    args_array = dict(args_array)
     file_log = list()
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
-    cmd_regex = docid_dict["command"] + "*" + cfg.log_type + "*"
-    log_files = gen_libs.dir_file_match(cfg.log_dir, cmd_regex)
+
+    # Special case exception for one command.
+    if docid_dict["command"].lower() == "eucom":
+        cmd = "intelink"
+
+    else:
+        cmd = docid_dict["command"].lower()
+
+    cmd_regex = cmd + ".*" + cfg.log_type
+
+    if args_array.get("-a", None):
+        log_files = get_archive_files(cfg.archive_dir, cmd,
+                                      docid_dict["pubdate"], cmd_regex)
+
+    else:
+        log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
 
     # Create argument list for check_log program.
     search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
@@ -206,8 +387,10 @@ def process_docid(cfg, fname, log, **kwargs):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
 
-    #   Do I want to do anything with err_flag and err_msg?
     err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
+
+    if err_flag:
+        log.log_warn("process_docid:  %s" % (err_msg))
 
     if file_log:
         log_json = create_json(cfg, docid_dict, file_log)
@@ -241,17 +424,17 @@ def process_files(args_array, cfg, log, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-t"),
                                     subj=args_array.get("-s", None))
 
-    docid_files = gen_libs.dir_file_match(cfg.docid_dir, cfg.file_regex)
+    docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
 
     for fname in docid_files:
         log.log_info("process_files:  Processing file: %s" % (fname))
-        status = process_docid(cfg, fname, log)
+        status = process_docid(args_array, cfg, fname, log)
 
         if status:
             remove_list.append(fname)
 
     for fname in remove_list:
-        gen_libs.rm_file(fname)
+        gen_libs.mv_file2(fname, cfg.archive_dir)
         docid_files.remove(fname)
 
     if docid_files:
@@ -273,28 +456,34 @@ def validate_dirs(cfg, **kwargs):
 
     msg_dict = dict()
 
-    status, msg = gen_libs.chk_crt_file(cfg.doc_dir, write=True, no_print=True)
+    status, msg = gen_libs.chk_crt_dir(cfg.doc_dir, write=True, no_print=True)
 
     if not status:
         msg_dict[cfg.doc_dir] = msg
 
-    status, msg = gen_libs.chk_crt_file(cfg.log_dir, read=True, no_print=True)
+    status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
 
     if not status:
         msg_dict[cfg.log_dir] = msg
 
     basepath = gen_libs.get_base_dir(cfg.outfile)
-    status, msg = gen_libs.chk_crt_file(basepath, write=True, create=True,
-                                        no_print=True)
+    status, msg = gen_libs.chk_crt_dir(basepath, write=True, create=True,
+                                       no_print=True)
 
     if not status:
         msg_dict[basepath] = msg
 
-    status, msg = gen_libs.chk_crt_file(cfg.error_dir, write=True, create=True,
-                                        no_print=True)
+    status, msg = gen_libs.chk_crt_dir(cfg.error_dir, write=True, create=True,
+                                       no_print=True)
 
     if not status:
         msg_dict[cfg.error_dir] = msg
+
+    status, msg = gen_libs.chk_crt_dir(cfg.archive_dir, write=True,
+                                       create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.archive_dir] = msg
 
     return msg_dict
 
@@ -314,8 +503,9 @@ def run_program(args_array, **kwargs):
 
     args_array = dict(args_array)
     cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
-    status, err_msg = gen_libs.chk_crt_file(cfg.log_file, write=True,
-                                            create=True, no_print=True)
+    basepath = gen_libs.get_base_dir(cfg.log_file)
+    status, err_msg = gen_libs.chk_crt_dir(basepath, write=True, create=True,
+                                           no_print=True)
 
     if status:
         log = gen_class.Logger(cfg.log_file, cfg.log_file, "INFO",
@@ -324,7 +514,7 @@ def run_program(args_array, **kwargs):
         log.log_info("Program initialization...")
 
         if args_array.get("-m", None):
-            cfg.docid_dir = args_array["-m"]
+            cfg.doc_dir = args_array["-m"]
 
         msg_dict = validate_dirs(cfg)
 
