@@ -372,7 +372,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     if args_array.get("-a", None):
         log_files = get_archive_files(cfg.archive_dir, cmd,
-                                      docid_dict[pubdate], cmd_regex)
+                                      docid_dict["pubdate"], cmd_regex)
 
     else:
         log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
