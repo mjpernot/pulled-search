@@ -69,6 +69,23 @@ class UnitTest(unittest.TestCase):
         self.dt6 = datetime.datetime.strptime("20200301", "%Y%m%d")
         self.results = [self.dt1.date(), self.dt2.date(), self.dt3.date(),
                         self.dt4.date(), self.dt5.date(), self.dt6.date()]
+        self.results2 = [self.dt6.date(), self.dt5.date(), self.dt4.date(),
+                         self.dt3.date(), self.dt2.date(), self.dt1.date()]
+
+    def test_reverse_dates(self):
+
+        """Function:  test_reverse_dates
+
+        Description:  Test with dates reversed.
+
+        Arguments:
+
+        """
+
+        for x in pulled_search.date_range(self.end_dt, self.start_dt):
+            self.datelist.append(x)
+
+        self.assertEqual(self.datelist, self.results2)
 
     def test_month_days(self):
 
