@@ -94,9 +94,10 @@ class UnitTest(unittest.TestCase):
         mock_range.return_value = self.range
         mock_search.side_effect = [self.subresult1, self.subresult2]
 
-        self.assertEqual(pulled_search.get_archive_files(
-            self.archive_dir, self.cmd, self.pubdate, self.cmd_regex),
-                         self.results)
+        self.assertEqual(
+            pulled_search.get_archive_files(self.archive_dir, self.cmd,
+                                            self.pubdate, self.cmd_regex),
+            self.results)
 
 
 if __name__ == "__main__":
