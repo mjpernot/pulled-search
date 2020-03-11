@@ -331,11 +331,13 @@ def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
     """
 
     if add_path:
-        return [os.path.join(dir_path, x) for x in list_files(dir_path)
+        return [os.path.join(dir_path, x)
+                for x in gen_libs.list_files(dir_path)
                 if re.search(file_str, x)]
 
     else:
-        return [x for x in list_files(dir_path) if re.search(file_str, x)]
+        return [x for x in gen_libs.list_files(dir_path)
+                if re.search(file_str, x)]
 
 
 def process_docid(args_array, cfg, fname, log, **kwargs):
