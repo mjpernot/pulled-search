@@ -387,7 +387,6 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
 
-    #   Do I want to do anything with err_flag and err_msg?
     err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
     if err_flag:
