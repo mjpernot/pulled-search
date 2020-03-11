@@ -12,6 +12,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - month_days:  Return the number of days in the month in the date.
 
 ### Changed
+- process_files:  Changed gen_libs.dir_file_match to dir_file_search.
 - process_docid:  Changed gen_libs.dir_file_match to dir_file_search.
 - process_docid:  Converted command name to lowercase for log file search.
 - process_docid:  Special case exception for one command.
