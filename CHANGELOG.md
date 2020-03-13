@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.0] - 2020-03-13
+### Added
+- setup_mail: Create mail instance.
+
 ### Changed
 - config/search.py.TEMPLATE:  Added section for Mongodb configuration.
 
