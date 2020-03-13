@@ -14,7 +14,7 @@
     Arguments:
         -c file => Configuration file.  Required argument.
         -d dir_path => Directory path for option '-c'.  Required argument.
-        -m dir_path => Directory to monitor.
+        -m dir_path => Directory to monitor for doc ID files.
         -a => This is an archive log search.
         -z => Use the zgrep option instead of check_log to check GZipped files.
         -t email_address(es) => Send output to one or more email addresses.
@@ -401,6 +401,28 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         status = True
 
     return status
+
+
+def setup_mail(args_array, subj=None, **kwargs):
+
+    """Function:  setup_mail
+
+    Description:  Processes the docid files.
+
+    Arguments:
+        (input) args_array -> Dictionary of command line options and values.
+        (input) subj -> Email subject line.
+        (output) mail -> Mail instance.
+
+    """
+
+    mail = None
+
+    if args_array.get("-t", None):
+        mail = gen_class.setup_mail(args_array.get("-t"),
+                                    subj=args_array.get("-s", subj))
+
+    return mail
 
 
 def process_files(args_array, cfg, log, **kwargs):
