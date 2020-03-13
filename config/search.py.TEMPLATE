@@ -46,3 +46,29 @@ x_durable = True
 q_durable = True
 # Do queues automatically delete once message is processed:  True|False
 auto_delete = False
+
+# Mongo DB Configuration section.
+muser = "root"
+mpswd = "ROOT_PASSWORD"
+# Mongo DB host information
+mhost = "HOST_IP"
+mname = "HOSTNAME"
+# Mongo database port (default is 27017)
+mport = 27017
+# Mongo configuration settings
+mconf_file = None
+# Authentication required:  True|False
+mauth = True
+
+# Replica Set Mongo configuration settings.
+# Replica set name.
+#    None means the Mongo database is not part of a replica set.
+#    Example:  repset = "REPLICA_SET_NAME"
+repset = None
+# Replica host listing.
+#    None means the Mongo database is not part of a replica set.
+#    Example:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
+repset_hosts = None
+# Database to authentication to.
+#    Example:  db_auth = "AUTHENTICATION_DATABASE"
+db_auth = None 
