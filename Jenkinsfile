@@ -11,6 +11,12 @@ pipeline {
                 dir ('lib') {
                     git branch: "master", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
                 }
+                dir ('mongo_lib') {
+                    git branch: "master", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/mongo-lib.git"
+                }
+                dir ('mongo_lib/lib') {
+                    git branch: "master", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
+                }
                 dir ('rabbit_lib') {
                     git branch: "master", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/rabbitmq-lib.git"
                 }
@@ -23,6 +29,7 @@ pipeline {
                 sh """
                 pip2 install mock==2.0.0 --user
                 pip2 install pika==0.11.0 --user
+                pip2 install pymongo==3.2.0 --user
                 ./test/unit/pulled_search/create_json.py
                 ./test/unit/pulled_search/create_rmq.py
                 ./test/unit/pulled_search/date_range.py
@@ -46,6 +53,7 @@ pipeline {
                 sh 'rm -rf lib'
                 sh 'rm -rf checklog'
                 sh 'rm -rf rabbit_lib'
+                sh 'rm -rf mongo_lib'
                 script {
                     scannerHome = tool 'sonar-scanner';
                 }
