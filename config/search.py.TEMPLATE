@@ -1,8 +1,16 @@
-# Pulled Search/RabbitMQ Configuration file
+# Pulled Search Process/RabbitMQ Configuration file.
+# Pulled Search Insert/Mongodb Configuration file.
 # Classification (U)
 # Unclassified until filled.
 
-# Program Configuration section.
+# Pulled Search General Configuration section.
+# Logger file for the storage of log entries.
+# File name including directory path.
+log_file = "DIR_PATH/pulled_search.log"
+# Administrator email for reporting errors detected during the program run.
+admin_email = "USERNAME@EMAIL_DOMAIN"
+
+# Pulled Search Process Configuration section.
 # Directory where docid files to be processed are.
 doc_dir = "DOC_DIR_PATH"
 # Regular expression for search for log file names.
@@ -20,13 +28,8 @@ enclave = "ENCLAVE"
 archive_dir = "ARCHIVE_DIR_PATH"
 # Directory path to where archived files are saved to.
 error_dir = "ERROR_DIR_PATH"
-# Logger file for the storage of log entries.
-# File name including directory path.
-log_file = "DIR_PATH/pulled_search.log"
-# Administrator email for reporting errors detected during the program run.
-admin_email = "USERNAME@EMAIL_DOMAIN"
 
-# RabbitMQ Configuration section.
+# Pulled Search Process/RabbitMQ Configuration section.
 user = "USER"
 pswd = "PSWD"
 host = "HOSTNAME"
@@ -47,7 +50,17 @@ q_durable = True
 # Do queues automatically delete once message is processed:  True|False
 auto_delete = False
 
-# Mongo DB Configuration section.
+# Pulled Search Insert Configuration section.
+# Directory where to monitor for new files to insert into Mongodb.
+monitor_dir = "MONITOR_DIR_PATH"
+# Regular expression for search for Insert/Mongodb file names.
+mfile_regex = "_mongo.json"
+# Directory path to where Insert/Mongodb error and non-processed files are saved to.
+marchive_dir = "ARCHIVE_DIR_PATH"
+# Directory path to where Insert/Mongodb archived files are saved to.
+merror_dir = "ERROR_DIR_PATH"
+
+# Pulled Search Insert/Mongo DB Configuration section.
 muser = "root"
 mpswd = "ROOT_PASSWORD"
 # Mongo DB host information
