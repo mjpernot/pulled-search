@@ -28,6 +28,9 @@
     - lib/arg_parser
     - lib/gen_class
     - lib/gen_libs
+    - rabbit_lib/rabbit_class
+    - mongo_lib/mongo_libs
+    - mongo_lib/mongo_class
     - checklog/check_log
 
 
@@ -58,6 +61,8 @@ pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appd
 pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
 
@@ -139,6 +144,8 @@ pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appd
 pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
 # Unit test runs for pulled_search.py:
