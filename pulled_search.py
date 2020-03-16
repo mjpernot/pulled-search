@@ -425,6 +425,33 @@ def setup_mail(args_array, subj=None, **kwargs):
     return mail
 
 
+def process_docids(args_array, cfg. log, docid_files, **kwargs):
+
+    """Function:  process_docids
+
+    Description:  Processes the docid files.
+
+    Arguments:
+        (input) args_array -> Dictionary of command line options and values.
+        (input) cfg -> Configuration setup.
+        (input) log -> Log class instance.
+        (input) docid_files -> List of files to be processed.
+        (output) done_list -> List of files successfully processed.
+
+    """
+
+    done_list = list()
+
+    for fname in docid_files:
+        log.log_info("process_docids:  Processing file: %s" % (fname))
+        status = process_docid(args_array, cfg, fname, log)
+
+        if status:
+            done_list.append(fname)
+
+    return done_list
+
+
 def process_files(args_array, cfg, log, **kwargs):
 
     """Function:  process_files
