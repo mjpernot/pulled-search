@@ -425,7 +425,7 @@ def setup_mail(args_array, subj=None, **kwargs):
     return mail
 
 
-def process_docids(args_array, cfg. log, docid_files, **kwargs):
+def process_docids(args_array, cfg, log, docid_files, **kwargs):
 
     """Function:  process_docids
 
