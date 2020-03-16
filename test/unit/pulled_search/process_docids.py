@@ -1,0 +1,170 @@
+#!/usr/bin/python
+# Classification (U)
+
+"""Program:  process_docids.py
+
+    Description:  Unit testing of process_docids in pulled_search.py.
+
+    Usage:
+        test/unit/pulled_search/process_docids.py
+
+    Arguments:
+
+"""
+
+# Libraries and Global Variables
+
+# Standard
+import sys
+import os
+
+if sys.version_info < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
+# Third-party
+import mock
+
+# Local
+sys.path.append(os.getcwd())
+import pulled_search
+import lib.gen_libs as gen_libs
+import version
+
+__version__ = version.__version__
+
+
+class UnitTest(unittest.TestCase):
+
+    """Class:  UnitTest
+
+    Description:  Class which is a representation of a unit testing.
+
+    Methods:
+        setUp -> Initialize testing environment.
+        test_fails_item_list -> Test with some failures in docid file list
+        test_multiple_item_list -> Test multiple entries in docid file list.
+        test_single_item_list -> Test with multiple entries in docid file list.
+        test_empty_list -> Test with an empty docid file list.
+
+    """
+
+    def setUp(self):
+
+        """Function:  setUp
+
+        Description:  Initialization for unit testing.
+
+        Arguments:
+
+        """
+
+        class CfgTest(object):
+
+            """Class:  CfgTest
+
+            Description:  Class which is a representation of a cfg module.
+
+            Methods:
+                __init__ -> Initialize configuration environment.
+
+            """
+
+            def __init__(self):
+
+                """Method:  __init__
+
+                Description:  Initialization instance of the CfgTest class.
+
+                Arguments:
+
+                """
+
+                self.file_regex = "*_docid.json"
+                self.doc_dir = "/dir_path/doc_dir"
+                self.error_dir = "/dir/path/error_dir"
+                self.archive_dir = "/dir/path/archive_dir"
+
+        self.cfg = CfgTest()
+        self.docid_files = ["/path/docidfile1"]
+        self.docid_files2 = ["/path/docidfile1", "/path/docidfile2"]
+        self.results = ["/path/docidfile1"]
+        self.results2 = ["/path/docidfile1", "/path/docidfile2"]
+        self.results3 = ["/path/docidfile2"]
+        self.args_array = {"-t": "name@domain"}
+
+    @mock.patch("pulled_search.process_docid",
+                mock.Mock(side_effect=[False, True]))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_fails_item_list(self, mock_log):
+
+        """Function:  test_fails_item_list
+
+        Description:  Test with multiple entries in docid file list.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertEqual(pulled_search.process_docids(
+            self.args_array, self.cfg, mock_log, self.docid_files2),
+                         self.results3)
+
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_multiple_item_list(self, mock_log):
+
+        """Function:  test_multiple_item_list
+
+        Description:  Test with multiple entries in docid file list.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertEqual(pulled_search.process_docids(
+            self.args_array, self.cfg, mock_log, self.docid_files2),
+                         self.results2)
+
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_single_item_list(self, mock_log):
+
+        """Function:  test_single_item_list
+
+        Description:  Test with one entry in docid file list.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertEqual(pulled_search.process_docids(
+            self.args_array, self.cfg, mock_log, self.docid_files),
+                         self.results)
+
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_empty_list(self, mock_log):
+
+        """Function:  test_empty_list
+
+        Description:  Test with an empty docid file list.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertEqual(pulled_search.process_docids(
+            self.args_array, self.cfg, mock_log, []), [])
+
+
+if __name__ == "__main__":
+    unittest.main()
