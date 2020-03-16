@@ -469,6 +469,7 @@ def cleanup_files(docid_files, processed_list, dest_dir **kwargs):
     """
 
     docid_files = list(docid_files)
+    processed_list = list(processed_list)
 
     for fname in processed_list:
         gen_libs.mv_file2(fname, dest_dir)
