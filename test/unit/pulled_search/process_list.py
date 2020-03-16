@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # Classification (U)
 
-"""Program:  process_docids.py
+"""Program:  process_list.py
 
-    Description:  Unit testing of process_docids in pulled_search.py.
+    Description:  Unit testing of process_list in pulled_search.py.
 
     Usage:
-        test/unit/pulled_search/process_docids.py
+        test/unit/pulled_search/process_list.py
 
     Arguments:
 
@@ -109,7 +109,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
 
-        self.assertEqual(pulled_search.process_docids(
+        self.assertEqual(pulled_search.process_list(
             self.args_array, self.cfg, mock_log, self.docid_files2),
                          self.results3)
 
@@ -127,7 +127,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
 
-        self.assertEqual(pulled_search.process_docids(
+        self.assertEqual(pulled_search.process_list(
             self.args_array, self.cfg, mock_log, self.docid_files2),
                          self.results2)
 
@@ -145,7 +145,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
 
-        self.assertEqual(pulled_search.process_docids(
+        self.assertEqual(pulled_search.process_list(
             self.args_array, self.cfg, mock_log, self.docid_files),
                          self.results)
 
@@ -162,7 +162,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
 
-        self.assertEqual(pulled_search.process_docids(
+        self.assertEqual(pulled_search.process_list(
             self.args_array, self.cfg, mock_log, []), [])
 
 
