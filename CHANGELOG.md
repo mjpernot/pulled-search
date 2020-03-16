@@ -6,6 +6,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [0.1.0] - 2020-03-13
 ### Added
 - setup_mail: Create mail instance.
+- cleanup_files:  Send processed files to destination directory and remove from master file list.
 - process_list:  Processes the docid files.
 
 ### Changed
