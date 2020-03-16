@@ -453,7 +453,7 @@ def process_list(args_array, cfg, log, docid_files, **kwargs):
     return done_list
 
 
-def cleanup_files(docid_files, processed_list, dest_dir **kwargs):
+def cleanup_files(docid_files, processed_list, dest_dir, **kwargs):
 
     """Function:  cleanup_files
 
