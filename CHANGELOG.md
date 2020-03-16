@@ -6,7 +6,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [0.1.0] - 2020-03-13
 ### Added
 - setup_mail: Create mail instance.
-- process_docids:  Processes the docid files.
+- process_list:  Processes the docid files.
 
 ### Changed
 - config/search.py.TEMPLATE:  Added section for Mongodb configuration.
