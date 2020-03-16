@@ -441,6 +441,7 @@ def process_list(args_array, cfg, log, docid_files, **kwargs):
     """
 
     done_list = list()
+    args_array = dict(args_array)
 
     for fname in docid_files:
         log.log_info("process_docids:  Processing file: %s" % (fname))
@@ -450,6 +451,30 @@ def process_list(args_array, cfg, log, docid_files, **kwargs):
             done_list.append(fname)
 
     return done_list
+
+
+def cleanup_files(docid_files, processed_list, dest_dir **kwargs):
+
+    """Function:  cleanup_files
+
+    Description:  Send processed files to destination directory and remove
+        from master file list.
+
+    Arguments:
+        (input) docid_files -> List of files to be processed.
+        (input) processed_list -> List of files that were processed.
+        (input) dest_dir -> Directory to move processed files to.
+        (output) docid_files -> Modified list of files not processed.
+
+    """
+
+    docid_files = list(docid_files)
+
+    for fname in processed_list:
+        gen_libs.mv_file2(fname, dest_dir)
+        docid_files.remove(fname)
+
+    return docid_files
 
 
 def process_files(args_array, cfg, log, **kwargs):
