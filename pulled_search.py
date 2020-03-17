@@ -498,13 +498,11 @@ def process_files(args_array, cfg, log, **kwargs):
 
     args_array = dict(args_array)
     mail = setup_mail(args_array, subj="Non-processed files")
+    log.log_info("process_files:  Searching for files to check...")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
     remove_list = process_list(args_array, cfg, log, docid_files)
     docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir)
-
-    if docid_files:
-        log.log_info("process_files:  Non-processed files detected.")
-        non_processed(docid_files, cfg.error_dir, log, mail)
+    non_processed(docid_files, cfg.error_dir, log, mail)
 
 
 def validate_dirs(cfg, **kwargs):
