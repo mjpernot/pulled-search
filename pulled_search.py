@@ -496,17 +496,10 @@ def process_files(args_array, cfg, log, **kwargs):
 
     """
 
-    remove_list = list()
     args_array = dict(args_array)
     mail = setup_mail(args_array, subj="Non-processed files")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
-
-    for fname in docid_files:
-        log.log_info("process_files:  Processing file: %s" % (fname))
-        status = process_docid(args_array, cfg, fname, log)
-
-        if status:
-            remove_list.append(fname)
+    remove_list = process_list(args_array, cfg, log, docid_files)
 
     for fname in remove_list:
         gen_libs.mv_file2(fname, cfg.archive_dir)
