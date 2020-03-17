@@ -458,7 +458,7 @@ def process_list(args_array, cfg, log, docid_files, **kwargs):
     return done_list
 
 
-def cleanup_files(docid_files, processed_list, dest_dir, **kwargs):
+def cleanup_files(docid_files, processed_list, dest_dir, log, **kwargs):
 
     """Function:  cleanup_files
 
@@ -469,6 +469,7 @@ def cleanup_files(docid_files, processed_list, dest_dir, **kwargs):
         (input) docid_files -> List of files to be processed.
         (input) processed_list -> List of files that were processed.
         (input) dest_dir -> Directory to move processed files to.
+        (input) log -> Log class instance.
         (output) docid_files -> Modified list of files not processed.
 
     """
@@ -477,6 +478,7 @@ def cleanup_files(docid_files, processed_list, dest_dir, **kwargs):
     processed_list = list(processed_list)
 
     for fname in processed_list:
+        log.log_info("cleanup_files:  Archiving file: %s" % (fname))
         gen_libs.mv_file2(fname, dest_dir)
         docid_files.remove(fname)
 
