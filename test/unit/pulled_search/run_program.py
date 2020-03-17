@@ -219,6 +219,7 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.log = LoggerTest()
         self.setupmail = setup_mail()
+        self.func_dict = {"-P": process_files}
         self.args_array = {"-c": "configfile", "-d": "/dir/config"}
         self.args_array2 = {"-c": "configfile", "-d": "/dir/config",
                             "-m": "/dir/newdir"}
@@ -244,7 +245,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = self.log
         mock_cfg.return_value = self.cfg
 
-        self.assertFalse(pulled_search.run_program(self.args_array))
+        self.assertFalse(pulled_search.run_program(self.args_array,
+                                                   self.func_dict))
 
     @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
@@ -264,7 +266,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = self.log
         mock_cfg.return_value = self.cfg
 
-        self.assertFalse(pulled_search.run_program(self.args_array2))
+        self.assertFalse(pulled_search.run_program(self.args_array2,
+                                                   self.func_dict))
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(False, "Error Message")))
@@ -283,7 +286,8 @@ class UnitTest(unittest.TestCase):
         mock_mail.return_value = self.setupmail
         mock_cfg.return_value = self.cfg
 
-        self.assertFalse(pulled_search.run_program(self.args_array))
+        self.assertFalse(pulled_search.run_program(self.args_array,
+                                                   self.func_dict))
 
     @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
@@ -303,7 +307,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = self.log
         mock_cfg.return_value = self.cfg
 
-        self.assertFalse(pulled_search.run_program(self.args_array))
+        self.assertFalse(pulled_search.run_program(self.args_array,
+                                                   self.func_dict))
 
 
 if __name__ == "__main__":
