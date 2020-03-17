@@ -497,13 +497,8 @@ def process_files(args_array, cfg, log, **kwargs):
     """
 
     remove_list = list()
-    mail = None
     args_array = dict(args_array)
-
-    if args_array.get("-t", None):
-        mail = gen_class.setup_mail(args_array.get("-t"),
-                                    subj=args_array.get("-s", None))
-
+    mail = setup_mail(args_array, subj="Non-processed files")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
 
     for fname in docid_files:
