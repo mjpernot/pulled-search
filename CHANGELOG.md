@@ -12,6 +12,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Changed
 - config/search.py.TEMPLATE:  Added section for Mongodb configuration.
 - non_processed:  Added check to see if there were non-processed files.
+- process_files:  Replaced sections of code with calls to general functions.
 
 
 ## [0.0.2] - 2020-03-09
