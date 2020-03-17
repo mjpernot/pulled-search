@@ -30,15 +30,16 @@
         NOTE 1:  -v or -h overrides the other options.
         NOTE 2:  -s requires -t option to be included.
         NOTE 3:  -P and -I are Xor options.
-
-        NOTE 4:  The log files can be normal flat files or compressed files
+        NOTE 4:  -m and -n options will override the configuration settings.
+            The -m option is mapped to the doc_dir configuration entry, and
+            the -n option is mapped to the monitor_dir configuration entry.
+        NOTE 5:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
 
     Configuration file:
-        Configuration file format (search.py).  The configuration file format
-        is for the environment setup for the program.
-
+        Configuration file (search.py.TEMPLATE).  Below is the configuration
+        file format for the environment setup in the program.
 
         # Pulled Search General Configuration section.
         # Logger file for the storage of log entries.
@@ -126,7 +127,7 @@
         db_auth = None
 
     Examples:
-        pulled_search.py -c search -d config
+        pulled_search.py -c search -d /opt/local/pulled/config -P
 
 """
 
@@ -665,6 +666,7 @@ def main():
         opt_multi_list -> contains the options that will have multiple values.
         opt_req_list -> contains options that are required for the program.
         opt_val_list -> contains options which require values.
+        opt_xor_dict -> contains dict with key that is xor with it's values.
 
     Arguments:
         (input) argv -> Arguments from the command line.
@@ -672,11 +674,12 @@ def main():
     """
 
     dir_chk_list = ["-d", "-m", "-n"]
-    func_dict = {"-P": process_files}
+    func_dict = {"-P": process_files, "-I": insert_data}
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
     opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y"]
+    opt_xor_dict = {"-I": ["-P"], "-P": ["-I"]}
 
     # Process argument list from command line.
     args_array = arg_parser.arg_parse2(sys.argv, opt_val_list,
@@ -685,7 +688,8 @@ def main():
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
        and arg_parser.arg_cond_req_or(args_array, opt_con_req_dict) \
-       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
+       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list) \
+       and arg_parser.arg_xor_dict(args_array, opt_xor_dict):
 
         try:
             prog_lock = gen_class.ProgramLock(sys.argv,
