@@ -500,10 +500,7 @@ def process_files(args_array, cfg, log, **kwargs):
     mail = setup_mail(args_array, subj="Non-processed files")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
     remove_list = process_list(args_array, cfg, log, docid_files)
-
-    for fname in remove_list:
-        gen_libs.mv_file2(fname, cfg.archive_dir)
-        docid_files.remove(fname)
+    docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir)
 
     if docid_files:
         log.log_info("process_files:  Non-processed files detected.")
