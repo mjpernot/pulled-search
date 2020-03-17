@@ -128,7 +128,7 @@ def help_message():
     print(__doc__)
 
 
-def non_processed(docid_files, error_dir, mail=None, **kwargs):
+def non_processed(docid_files, error_dir, mail=None, log, **kwargs):
 
     """Function:  non_processed
 
@@ -138,6 +138,7 @@ def non_processed(docid_files, error_dir, mail=None, **kwargs):
         (input) docid_files -> List of files not processed.
         (input) error_dir -> Directory to move non-processed files to.
         (input) mail -> Mail instance.
+        (input) log -> Log class instance.
 
     """
 
@@ -147,6 +148,7 @@ def non_processed(docid_files, error_dir, mail=None, **kwargs):
         log.log_info("non_processed:  Non-processed files detected.")
 
         for fname in docid_files:
+            log.log_info("non_processed:  Moving file: %s" % (fname))
             gen_libs.mv_file2(fname, error_dir)
     
         if docid_files and mail:
