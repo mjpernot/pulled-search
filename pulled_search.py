@@ -8,8 +8,9 @@
         and if detected will send these log entries to a RabbitMQ queue.
 
     Usage:
-        pulled_search.py -c file -d path [-m path | -z | -y flavor_id | -a]
-            [-t email {email2 email3 ...} {-s subject_line}] [-v | -h]
+        pulled_search.py -c file -d path [-m path | -n path | -z |
+            -y flavor_id | -a] [-t email {email2 email3 ...} {-s subject_line}]
+            [-v | -h]
 
     Arguments:
         -P => Process Doc ID files.
@@ -623,6 +624,9 @@ def run_program(args_array, **kwargs):
         if args_array.get("-m", None):
             cfg.doc_dir = args_array["-m"]
 
+        if args_array.get("-n", None):
+            cfg.monitor_dir = args_array["-n"]
+
         msg_dict = validate_dirs(cfg)
 
         if msg_dict:
@@ -663,11 +667,11 @@ def main():
 
     """
 
-    dir_chk_list = ["-d", "-m"]
+    dir_chk_list = ["-d", "-m", "-n"]
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
-    opt_val_list = ["-c", "-d", "-m", "-s", "-t", "-y"]
+    opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y"]
 
     # Process argument list from command line.
     args_array = arg_parser.arg_parse2(sys.argv, opt_val_list,
