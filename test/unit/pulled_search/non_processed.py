@@ -115,7 +115,8 @@ class UnitTest(unittest.TestCase):
         self.docid_files2 = []
         self.error_dir = "/dir/error_dir"
 
-    def test_no_data(self):
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_no_data(self, mock_log):
 
         """Function:  test_no_data
 
@@ -124,6 +125,8 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
+        mock_log.return_value = "Log Instance"
 
         self.assertFalse(pulled_search.non_processed(
             self.docid_files2, self.error_dir, mock_log, self.mail))
