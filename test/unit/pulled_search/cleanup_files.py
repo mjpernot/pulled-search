@@ -73,7 +73,8 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
-    def test_multiple_item_list(self):
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_multiple_item_list(self, mock_log):
 
         """Function:  test_multiple_item_list
 
@@ -83,13 +84,16 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_log.return_value = "Log Instance"
+
         self.assertEqual(pulled_search.cleanup_files(
-            self.docid_files3, self.processed_list2, self.dest_dir),
+            self.docid_files3, self.processed_list2, self.dest_dir, mock_log),
                          self.results2)
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
-    def test_single_item_list2(self):
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_single_item_list2(self, mock_log):
 
         """Function:  test_single_item_list2
 
@@ -99,13 +103,16 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_log.return_value = "Log Instance"
+
         self.assertEqual(pulled_search.cleanup_files(
-            self.docid_files2, self.processed_list, self.dest_dir),
+            self.docid_files2, self.processed_list, self.dest_dir, mock_log),
                          self.results)
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
-    def test_single_item_list(self):
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_single_item_list(self, mock_log):
 
         """Function:  test_single_item_list
 
@@ -115,8 +122,11 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_log.return_value = "Log Instance"
+
         self.assertEqual(pulled_search.cleanup_files(
-            self.docid_files, self.processed_list, self.dest_dir), [])
+            self.docid_files, self.processed_list, self.dest_dir, mock_log),
+                         [])
 
     def test_empty_list(self):
 
