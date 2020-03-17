@@ -136,19 +136,22 @@ def non_processed(docid_files, error_dir, mail=None, **kwargs):
 
     Arguments:
         (input) docid_files -> List of files not processed.
-        (input) error_dir -> Error directory for storing non-processed files.
+        (input) error_dir -> Directory to move non-processed files to.
         (input) mail -> Mail instance.
 
     """
 
     docid_files = list(docid_files)
 
-    for fname in docid_files:
-        gen_libs.mv_file2(fname, error_dir)
+    if docid_files:
+        log.log_info("non_processed:  Non-processed files detected.")
 
-    if docid_files and mail:
-        mail.add_2_msg(docid_files)
-        mail.send_mail()
+        for fname in docid_files:
+            gen_libs.mv_file2(fname, error_dir)
+    
+        if docid_files and mail:
+            mail.add_2_msg(docid_files)
+            mail.send_mail()
 
 
 # Look at creating a function in RabbitMQ class - setup todo item for this.
