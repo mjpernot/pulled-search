@@ -640,12 +640,9 @@ def run_program(args_array, func_dict, **kwargs):
             mail.send_mail()
 
         else:
-            # Find which functions to call.
+            # Determine which functions to call.
             for opt in set(args_array.keys()) & set(func_dict.keys()):
                 func_dict[opt](args_array, cfg, log)
-
-            #log.log_info("Detecting files...")
-            #process_files(args_array, cfg, log)
 
     else:
         mail = gen_class.setup_mail(cfg.admin_email,
