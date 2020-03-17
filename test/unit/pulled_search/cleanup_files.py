@@ -128,7 +128,8 @@ class UnitTest(unittest.TestCase):
             self.docid_files, self.processed_list, self.dest_dir, mock_log),
                          [])
 
-    def test_empty_list(self):
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_empty_list(self, mock_log):
 
         """Function:  test_empty_list
 
@@ -138,8 +139,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_log.return_value = "Log Instance"
+
         self.assertEqual(pulled_search.cleanup_files(
-            self.docid_files, [], self.dest_dir), self.results3)
+            self.docid_files, [], self.dest_dir, mock_log), self.results3)
 
 
 if __name__ == "__main__":
