@@ -501,7 +501,7 @@ def process_files(args_array, cfg, log, **kwargs):
     log.log_info("process_files:  Searching for files to check...")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
     remove_list = process_list(args_array, cfg, log, docid_files)
-    docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir)
+    docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir, log)
     non_processed(docid_files, cfg.error_dir, log, mail)
 
 
