@@ -15,6 +15,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - non_processed:  Added check to see if there were non-processed files.
 - process_files:  Replaced sections of code with calls to general functions.
 - main:  Added -n option.
+- main:  Added function calls dictionary for different options.
 - run_program:  Added -n option.
 
 
