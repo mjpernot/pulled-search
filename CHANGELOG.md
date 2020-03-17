@@ -17,6 +17,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Added -n option.
 - main:  Added function calls dictionary for different options.
 - run_program:  Added -n option.
+- run_program:  Added code to use the function dictionary.
 
 
 ## [0.0.2] - 2020-03-09
