@@ -569,7 +569,7 @@ def insert_data(args_array, cfg, log, **kwargs):
     insert_list = dir_file_search(cfg.monitor_dir,
                                   cfg.file_regex2, add_path=True)
     remove_list = process_list(args_array, cfg, log, insert_list)
-    docid_files = cleanup_files(insert_list, remove_list, cfg.archive_dir, log)
+    insert_list = cleanup_files(insert_list, remove_list, cfg.archive_dir, log)
     mail = setup_mail(args_array, subj="Non-processed files")
     non_processed(insert_list, cfg.error_dir, log, mail)
 
