@@ -37,6 +37,7 @@ pipeline {
                 ./test/unit/pulled_search/dir_file_search.py
                 ./test/unit/pulled_search/get_archive_files.py
                 ./test/unit/pulled_search/help_message.py
+                ./test/unit/pulled_search/insert_data.py
                 ./test/unit/pulled_search/main.py
                 ./test/unit/pulled_search/month_days.py
                 ./test/unit/pulled_search/non_processed.py
