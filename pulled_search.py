@@ -151,7 +151,7 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
             log.log_info("non_processed:  Moving file: %s" % (fname))
             gen_libs.mv_file2(fname, error_dir)
     
-        if docid_files and mail:
+        if mail:
             mail.add_2_msg(docid_files)
             mail.send_mail()
 
