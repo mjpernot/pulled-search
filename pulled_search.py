@@ -519,7 +519,7 @@ def process_files(args_array, cfg, log, **kwargs):
 
     if docid_files:
         log.log_info("process_files:  Non-processed files detected.")
-        non_processed(docid_files, cfg.error_dir, mail)
+        non_processed(docid_files, cfg.error_dir, mail, log)
 
 
 def validate_dirs(cfg, **kwargs):
