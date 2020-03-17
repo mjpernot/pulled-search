@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.0] - 2020-03-13
+### Fixed
+- process_docid:  Seralize the json document before inserting into RabbitMQ.
+
 ### Added
 - setup_mail: Create mail instance.
 - cleanup_files:  Send processed files to destination directory and remove from master file list.

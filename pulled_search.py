@@ -444,7 +444,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     if file_log:
         log_json = create_json(cfg, docid_dict, file_log)
         log.log_info("process_docid:  Log entries publishing to RabbitMQ.")
-        status = send_2_rabbitmq(cfg, log_json)
+        status = send_2_rabbitmq(cfg, json.dumps(log_json))
 
     else:
         status = True
