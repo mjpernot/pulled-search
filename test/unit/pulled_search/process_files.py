@@ -90,13 +90,12 @@ class UnitTest(unittest.TestCase):
         self.log_files = ["/path/logfile1", "/path/logfile2"]
         self.args_array = {"-t": "name@domain"}
 
-    @mock.patch("pulled_search.non_processed", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.mv_file2",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_docid")
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.process_list", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_nonprocessed_files(self, mock_log, mock_match, mock_process):
+    def test_nonprocessed_files(self, mock_log):
 
         """Function:  test_nonprocessed_files
 
@@ -106,15 +105,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = True
-        mock_match.return_value = self.log_files
-        mock_process.side_effect = [True, False]
-
         self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
 
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.process_list", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_no_log_files(self, mock_log, mock_match):
+    def test_no_log_files(self, mock_log):
 
         """Function:  test_no_log_files
 
@@ -124,17 +122,12 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = True
-        mock_match.return_value = []
-
         self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
 
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value="MailInstance"))
-    @mock.patch("pulled_search.gen_libs.mv_file2",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.process_list", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_mail(self, mock_log, mock_match):
 
@@ -152,10 +145,10 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(pulled_search.process_files(self.args_array, self.cfg,
                                                      mock_log))
 
-    @mock.patch("pulled_search.gen_libs.mv_file2",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.process_list", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_data(self, mock_log, mock_match):
 
@@ -166,9 +159,6 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
-
-        mock_log.return_value = True
-        mock_match.return_value = self.log_files
 
         self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
 
