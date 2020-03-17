@@ -620,6 +620,32 @@ def validate_dirs(cfg, **kwargs):
     return msg_dict
 
 
+def checks_dirs(args_array, cfg, **kwargs):
+
+    """Function:  checks_dirs
+
+    Description:  Validate the directories in the configuration file depending
+        on the options selected.
+
+    Arguments:
+        (input) args_array -> Dictionary of command line options and values.
+        (input) cfg -> Configuration setup.
+        (output) msg_dict -> Dictionary of any error messages detected.
+
+    """
+
+    args_array = dict(args_array)
+    msg_dict = dict()
+
+    if args_array.get("-P", none):
+        msg_dict = validate_dirs(cfg)
+
+    else if args_array.get("-I", none):
+        msg_dict = validate_dirs2(cfg)
+
+    return msg_dict
+
+
 def run_program(args_array, func_dict, **kwargs):
 
     """Function:  run_program
@@ -658,7 +684,7 @@ def run_program(args_array, func_dict, **kwargs):
         if msg_dict:
             log.log_err("Validation of configuration directories failed")
             log.log_err("Message: %s" % (msg_dict))
-            mail = gen_class.setup_mail(cfg.admin_email,
+            mail = mail(cfg.admin_email,
                                         subj="Directory Check Failure")
             mail.add_2_msg(msg_dict)
             mail.send_mail()

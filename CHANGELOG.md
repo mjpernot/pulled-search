@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid:  Seralize the json document before inserting into RabbitMQ.
 
 ### Added
+- checks_dirs:  Validate the directories in the configuration file depending on the options selected.
 - setup_mail: Create mail instance.
 - cleanup_files:  Send processed files to destination directory and remove from master file list.
 - process_list:  Processes the docid files.
