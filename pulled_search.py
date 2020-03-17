@@ -567,7 +567,7 @@ def insert_data(args_array, cfg, log, **kwargs):
     args_array = dict(args_array)
     log.log_info("insert_data:  Searching for files to insert...")
     insert_list = dir_file_search(cfg.monitor_dir,
-                                  cfg.file_regex2, add_path=True)
+                                  cfg.mfile_regex, add_path=True)
     remove_list = process_list(args_array, cfg, log, insert_list)
     insert_list = cleanup_files(insert_list, remove_list, cfg.archive_dir, log)
     mail = setup_mail(args_array, subj="Non-processed files")
@@ -578,7 +578,8 @@ def validate_dirs(cfg, **kwargs):
 
     """Function:  validate_dirs
 
-    Description:  Validate the directories in the configuration file.
+    Description:  Validate the directories in the configuration file for the
+        -P option.
 
     Arguments:
         (input) cfg -> Configuration setup.
@@ -620,6 +621,42 @@ def validate_dirs(cfg, **kwargs):
     return msg_dict
 
 
+def mvalidate_dirs(cfg, **kwargs):
+
+    """Function:  mvalidate_dirs
+
+    Description:  Validate the directories in the configuration file for the
+        -I option.
+
+    Arguments:
+        (input) cfg -> Configuration setup.
+        (output) msg_dict -> Dictionary of any error messages detected.
+
+    """
+
+    msg_dict = dict()
+
+    status, msg = gen_libs.chk_crt_dir(cfg.monitor_dir, write=True,
+                                       no_print=True)
+
+    if not status:
+        msg_dict[cfg.monitor_dir] = msg
+
+    status, msg = gen_libs.chk_crt_dir(cfg.merror_dir, write=True, create=True,
+                                       no_print=True)
+
+    if not status:
+        msg_dict[cfg.merror_dir] = msg
+
+    status, msg = gen_libs.chk_crt_dir(cfg.marchive_dir, write=True,
+                                       create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.marchive_dir] = msg
+
+    return msg_dict
+
+
 def checks_dirs(args_array, cfg, **kwargs):
 
     """Function:  checks_dirs
@@ -641,7 +678,7 @@ def checks_dirs(args_array, cfg, **kwargs):
         msg_dict = validate_dirs(cfg)
 
     else if args_array.get("-I", none):
-        msg_dict = validate_dirs2(cfg)
+        msg_dict = mvalidate_dirs(cfg)
 
     return msg_dict
 
