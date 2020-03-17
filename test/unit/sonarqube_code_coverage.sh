@@ -17,6 +17,7 @@ coverage run -a --source=pulled_search test/unit/pulled_search/get_archive_files
 coverage run -a --source=pulled_search test/unit/pulled_search/help_message.py
 coverage run -a --source=pulled_search test/unit/pulled_search/insert_data.py
 coverage run -a --source=pulled_search test/unit/pulled_search/main.py
+coverage run -a --source=pulled_search test/unit/pulled_search/mvalidate_dirs.py
 coverage run -a --source=pulled_search test/unit/pulled_search/month_days.py
 coverage run -a --source=pulled_search test/unit/pulled_search/non_processed.py
 coverage run -a --source=pulled_search test/unit/pulled_search/process_docid.py
