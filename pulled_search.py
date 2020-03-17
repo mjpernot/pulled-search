@@ -12,9 +12,12 @@
             [-t email {email2 email3 ...} {-s subject_line}] [-v | -h]
 
     Arguments:
+        -P => Process Doc ID files.
+        -I => Insert Pulled Search files into Mongodb.
         -c file => Configuration file.  Required argument.
         -d dir_path => Directory path for option '-c'.  Required argument.
         -m dir_path => Directory to monitor for doc ID files.
+        -n dir_path => Directory to monitor for pulled search files.
         -a => This is an archive log search.
         -z => Use the zgrep option instead of check_log to check GZipped files.
         -t email_address(es) => Send output to one or more email addresses.
@@ -25,8 +28,9 @@
 
         NOTE 1:  -v or -h overrides the other options.
         NOTE 2:  -s requires -t option to be included.
+        NOTE 3:  -P and -I are Xor options.
 
-        NOTE 3:  The log files can be normal flat files or compressed files
+        NOTE 4:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
 
@@ -34,53 +38,91 @@
         Configuration file format (search.py).  The configuration file format
         is for the environment setup for the program.
 
-            # Program Configuration section.
-            # Directory where docid files to be processed are.
-            doc_dir = "DOC_DIR_PATH"
-            # Regular expression for search for log file names.
-            file_regex = "_docid.json"
-            # Directory where log files to be searched are.
-            log_dir = "LOG_DIR_PATH"
-            # Type of log files to checked.
-            log_type = "access_log"
-            # Temporary file where check_log will write to.
-            # File name including directory path.
-            outfile = "DIR_PATH/checklog.out"
-            # Security enclave these files are being processed on.
-            enclave = "ENCLAVE"
-            # Directory path to where error and non-processed files are.
-            error_dir = "ERROR_DIR_PATH"
-            # Directory path to where error and non-processed files are saved
-            #   to.
-            archive_dir = "ARCHIVE_DIR_PATH"
-            # Logger file for the storage of log entries.
-            # File name including directory path.
-            log_file = "DIR_PATH/pulled_search.log"
-            # Administrator email for reporting errors detected during the
-            #   program run.
-            admin_email = "USERNAME@EMAIL_DOMAIN"
 
-            # RabbitMQ Configuration section.
-            user = "USER"
-            pswd = "PSWD"
-            host = "HOSTNAME"
-            # RabbitMQ Queue name.
-            queue = "QUEUENAME"
-            # RabbitMQ R-Key name (normally same as queue name).
-            r_key = "RKEYNAME"
-            # RabbitMQ Exchange name for each instance run.
-            exchange_name = "EXCHANGE_NAME"
-            # RabbitMQ listening port, default is 5672.
-            port = 5672
-            # Type of exchange:  direct, topic, fanout, headers
-            exchange_type = "direct"
-            # Is exchange durable: True|False
-            x_durable = True
-            # Are queues durable: True|False
-            q_durable = True
-            # Do queues automatically delete once message is
-            #   processed:  True|False
-            auto_delete = False
+        # Pulled Search General Configuration section.
+        # Logger file for the storage of log entries.
+        # File name including directory path.
+        log_file = "DIR_PATH/pulled_search.log"
+        # Administrator email for reporting errors detected during the program
+        #   run.
+        admin_email = "USERNAME@EMAIL_DOMAIN"
+        
+        # Pulled Search Process Configuration section.
+        # Directory where docid files to be processed are.
+        doc_dir = "DOC_DIR_PATH"
+        # Regular expression for search for log file names.
+        file_regex = "_docid.json"
+        # Directory where log files to be searched are.
+        log_dir = "LOG_DIR_PATH"
+        # Type of log files to checked.
+        log_type = "access_log"
+        # Temporary file where check_log will write to.
+        # File name including directory path.
+        outfile = "DIR_PATH/checklog.out"
+        # Security enclave these files are being processed on.
+        enclave = "ENCLAVE"
+        # Directory path to where error and non-processed files are saved to.
+        archive_dir = "ARCHIVE_DIR_PATH"
+        # Directory path to where archived files are saved to.
+        error_dir = "ERROR_DIR_PATH"
+        
+        # Pulled Search Process/RabbitMQ Configuration section.
+        user = "USER"
+        pswd = "PSWD"
+        host = "HOSTNAME"
+        # RabbitMQ Queue name.
+        queue = "QUEUENAME"
+        # RabbitMQ R-Key name (normally same as queue name).
+        r_key = "RKEYNAME"
+        # RabbitMQ Exchange name for each instance run.
+        exchange_name = "EXCHANGE_NAME"
+        # RabbitMQ listening port, default is 5672.
+        port = 5672
+        # Type of exchange:  direct, topic, fanout, headers
+        exchange_type = "direct"
+        # Is exchange durable: True|False
+        x_durable = True
+        # Are queues durable: True|False
+        q_durable = True
+        # Do queues automatically delete once message is processed:  True|False
+        auto_delete = False
+        
+        # Pulled Search Insert Configuration section.
+        # Directory where to monitor for new files to insert into Mongodb.
+        monitor_dir = "MONITOR_DIR_PATH"
+        # Regular expression for search for Insert/Mongodb file names.
+        mfile_regex = "_mongo.json"
+        # Directory path to where Insert/Mongodb error and non-processed files
+        #   are saved to.
+        marchive_dir = "ARCHIVE_DIR_PATH"
+        # Directory path to where Insert/Mongodb archived files are saved to.
+        merror_dir = "ERROR_DIR_PATH"
+        
+        # Pulled Search Insert/Mongo DB Configuration section.
+        muser = "root"
+        mpswd = "ROOT_PASSWORD"
+        # Mongo DB host information
+        mhost = "HOST_IP"
+        mname = "HOSTNAME"
+        # Mongo database port (default is 27017)
+        mport = 27017
+        # Mongo configuration settings
+        mconf_file = None
+        # Authentication required:  True|False
+        mauth = True
+        
+        # Replica Set Mongo configuration settings.
+        # Replica set name.
+        #    None means the Mongo database is not part of a replica set.
+        #    Example:  repset = "REPLICA_SET_NAME"
+        repset = None
+        # Replica host listing.
+        #    None means the Mongo database is not part of a replica set.
+        #    Example:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
+        repset_hosts = None
+        # Database to authentication to.
+        #    Example:  db_auth = "AUTHENTICATION_DATABASE"
+        db_auth = None
 
     Examples:
         pulled_search.py -c search -d config
