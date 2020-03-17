@@ -16,7 +16,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_files:  Replaced sections of code with calls to general functions.
 - main:  Added -n option.
 - main:  Added function calls dictionary for different options.
-- run_program:  Added -n option.
+- run_program:  Added -n -I options.
 - run_program:  Added code to use the function dictionary.
 
 
