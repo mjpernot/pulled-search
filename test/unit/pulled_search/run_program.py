@@ -35,6 +35,22 @@ import version
 __version__ = version.__version__
 
 
+def process_files(args_array, cfg, log, **kwargs):
+
+    """Function:  process_files
+
+    Description:  This is a function stub for pulled_search.process_files.
+
+    Arguments:
+        (input) args_array -> Dictionary of command line options and values.
+        (input) cfg -> Configuration setup.
+        (input) log -> Log class instance.
+
+    """
+
+    pass
+
+
 class MailTest(object):
 
     """Class:  MailTest
@@ -230,7 +246,6 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.run_program(self.args_array))
 
-    @mock.patch("pulled_search.process_files", mock.Mock(return_value=True))
     @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(True, None)))
@@ -270,7 +285,6 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.run_program(self.args_array))
 
-    @mock.patch("pulled_search.process_files", mock.Mock(return_value=True))
     @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(True, None)))
