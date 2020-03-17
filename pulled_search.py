@@ -596,7 +596,7 @@ def validate_dirs(cfg, **kwargs):
     return msg_dict
 
 
-def run_program(args_array, **kwargs):
+def run_program(args_array, func_dict, **kwargs):
 
     """Function:  run_program
 
@@ -606,10 +606,12 @@ def run_program(args_array, **kwargs):
 
     Arguments:
         (input) args_array -> Dictionary of command line options and values.
+        (input) func_dict -> Dict of function calls for different options.
 
     """
 
     args_array = dict(args_array)
+    func_dict = dict(func_dict)
     cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
     basepath = gen_libs.get_base_dir(cfg.log_file)
     status, err_msg = gen_libs.chk_crt_dir(basepath, write=True, create=True,
@@ -638,8 +640,12 @@ def run_program(args_array, **kwargs):
             mail.send_mail()
 
         else:
-            log.log_info("Detecting files...")
-            process_files(args_array, cfg, log)
+            # Find which functions to call.
+            for opt in set(args_array.keys()) & set(func_dict.keys()):
+                func_dict[opt](args_array, cfg, log)
+
+            #log.log_info("Detecting files...")
+            #process_files(args_array, cfg, log)
 
     else:
         mail = gen_class.setup_mail(cfg.admin_email,
