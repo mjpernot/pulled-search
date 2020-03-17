@@ -13,7 +13,7 @@
             [-v | -h]
 
     Arguments:
-        -P => Process Doc ID files.
+        -P => Process Doc ID files send to RabbitMQ.
         -I => Insert Pulled Search files into Mongodb.
         -c file => Configuration file.  Required argument.
         -d dir_path => Directory path for option '-c'.  Required argument.
@@ -657,6 +657,7 @@ def main():
 
     Variables:
         dir_chk_list -> contains options which will be directories.
+        func_dict -> dictionary of function calls for different options.
         opt_con_req_dict -> contains options requiring other options.
         opt_multi_list -> contains the options that will have multiple values.
         opt_req_list -> contains options that are required for the program.
@@ -668,6 +669,7 @@ def main():
     """
 
     dir_chk_list = ["-d", "-m", "-n"]
+    func_dict = {"-P": process_files}
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
@@ -685,7 +687,7 @@ def main():
         try:
             prog_lock = gen_class.ProgramLock(sys.argv,
                                               args_array.get("-y", ""))
-            run_program(args_array)
+            run_program(args_array, func_dict)
             del prog_lock
 
         except gen_class.SingleInstanceException:
