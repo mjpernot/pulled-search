@@ -474,7 +474,7 @@ def setup_mail(args_array, subj=None, **kwargs):
     return mail
 
 
-def process_list(args_array, cfg, log, docid_files, **kwargs):
+def process_list(args_array, cfg, log, file_list, **kwargs):
 
     """Function:  process_list
 
@@ -484,15 +484,16 @@ def process_list(args_array, cfg, log, docid_files, **kwargs):
         (input) args_array -> Dictionary of command line options and values.
         (input) cfg -> Configuration setup.
         (input) log -> Log class instance.
-        (input) docid_files -> List of files to be processed.
+        (input) file_list -> List of files to be processed.
         (output) done_list -> List of files successfully processed.
 
     """
 
     done_list = list()
     args_array = dict(args_array)
+    file_list = list(file_list)
 
-    for fname in docid_files:
+    for fname in file_list:
         log.log_info("process_docids:  Processing file: %s" % (fname))
         status = process_docid(args_array, cfg, fname, log)
 
