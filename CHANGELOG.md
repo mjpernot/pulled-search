@@ -19,6 +19,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ### Changed
 - run_program:  Replaced validate_dirs with checks_dirs call.
+- run_program:  Replaced checking config settings with call to config_override.
 - config/search.py.TEMPLATE:  Added section for Mongodb configuration.
 - non_processed:  Added check to see if there were non-processed files.
 - process_files:  Replaced sections of code with calls to general functions.
