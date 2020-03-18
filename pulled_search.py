@@ -739,7 +739,7 @@ def run_program(args_array, func_dict, **kwargs):
         if args_array.get("-n", None):
             cfg.monitor_dir = args_array["-n"]
 
-        msg_dict = validate_dirs(cfg)
+        msg_dict = checks_dirs(cfg)
 
         if msg_dict:
             log.log_err("Validation of configuration directories failed")
