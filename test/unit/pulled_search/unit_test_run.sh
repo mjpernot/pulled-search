@@ -6,6 +6,7 @@
 
 echo ""
 echo "Unit test:  pulled_search.py"
+test/unit/pulled_search/checks_dirs.py
 test/unit/pulled_search/cleanup_files.py
 test/unit/pulled_search/config_override.py
 test/unit/pulled_search/create_json.py
