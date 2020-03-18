@@ -222,6 +222,8 @@ class UnitTest(unittest.TestCase):
         self.args_array = {"-c": "configfile", "-d": "/dir/config"}
         self.args_array2 = {"-c": "configfile", "-d": "/dir/config",
                             "-m": "/dir/newdir"}
+        self.args_array3 = {"-c": "configfile", "-d": "/dir/config",
+                            "-P": True}
 
     @mock.patch("pulled_search.checks_dirs", mock.Mock(
         return_value={"/dir_path/doc_dir": "Doc_dir failure"}))
@@ -292,7 +294,7 @@ class UnitTest(unittest.TestCase):
         mock_cfg.return_value = self.cfg
         mock_override.return_value = self.cfg
 
-        self.assertFalse(pulled_search.run_program(self.args_array,
+        self.assertFalse(pulled_search.run_program(self.args_array3,
                                                    self.func_dict))
 
 
