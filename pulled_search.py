@@ -569,9 +569,9 @@ def insert_data(args_array, cfg, log, **kwargs):
     insert_list = dir_file_search(cfg.monitor_dir,
                                   cfg.mfile_regex, add_path=True)
     remove_list = process_list(args_array, cfg, log, insert_list)
-    insert_list = cleanup_files(insert_list, remove_list, cfg.archive_dir, log)
+    insert_list = cleanup_files(insert_list, remove_list, cfg.marchive_dir, log)
     mail = setup_mail(args_array, subj="Non-processed files")
-    non_processed(insert_list, cfg.error_dir, log, mail)
+    non_processed(insert_list, cfg.merror_dir, log, mail)
 
 
 def validate_dirs(cfg, **kwargs):
