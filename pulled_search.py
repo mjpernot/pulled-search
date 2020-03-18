@@ -733,11 +733,7 @@ def run_program(args_array, func_dict, **kwargs):
                                "%Y-%m-%dT%H:%M:%SZ")
         log.log_info("Program initialization...")
 
-        if args_array.get("-m", None):
-            cfg.doc_dir = args_array["-m"]
-
-        if args_array.get("-n", None):
-            cfg.monitor_dir = args_array["-n"]
+        cfg = config_override(args_array, cfg)
 
         msg_dict = checks_dirs(cfg)
 
