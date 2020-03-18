@@ -81,10 +81,10 @@ class UnitTest(unittest.TestCase):
 
                 """
 
-                self.file_regex2 = "*_insert.json"
+                self.mfile_regex = "*_insert.json"
                 self.monitor_dir = "/dir_path/monitor_dir"
-                self.error_dir = "/dir/path/error_dir"
-                self.archive_dir = "/dir/path/archive_dir"
+                self.merror_dir = "/dir/path/error_dir"
+                self.marchive_dir = "/dir/path/archive_dir"
 
         self.cfg = CfgTest()
         self.args_array = {"-t": "name@domain"}
