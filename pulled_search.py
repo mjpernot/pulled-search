@@ -740,7 +740,7 @@ def run_program(args_array, func_dict, **kwargs):
         if msg_dict:
             log.log_err("Validation of configuration directories failed")
             log.log_err("Message: %s" % (msg_dict))
-            mail = mail(cfg.admin_email,
+            mail = gen_class.setup_mail(cfg.admin_email,
                                         subj="Directory Check Failure")
             mail.add_2_msg(msg_dict)
             mail.send_mail()
