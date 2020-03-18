@@ -474,7 +474,7 @@ def setup_mail(args_array, subj=None, **kwargs):
     return mail
 
 
-def process_list(args_array, cfg, log, file_list, **kwargs):
+def process_list(args_array, cfg, log, file_list, action, **kwargs):
 
     """Function:  process_list
 
@@ -485,6 +485,9 @@ def process_list(args_array, cfg, log, file_list, **kwargs):
         (input) cfg -> Configuration setup.
         (input) log -> Log class instance.
         (input) file_list -> List of files to be processed.
+        (input) action -> Type of processing to complete.
+            "search" -> Execute a pulled search on the file.
+            "insert" -> Insert data file into database.
         (output) done_list -> List of files successfully processed.
 
     """
@@ -495,7 +498,15 @@ def process_list(args_array, cfg, log, file_list, **kwargs):
 
     for fname in file_list:
         log.log_info("process_docids:  Processing file: %s" % (fname))
-        status = process_docid(args_array, cfg, fname, log)
+
+        if action == "search":
+            status = process_docid(args_array, cfg, fname, log)
+
+        elif action == "insert":
+            status = insert_data(args_array, cfg, fname, log)
+
+        else:
+            log.log_warn("Incorrect or no action detected: %s" % (action))
 
         if status:
             done_list.append(fname)
@@ -547,7 +558,7 @@ def process_files(args_array, cfg, log, **kwargs):
     mail = setup_mail(args_array, subj="Non-processed files")
     log.log_info("process_files:  Searching for files to check...")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
-    remove_list = process_list(args_array, cfg, log, docid_files)
+    remove_list = process_list(args_array, cfg, log, docid_files, "search")
     docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir, log)
     non_processed(docid_files, cfg.error_dir, log, mail)
 
@@ -569,8 +580,9 @@ def insert_data(args_array, cfg, log, **kwargs):
     log.log_info("insert_data:  Searching for files to insert...")
     insert_list = dir_file_search(cfg.monitor_dir,
                                   cfg.mfile_regex, add_path=True)
-    remove_list = process_list(args_array, cfg, log, insert_list)
-    insert_list = cleanup_files(insert_list, remove_list, cfg.marchive_dir, log)
+    remove_list = process_list(args_array, cfg, log, insert_list, "insert")
+    insert_list = cleanup_files(insert_list, remove_list, cfg.marchive_dir,
+                                log)
     mail = setup_mail(args_array, subj="Non-processed files")
     non_processed(insert_list, cfg.merror_dir, log, mail)
 
