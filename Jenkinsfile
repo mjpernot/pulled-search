@@ -30,6 +30,7 @@ pipeline {
                 pip2 install mock==2.0.0 --user
                 pip2 install pika==0.11.0 --user
                 pip2 install pymongo==3.2.0 --user
+                ./test/unit/pulled_search/checks_dirs.py
                 ./test/unit/pulled_search/cleanup_files.py
                 ./test/unit/pulled_search/config_override.py
                 ./test/unit/pulled_search/create_json.py
