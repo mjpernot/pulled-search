@@ -674,10 +674,10 @@ def checks_dirs(args_array, cfg, **kwargs):
     args_array = dict(args_array)
     msg_dict = dict()
 
-    if args_array.get("-P", none):
+    if args_array.get("-P", None):
         msg_dict = validate_dirs(cfg)
 
-    elif args_array.get("-I", none):
+    elif args_array.get("-I", None):
         msg_dict = mvalidate_dirs(cfg)
 
     return msg_dict
