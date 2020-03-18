@@ -683,6 +683,29 @@ def checks_dirs(args_array, cfg, **kwargs):
     return msg_dict
 
 
+def config_override(args_array, cfg, **kwargs):
+
+    """Function:  config_override
+
+    Description:  Checks for specific arguments which will override the
+        values for some configuration settings.
+
+    Arguments:
+        (input) args_array -> Dictionary of command line options and values.
+        (input) cfg -> Configuration setup.
+        (output) cfg -> Modified configuration setup.
+
+    """
+
+    if args_array.get("-m", None):
+        cfg.doc_dir = args_array["-m"]
+
+    if args_array.get("-n", None):
+        cfg.monitor_dir = args_array["-n"]
+
+    return cfg
+
+
 def run_program(args_array, func_dict, **kwargs):
 
     """Function:  run_program
