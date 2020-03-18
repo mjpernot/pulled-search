@@ -452,6 +452,39 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     return status
 
 
+def process_insert(args_array, cfg, fname, log, **kwargs):
+
+    """Function:  process_insert
+
+    Description:  Processes the insert file into a database.
+
+    Arguments:
+        (input) args_array -> Dictionary of command line options and values.
+        (input) cfg -> Configuration setup.
+        (input) fname -> Insert file name.
+        (input) log -> Log class instance.
+        (output) status -> True|False - File has successfully processed.
+
+    """
+
+    args_array = dict(args_array)
+    file_log = list()
+    log.log_info("process_insert:  Converting data to JSON.")
+    data_list = gen_libs.file_2_list(fname)
+    insert_dict = json.loads(gen_libs.list_2_str(data_list))
+
+    if isinstance(insert_dict, dict):
+        log.log_info("process_insert:  Inserting data into Mongodb.")
+        mongo_libs.ins_doc(cfg, cfg.db, cfg.tbl, insert_dict)
+        status = True
+
+    else:
+        log.log_err("process_insert: Data failed to convert to JSON.")
+        status = False
+
+    return status
+
+
 def setup_mail(args_array, subj=None, **kwargs):
 
     """Function:  setup_mail
@@ -500,13 +533,16 @@ def process_list(args_array, cfg, log, file_list, action, **kwargs):
         log.log_info("process_docids:  Processing file: %s" % (fname))
 
         if action == "search":
+            log.log_info("process_docids:  Action: search")
             status = process_docid(args_array, cfg, fname, log)
 
         elif action == "insert":
-            status = insert_data(args_array, cfg, fname, log)
+            log.log_info("process_docids:  Action: insert")
+            status = process_insert(args_array, cfg, fname, log)
 
         else:
             log.log_warn("Incorrect or no action detected: %s" % (action))
+            status = False
 
         if status:
             done_list.append(fname)

@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid:  Seralize the json document before inserting into RabbitMQ.
 
 ### Added
+- process_insert:  Process the insert file and send to a database.
 - config_override:  Checks for specific arguments which will override the values for some configuration settings.
 - mvalidate_dirs:  Validate the directories in the configuration file for the -I option.
 - checks_dirs:  Validate the directories in the configuration file depending on the options selected.
