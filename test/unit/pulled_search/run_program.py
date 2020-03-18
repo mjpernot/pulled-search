@@ -224,7 +224,7 @@ class UnitTest(unittest.TestCase):
         self.args_array2 = {"-c": "configfile", "-d": "/dir/config",
                             "-m": "/dir/newdir"}
 
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(
+    @mock.patch("pulled_search.checks_dirs", mock.Mock(
         return_value={"/dir_path/doc_dir": "Doc_dir failure"}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(True, None)))
@@ -248,7 +248,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(pulled_search.run_program(self.args_array,
                                                    self.func_dict))
 
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
+    @mock.patch("pulled_search.checks_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.load_module")
@@ -289,7 +289,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(pulled_search.run_program(self.args_array,
                                                    self.func_dict))
 
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
+    @mock.patch("pulled_search.checks_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.load_module")
