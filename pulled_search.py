@@ -456,7 +456,7 @@ def process_insert(args_array, cfg, fname, log, **kwargs):
 
     """Function:  process_insert
 
-    Description:  Processes the insert file into a database.
+    Description:  Process the insert file and send to a database.
 
     Arguments:
         (input) args_array -> Dictionary of command line options and values.
