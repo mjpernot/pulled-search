@@ -152,6 +152,7 @@ import lib.arg_parser as arg_parser
 import lib.gen_libs as gen_libs
 import lib.gen_class as gen_class
 import rabbit_lib.rabbitmq_class as rabbitmq_class
+import mongo_lib.mongo_libs as mongo_libs
 import checklog.check_log as check_log
 import version
 
@@ -452,14 +453,13 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     return status
 
 
-def process_insert(args_array, cfg, fname, log, **kwargs):
+def process_insert(cfg, fname, log, **kwargs):
 
     """Function:  process_insert
 
     Description:  Process the insert file and send to a database.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
         (input) cfg -> Configuration setup.
         (input) fname -> Insert file name.
         (input) log -> Log class instance.
@@ -467,7 +467,6 @@ def process_insert(args_array, cfg, fname, log, **kwargs):
 
     """
 
-    args_array = dict(args_array)
     file_log = list()
     log.log_info("process_insert:  Converting data to JSON.")
     data_list = gen_libs.file_2_list(fname)
@@ -538,7 +537,7 @@ def process_list(args_array, cfg, log, file_list, action, **kwargs):
 
         elif action == "insert":
             log.log_info("process_docids:  Action: insert")
-            status = process_insert(args_array, cfg, fname, log)
+            status = process_insert(cfg, fname, log)
 
         else:
             log.log_warn("Incorrect or no action detected: %s" % (action))
