@@ -153,8 +153,8 @@ pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host
 
 ```
 cd {Python_Project}/pulled-search
-test/unit/pulled_search/config_override.py
 test/unit/pulled_search/cleanup_files.py
+test/unit/pulled_search/config_override.py
 test/unit/pulled_search/create_json.py
 test/unit/pulled_search/create_rmq.py
 test/unit/pulled_search/date_range.py
