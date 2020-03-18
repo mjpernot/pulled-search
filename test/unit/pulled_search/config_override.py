@@ -90,14 +90,10 @@ class UnitTest(unittest.TestCase):
         self.args_array3 = {"-t": "name@domain", "-n": "/new_path/monitor_dir"}
         self.args_array4 = {"-t": "name@domain", "-n": "/new_path/monitor_dir",
                             "-m": "/new_path/doc_dir"}
-        self.results = CfgTest()
-        self.results2 = self.results
-        self.results2.doc_dir = "/new_path/doc_dir"} 
-        self.results3 = self.results
-        self.results3.monitor_dir = "/new_path/monitor_dir"}
-        self.results4 = self.results
-        self.results4.doc_dir = "/new_path/doc_dir"} 
-        self.results4.monitor_dir = "/new_path/monitor_dir"}
+        self.results = "/dir_path/doc_dir"
+        self.results2 = "/dir_path/monitor_dir"
+        self.results3 = "/new_path/doc_dir"
+        self.results4 = "/new_path/monitor_dir"
 
     def test_all_changes(self):
 
@@ -109,8 +105,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(pulled_search.config_override(
-            self.args_array4, self.cfg), self.results4)
+        cfg = pulled_search.config_override(self.args_array4, self.cfg)
+        self.assertEqual((cfg.doc_dir, cfg.monitor_dir),
+                         (self.results3, self.results4))
 
     def test_monitordir_change(self):
 
@@ -122,8 +119,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(pulled_search.config_override(
-            self.args_array3, self.cfg), self.results3)
+        cfg = pulled_search.config_override(self.args_array3, self.cfg)
+        self.assertEqual((cfg.doc_dir, cfg.monitor_dir),
+                         (self.results, self.results4))
 
     def test_docdir_change(self):
 
@@ -135,8 +133,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(pulled_search.config_override(
-            self.args_array2, self.cfg), self.results2)
+        cfg = pulled_search.config_override(self.args_array2, self.cfg)
+        self.assertEqual((cfg.doc_dir, cfg.monitor_dir),
+                         (self.results3, self.results2))
 
     def test_no_changes(self):
 
@@ -148,8 +147,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(pulled_search.config_override(
-            self.args_array, self.cfg), self.results)
+        cfg = pulled_search.config_override(self.args_array, self.cfg)
+        self.assertEqual((cfg.doc_dir, cfg.monitor_dir),
+                         (self.results, self.results2))
 
 
 if __name__ == "__main__":
