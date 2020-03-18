@@ -93,6 +93,8 @@ class UnitTest(unittest.TestCase):
         self.results2 = ["/path/docidfile1", "/path/docidfile2"]
         self.results3 = ["/path/docidfile2"]
         self.args_array = {"-t": "name@domain"}
+        self.action = "search"
+        self.action2 = "insert"
 
     @mock.patch("pulled_search.process_docid",
                 mock.Mock(side_effect=[False, True]))
@@ -110,8 +112,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files2),
-                         self.results3)
+            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.action), self.results3)
 
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -128,8 +130,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files2),
-                         self.results2)
+            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.action), self.results2)
 
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -146,8 +148,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files),
-                         self.results)
+            self.args_array, self.cfg, mock_log, self.docid_files,
+            self.action), self.results)
 
     @mock.patch("pulled_search.gen_class.Logger")
     def test_empty_list(self, mock_log):
@@ -163,7 +165,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, []), [])
+            self.args_array, self.cfg, mock_log, [], self.action), [])
 
 
 if __name__ == "__main__":
