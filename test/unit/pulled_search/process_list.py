@@ -43,9 +43,13 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
-        test_fails_item_list -> Test with some failures in docid file list
-        test_multiple_item_list -> Test multiple entries in docid file list.
-        test_single_item_list -> Test with multiple entries in docid file list.
+        test_incorrect_action -> Test with incorrect action passed.
+        test_fails_item_list2 -> Test with some failures in insert file list
+        test_multiple_item_list2 -> Test multiple entries in insert file list.
+        test_single_item_list2 -> Test with one entry in insert file list.
+        test_fails_item_list -> Test with some failures in search file list
+        test_multiple_item_list -> Test multiple entries in search file list.
+        test_single_item_list -> Test with one entry in search file list.
         test_empty_list -> Test with an empty docid file list.
 
     """
@@ -95,6 +99,79 @@ class UnitTest(unittest.TestCase):
         self.args_array = {"-t": "name@domain"}
         self.action = "search"
         self.action2 = "insert"
+        self.action3 = "badaction"
+
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_incorrect_action(self, mock_log):
+
+        """Function:  test_incorrect_action
+
+        Description:  Test with incorrect action passed.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertEqual(pulled_search.process_list(
+            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.action3), [])
+
+    @mock.patch("pulled_search.process_insert",
+                mock.Mock(side_effect=[False, True]))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_fails_item_list2(self, mock_log):
+
+        """Function:  test_fails_item_list2
+
+        Description:  Test with multiple entries in insert file list.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertEqual(pulled_search.process_list(
+            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.action2), self.results3)
+
+    @mock.patch("pulled_search.process_insert", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_multiple_item_list2(self, mock_log):
+
+        """Function:  test_multiple_item_list2
+
+        Description:  Test with multiple entries in insert file list.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertEqual(pulled_search.process_list(
+            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.action2), self.results2)
+
+    @mock.patch("pulled_search.process_insert", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_single_item_list2(self, mock_log):
+
+        """Function:  test_single_item_list2
+
+        Description:  Test with one entry in insert file list.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertEqual(pulled_search.process_list(
+            self.args_array, self.cfg, mock_log, self.docid_files,
+            self.action2), self.results)
 
     @mock.patch("pulled_search.process_docid",
                 mock.Mock(side_effect=[False, True]))
@@ -103,7 +180,7 @@ class UnitTest(unittest.TestCase):
 
         """Function:  test_fails_item_list
 
-        Description:  Test with multiple entries in docid file list.
+        Description:  Test with multiple entries in search file list.
 
         Arguments:
 
@@ -121,7 +198,7 @@ class UnitTest(unittest.TestCase):
 
         """Function:  test_multiple_item_list
 
-        Description:  Test with multiple entries in docid file list.
+        Description:  Test with multiple entries in search file list.
 
         Arguments:
 
@@ -139,7 +216,7 @@ class UnitTest(unittest.TestCase):
 
         """Function:  test_single_item_list
 
-        Description:  Test with one entry in docid file list.
+        Description:  Test with one entry in search file list.
 
         Arguments:
 
