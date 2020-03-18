@@ -82,6 +82,7 @@ class UnitTest(unittest.TestCase):
 
                 self.doc_dir = "/dir_path/doc_dir"
                 self.monitor_dir = "/dir_path/monitor_dir"
+                self.log_dir = "/dir_path/log_dir"
 
         self.cfg = CfgTest()
         self.args_array = {"-t": "name@domain"}
@@ -106,6 +107,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.checks_dirs(
             self.args_array3, self.cfg), self.results3)
 
+    @mock.patch("pulled_search.validate_dirs",
+        mock.Mock(return_value={"-P": True}))
     def test_p_option(self):
 
         """Function:  test_p_option
