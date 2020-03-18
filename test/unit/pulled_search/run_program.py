@@ -124,7 +124,6 @@ class UnitTest(unittest.TestCase):
     Methods:
         setUp -> Initialize testing environment.
         test_validation_failure -> Test with directory validation failure.
-        test_m_override -> Test with -m option override.
         test_status_false -> Test with status set to False.
         test_status_true -> Test with status set to True.
 
@@ -228,10 +227,12 @@ class UnitTest(unittest.TestCase):
         return_value={"/dir_path/doc_dir": "Doc_dir failure"}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.config_override")
     @mock.patch("pulled_search.gen_class.setup_mail")
     @mock.patch("pulled_search.gen_libs.load_module")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_validation_failure(self, mock_log, mock_cfg, mock_mail):
+    def test_validation_failure(self, mock_log, mock_cfg, mock_mail,
+                                mock_override):
 
         """Function:  test_validation_failure
 
@@ -244,36 +245,17 @@ class UnitTest(unittest.TestCase):
         mock_mail.return_value = self.setupmail
         mock_log.return_value = self.log
         mock_cfg.return_value = self.cfg
+        mock_override.return_value = self.cfg
 
         self.assertFalse(pulled_search.run_program(self.args_array,
                                                    self.func_dict))
 
-    @mock.patch("pulled_search.checks_dirs", mock.Mock(return_value={}))
-    @mock.patch("pulled_search.gen_libs.chk_crt_dir",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.load_module")
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_m_override(self, mock_log, mock_cfg):
-
-        """Function:  test_m_override
-
-        Description:  Test with -m option override.
-
-        Arguments:
-
-        """
-
-        mock_log.return_value = self.log
-        mock_cfg.return_value = self.cfg
-
-        self.assertFalse(pulled_search.run_program(self.args_array2,
-                                                   self.func_dict))
-
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(False, "Error Message")))
+    @mock.patch("pulled_search.config_override")
     @mock.patch("pulled_search.gen_libs.load_module")
     @mock.patch("pulled_search.gen_class.setup_mail")
-    def test_status_false(self, mock_mail, mock_cfg):
+    def test_status_false(self, mock_mail, mock_cfg, mock_override):
 
         """Function:  test_status_false
 
@@ -285,6 +267,7 @@ class UnitTest(unittest.TestCase):
 
         mock_mail.return_value = self.setupmail
         mock_cfg.return_value = self.cfg
+        mock_override.return_value = self.cfg
 
         self.assertFalse(pulled_search.run_program(self.args_array,
                                                    self.func_dict))
@@ -292,9 +275,10 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.checks_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.config_override")
     @mock.patch("pulled_search.gen_libs.load_module")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_status_true(self, mock_log, mock_cfg):
+    def test_status_true(self, mock_log, mock_cfg, mock_override):
 
         """Function:  test_status_true
 
@@ -306,6 +290,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = self.log
         mock_cfg.return_value = self.cfg
+        mock_override.return_value = self.cfg
 
         self.assertFalse(pulled_search.run_program(self.args_array,
                                                    self.func_dict))
