@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid:  Seralize the json document before inserting into RabbitMQ.
 
 ### Added
+- - config/mongo.py.TEMPLATE:  Seperate configuration file for the Mongodb instance setup.
 - process_insert:  Process the insert file and send to a database.
 - config_override:  Checks for specific arguments which will override the values for some configuration settings.
 - mvalidate_dirs:  Validate the directories in the configuration file for the -I option.
