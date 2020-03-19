@@ -208,6 +208,7 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
             gen_libs.mv_file2(fname, error_dir)
     
         if mail:
+            log.log_info("non_processed:  Sending email...")
             mail.add_2_msg(docid_files)
             mail.send_mail()
 
@@ -558,7 +559,8 @@ def process_list(args_array, cfg, log, file_list, action, **kwargs):
             status = process_insert(args_array, cfg, fname, log)
 
         else:
-            log.log_warn("Incorrect or no action detected: %s" % (action))
+            log.log_warn("process_docids:  Incorrect or no action detected: %s"
+                         % (action))
             status = False
 
         if status:
@@ -612,7 +614,7 @@ def process_files(args_array, cfg, log, **kwargs):
 
     args_array = dict(args_array)
     mail = setup_mail(args_array, subj="Non-processed files")
-    log.log_info("process_files:  Searching for files to check...")
+    log.log_info("process_files:  Processing files to search...")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
     remove_list = process_list(args_array, cfg, log, docid_files, "search")
     docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir, log)
@@ -633,7 +635,7 @@ def insert_data(args_array, cfg, log, **kwargs):
     """
 
     args_array = dict(args_array)
-    log.log_info("insert_data:  Searching for files to insert...")
+    log.log_info("insert_data:  Processing files to insert...")
     insert_list = dir_file_search(cfg.monitor_dir,
                                   cfg.mfile_regex, add_path=True)
     remove_list = process_list(args_array, cfg, log, insert_list, "insert")
