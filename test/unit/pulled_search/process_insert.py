@@ -82,6 +82,7 @@ class UnitTest(unittest.TestCase):
                 self.tbl = "tablename"
 
         self.cfg = CfgTest()
+        self.args_array = {"-d": "/config_path"}
         self.data_list = ['{',
                           '"docID": "weotiuer",',
                           '"command": "COMMAND",',
@@ -109,8 +110,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_list.return_value = self.data_list
 
-        self.assertEqual(pulled_search.process_insert(self.cfg, self.fname,
-                                                      mock_log), False)
+        self.assertEqual(pulled_search.process_insert(
+            self.args_array, self.cfg, self.fname, mock_log), False)
 
     @mock.patch("pulled_search.mongo_libs.ins_doc",
                 mock.Mock(return_value=True))
@@ -129,8 +130,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_list.return_value = self.data_list
 
-        self.assertEqual(pulled_search.process_insert(self.cfg, self.fname,
-                                                      mock_log), True)
+        self.assertEqual(pulled_search.process_insert(
+            self.args_array, self.cfg, self.fname, mock_log), True)
 
 
 if __name__ == "__main__":
