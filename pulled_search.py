@@ -443,9 +443,9 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
 
     # Create argument list for check_log program.
-    log.log_info("process_docid:  Running check_log search...")
     search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
                    "-k": "or", "-o": cfg.outfile, "-z": True}
+    log.log_info("process_docid:  Running check_log search...")
     check_log.run_program(search_args)
 
     if not gen_libs.is_empty_file(cfg.outfile):
