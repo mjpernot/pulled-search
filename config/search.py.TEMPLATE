@@ -58,33 +58,6 @@ mfile_regex = "_mongo.json"
 marchive_dir = "ARCHIVE_DIR_PATH"
 # Directory path to where Insert/Mongodb error and non-processed files are saved to.
 merror_dir = "ERROR_DIR_PATH"
-
-# Pulled Search Insert/Mongo DB Configuration section.
-muser = "root"
-mpswd = "ROOT_PASSWORD"
-# Mongo DB host information
-mhost = "HOST_IP"
-mname = "HOSTNAME"
-# Mongo database port (default is 27017)
-mport = 27017
-# Mongo configuration settings
-mconf_file = None
-# Authentication required:  True|False
-mauth = True
-# Name of Mongo database.
-mdb = "DBNAME"
-# Name of Mongo table/collection.
-mtbl = "TBLNAME"
-
-# Replica Set Mongo configuration settings.
-# Replica set name.
-#    None means the Mongo database is not part of a replica set.
-#    Example:  repset = "REPLICA_SET_NAME"
-repset = None
-# Replica host listing.
-#    None means the Mongo database is not part of a replica set.
-#    Example:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
-repset_hosts = None
-# Database to authentication to.
-#    Example:  db_auth = "AUTHENTICATION_DATABASE"
-db_auth = None 
+# Name of Mongo configuration file.  (Do not include the ".py" in the name.)
+# No not change unless changing the name of the external Mongo config file.
+mconfig = "mongo"
