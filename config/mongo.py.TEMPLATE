@@ -1,5 +1,5 @@
 # Pulled Search Insert/Mongo DB Configuration section.
-user = "root"
+user = "USERNAME"
 passwd = "ROOT_PASSWORD"
 # Mongo DB host information
 host = "HOST_IP"
