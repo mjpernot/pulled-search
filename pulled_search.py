@@ -420,6 +420,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     args_array = dict(args_array)
     file_log = list()
+    status = True
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
 
@@ -433,13 +434,16 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     cmd_regex = cmd + ".*" + cfg.log_type
 
     if args_array.get("-a", None):
+        log.log_info("process_docid:  Searching for archive log files...")
         log_files = get_archive_files(cfg.archive_dir, cmd,
                                       docid_dict["pubdate"], cmd_regex)
 
     else:
+        log.log_info("process_docid:  Searching for apache log files...")
         log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
 
     # Create argument list for check_log program.
+    log.log_info("process_docid:  Running check_log search...")
     search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
                    "-k": "or", "-o": cfg.outfile, "-z": True}
     check_log.run_program(search_args)
@@ -447,6 +451,9 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
+
+    else:
+        log.log_info("process_docid:  No log entries detected.")
 
     err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
@@ -457,9 +464,6 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         log_json = create_json(cfg, docid_dict, file_log)
         log.log_info("process_docid:  Log entries publishing to RabbitMQ.")
         status = send_2_rabbitmq(cfg, json.dumps(log_json))
-
-    else:
-        status = True
 
     return status
 
