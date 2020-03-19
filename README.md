@@ -76,6 +76,11 @@ cp search.py.TEMPLATE search.py
 
 Make the appropriate changes to the environment.
   * Make the appropriate changes to connect to General setup section.
+    - log_file = "DIR_PATH/pulled_search.log"
+    - admin_email = "USERNAME@EMAIL_DOMAIN"
+
+  * Make the appropriate changes to connect to Process/Search setup section.
+  * NOTE:  Only needed if selecting the -P option.
     - doc_dir = "DOC_DIR_PATH"
     - file_regex = "_docid.json"
     - log_dir = "LOG_DIR_PATH"
@@ -84,10 +89,9 @@ Make the appropriate changes to the environment.
     - enclave = "ENCLAVE"
     - error_dir = "ERROR_DIR_PATH"
     - archive_dir = "ARCHIVE_DIR_PATH"
-    - log_file = "DIR_PATH/pulled_search.log"
-    - admin_email = "USERNAME@EMAIL_DOMAIN"
 
   * Make the appropriate changes to connect to RabbitMQ section.
+  * NOTE:  Only needed if selecting the -P option.
     - user = "USER"
     - pswd = "PSWD"
     - host = "HOSTNAME"
@@ -95,10 +99,35 @@ Make the appropriate changes to the environment.
     - r_key = "RKEYNAME" (Normally the same as the queue name.)
     - exchange_name = "EXCHANGE_NAME"
 
+  * Make the appropriate changes to connect to Insert setup section.
+  * NOTE:  Only needed if selecting the -I option.
+    - monitor_dir = "MONITOR_DIR_PATH"
+    - mfile_regex = "_mongo.json"
+    - marchive_dir = "ARCHIVE_DIR_PATH"
+    - merror_dir = "ERROR_DIR_PATH"
+
 ```
 vim search.py
 chmod 600 search.py
 ```
+
+Initialize Mongo configuration file.
+```
+cp mongo.py.TEMPLATE mongo.py
+```
+
+Make the appropriate changes to the Mongo environment.
+  * Make the appropriate changes to connect to RabbitMQ section.
+  * NOTE:  Only needed if selecting the -P option.
+    - user = "USERNAME"
+    - passwd = "PASSWORD"
+    - host = "HOST_IP"
+    - name = "HOSTNAME"
+    - conf_file = None
+    - repset = None
+    - repset_hosts = None
+    - db_auth = None
+
 
 # Program Help Function:
 
