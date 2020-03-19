@@ -113,7 +113,7 @@
 
             # Pulled Search Insert/Mongo DB Configuration section.
             user = "USERNAME"
-            passwd = "ROOT_PASSWORD"
+            passwd = "PASSWORD"
             # Mongo DB host information
             host = "HOST_IP"
             name = "HOSTNAME"
