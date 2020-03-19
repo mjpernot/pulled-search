@@ -584,7 +584,10 @@ def cleanup_files(docid_files, processed_list, dest_dir, log, **kwargs):
 
     for fname in processed_list:
         log.log_info("cleanup_files:  Archiving file: %s" % (fname))
-        gen_libs.mv_file2(fname, dest_dir)
+        dtg = datetime.datetime.strftime(datetime.datetime.now(),
+                                         "%Y%m%d_%H%M%S")
+        new_fname = os.path.basename(fname)
+        gen_libs.mv_file2(fname, dest_dir, new_fname=new_fname + "." + dtg)
         docid_files.remove(fname)
 
     return docid_files
