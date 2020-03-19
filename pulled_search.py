@@ -464,13 +464,14 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     return status
 
 
-def process_insert(cfg, fname, log, **kwargs):
+def process_insert(args_array, cfg, fname, log, **kwargs):
 
     """Function:  process_insert
 
     Description:  Process the insert file and send to a database.
 
     Arguments:
+        (input) args_array -> Dictionary of command line options and values.
         (input) cfg -> Configuration setup.
         (input) fname -> Insert file name.
         (input) log -> Log class instance.
@@ -479,13 +480,15 @@ def process_insert(cfg, fname, log, **kwargs):
     """
 
     file_log = list()
+    args_array = dict(args_array)
     log.log_info("process_insert:  Converting data to JSON.")
     data_list = gen_libs.file_2_list(fname)
     insert_dict = json.loads(gen_libs.list_2_str(data_list))
 
     if isinstance(insert_dict, dict):
         log.log_info("process_insert:  Inserting data into Mongodb.")
-        mongo_libs.ins_doc(cfg, cfg.db, cfg.tbl, insert_dict)
+        mcfg = gen_libs.load_module(cfg.mconfig, args_array["-d"])
+        mongo_libs.ins_doc(mcfg, mcfg.db, mcfg.tbl, insert_dict)
         status = True
 
     else:
@@ -548,7 +551,7 @@ def process_list(args_array, cfg, log, file_list, action, **kwargs):
 
         elif action == "insert":
             log.log_info("process_docids:  Action: insert")
-            status = process_insert(cfg, fname, log)
+            status = process_insert(args_array, cfg, fname, log)
 
         else:
             log.log_warn("Incorrect or no action detected: %s" % (action))
