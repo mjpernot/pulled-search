@@ -71,6 +71,10 @@ mport = 27017
 mconf_file = None
 # Authentication required:  True|False
 mauth = True
+# Name of Mongo database.
+mdb = "DBNAME"
+# Name of Mongo table/collection.
+mtbl = "TBLNAME"
 
 # Replica Set Mongo configuration settings.
 # Replica set name.
