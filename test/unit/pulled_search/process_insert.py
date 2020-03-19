@@ -78,10 +78,34 @@ class UnitTest(unittest.TestCase):
 
                 """
 
+                self.mconfig = "mongo"
+
+        class CfgTest2(object):
+
+            """Class:  CfgTest2
+
+            Description:  Class which is a representation of a cfg module.
+
+            Methods:
+                __init__ -> Initialize configuration environment.
+
+            """
+
+            def __init__(self):
+
+                """Method:  __init__
+
+                Description:  Initialization instance of the CfgTest class.
+
+                Arguments:
+
+                """
+
                 self.db = "databasename"
                 self.tbl = "tablename"
 
         self.cfg = CfgTest()
+        self.cfg2 = CfgTest2()
         self.args_array = {"-d": "/config_path"}
         self.data_list = ['{',
                           '"docID": "weotiuer",',
@@ -115,9 +139,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.mongo_libs.ins_doc",
                 mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.load_module")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_with_data(self, mock_log, mock_list):
+    def test_with_data(self, mock_log, mock_list, mock_load):
 
         """Function:  test_with_data
 
@@ -129,6 +154,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
         mock_list.return_value = self.data_list
+        mock_load.return_value = self.cfg2
 
         self.assertEqual(pulled_search.process_insert(
             self.args_array, self.cfg, self.fname, mock_log), True)
