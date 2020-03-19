@@ -488,7 +488,6 @@ def process_insert(args_array, cfg, fname, log, **kwargs):
 
     """
 
-    file_log = list()
     args_array = dict(args_array)
     log.log_info("process_insert:  Converting data to JSON.")
     data_list = gen_libs.file_2_list(fname)
