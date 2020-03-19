@@ -128,6 +128,11 @@ Make the appropriate changes to the Mongo environment.
     - repset_hosts = None
     - db_auth = None
 
+```
+vim mongo.py
+chmod 600 mongo.py
+```
+
 
 # Program Help Function:
 
