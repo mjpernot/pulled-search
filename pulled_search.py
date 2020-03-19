@@ -205,7 +205,11 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
 
         for fname in docid_files:
             log.log_info("non_processed:  Moving file: %s" % (fname))
-            gen_libs.mv_file2(fname, error_dir)
+            dtg = datetime.datetime.strftime(datetime.datetime.now(),
+                                             "%Y%m%d_%H%M%S")
+            new_fname = os.path.basename(fname)
+            gen_libs.mv_file2(fname, error_dir,
+                              new_fname=new_fname + "." + dtg)
     
         if mail:
             log.log_info("non_processed:  Sending email...")
