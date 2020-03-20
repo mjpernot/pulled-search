@@ -2,7 +2,7 @@
 # Classification (U)
 
 # Description:
-  The pulled_search program will detect when new pulled product files are created, parse the file, call the check_log program to check log files for the docid in the file, any entries found will be converted into a JSON document and send to a RabbitMQ queue.
+  The pulled_search program is a multi-option program for use with the pulled product process.  It can detect when new pulled product files are created, parse the file, call the check_log program to check log files for the docid in the file, any entries found will be converted into a JSON document and send to a RabbitMQ queue.  It also can detect when new pulled product log files are available to be inserted into a Mongo database.
 
 ###  This README file is broken down into the following sections:
   * Features
@@ -15,7 +15,10 @@
 
 
 # Features:
-  * Locate docids in log files and sends them to RabbitMQ.
+  * Monitor a directory for DocID files that will be used to search log files with corresponding log entries.
+  * Parse and convert log entries into a JSON document and send them to a RabbitMQ queue for further processing.
+  * Monitor a directory for Pulled Product json log files.
+  * Parse and convert pulled product json logs and insert them into a Mongodb database.
 
 
 # Prerequisites:
@@ -43,12 +46,12 @@ Install the project using git.
 umask 022
 cd {Python_Project}
 git clone git@sc.appdev.proj.coe.ic.gov:JAC-DSXD/pulled-search.git
+cd pulled-search
 ```
 
 Install/upgrade system modules.
 
 ```
-cd pulled-search
 sudo bash
 umask 022
 pip install -r requirements.txt --upgrade --trusted-host pypi.appdev.proj.coe.ic.gov
@@ -75,12 +78,12 @@ cp search.py.TEMPLATE search.py
 ```
 
 Make the appropriate changes to the environment.
-  * Make the appropriate changes to connect to General setup section.
+  * Make the appropriate changes to General setup section.
     - log_file = "DIR_PATH/pulled_search.log"
     - admin_email = "USERNAME@EMAIL_DOMAIN"
 
-  * Make the appropriate changes to connect to Process/Search setup section.
-  * NOTE:  Only needed if selecting the -P option.
+  * Make the appropriate changes to Process/Search setup section.
+  * NOTE:  Only required if selecting the -P option.
     - doc_dir = "DOC_DIR_PATH"
     - file_regex = "_docid.json"
     - log_dir = "LOG_DIR_PATH"
@@ -90,8 +93,8 @@ Make the appropriate changes to the environment.
     - error_dir = "ERROR_DIR_PATH"
     - archive_dir = "ARCHIVE_DIR_PATH"
 
-  * Make the appropriate changes to connect to RabbitMQ section.
-  * NOTE:  Only needed if selecting the -P option.
+  * Make the appropriate changes to RabbitMQ section.
+  * NOTE:  Only required if selecting the -P option.
     - user = "USER"
     - pswd = "PSWD"
     - host = "HOSTNAME"
@@ -99,8 +102,8 @@ Make the appropriate changes to the environment.
     - r_key = "RKEYNAME" (Normally the same as the queue name.)
     - exchange_name = "EXCHANGE_NAME"
 
-  * Make the appropriate changes to connect to Insert setup section.
-  * NOTE:  Only needed if selecting the -I option.
+  * Make the appropriate changes to Insert setup section.
+  * NOTE:  Only required if selecting the -I option.
     - monitor_dir = "MONITOR_DIR_PATH"
     - mfile_regex = "_mongo.json"
     - marchive_dir = "ARCHIVE_DIR_PATH"
@@ -116,9 +119,9 @@ Initialize Mongo configuration file.
 cp mongo.py.TEMPLATE mongo.py
 ```
 
-Make the appropriate changes to the Mongo environment.
-  * Make the appropriate changes to connect to RabbitMQ section.
-  * NOTE:  Only needed if selecting the -P option.
+Make the appropriate changes to the Mongodb environment.
+  * Make the appropriate changes to Mongodb section.
+  * NOTE:  Only required if selecting the -P option.
     - user = "USERNAME"
     - passwd = "PASSWORD"
     - host = "HOST_IP"
@@ -160,12 +163,12 @@ Install the project using git.
 umask 022
 cd {Python_Project}
 git clone --branch {Branch_Name} git@sc.appdev.proj.coe.ic.gov:JAC-DSXD/pulled-search.git
+cd pulled-search
 ```
 
 Install/upgrade system modules.
 
 ```
-cd pulled-search
 sudo bash
 umask 022
 pip install -r requirements.txt --upgrade --trusted-host pypi.appdev.proj.coe.ic.gov
