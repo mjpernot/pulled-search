@@ -415,6 +415,13 @@ def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
                 if re.search(file_str, x)]
 
 
+def zgrep_search(file_list, keyword, outfile, **kwargs):
+    file_list = list(file_list)
+
+    for fname in file_list:
+        # Zgrep keyword in fname > outfile
+
+
 def process_docid(args_array, cfg, fname, log, **kwargs):
 
     """Function:  process_docid
@@ -454,11 +461,16 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         log.log_info("process_docid:  Searching for apache log files...")
         log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
 
-    # Create argument list for check_log program.
-    search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
-                   "-k": "or", "-o": cfg.outfile, "-z": True}
-    log.log_info("process_docid:  Running check_log search...")
-    check_log.run_program(search_args)
+    if sys.version_info >= (2, 7):
+        # Create argument list for check_log program.
+        search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
+                       "-k": "or", "-o": cfg.outfile, "-z": True}
+        log.log_info("process_docid:  Running check_log search...")
+        check_log.run_program(search_args)
+
+    else:
+        log.log_info("process_docid:  Running zgrep search...")
+        zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
 
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")
