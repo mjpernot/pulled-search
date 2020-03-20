@@ -141,7 +141,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertFalse(pulled_search.insert_data(self.args_array, self.cfg,
-                                                     mock_log))
+                                                   mock_log))
 
     @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
