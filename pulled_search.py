@@ -806,10 +806,8 @@ def run_program(args_array, func_dict, **kwargs):
                                "%(asctime)s %(levelname)s %(message)s",
                                "%Y-%m-%dT%H:%M:%SZ")
         log.log_info("Program initialization...")
-
         cfg = config_override(args_array, cfg)
-
-        msg_dict = checks_dirs(cfg)
+        msg_dict = checks_dirs(args_array, cfg)
 
         if msg_dict:
             log.log_err("Validation of configuration directories failed")
