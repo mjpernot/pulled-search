@@ -88,7 +88,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.cleanup_files(
             self.docid_files3, self.processed_list2, self.dest_dir, mock_log),
-                         self.results2)
+            self.results2)
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
@@ -107,7 +107,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.cleanup_files(
             self.docid_files2, self.processed_list, self.dest_dir, mock_log),
-                         self.results)
+            self.results)
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
@@ -126,7 +126,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.cleanup_files(
             self.docid_files, self.processed_list, self.dest_dir, mock_log),
-                         [])
+            [])
 
     @mock.patch("pulled_search.gen_class.Logger")
     def test_empty_list(self, mock_log):
