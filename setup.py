@@ -44,6 +44,10 @@ setuptools.setup(
         "Development Status :: 2 - Alpha",
         "Operating System :: Linux",
         "Operating System :: Linux :: Centos",
+        "Topic :: Database :: RabbitMQ",
+        "Topic :: Database :: RabbitMQ :: 3.6.6",
+        "Topic :: Database :: Mongodb",
+        "Topic :: Database :: Mongodb :: 3.4.2",
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.6.6",
         "Programming Language :: Python :: 2.7.5"])
