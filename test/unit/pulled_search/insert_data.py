@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # Classification (U)
 
-"""Program:  process_files.py
+"""Program:  insert_data.py
 
-    Description:  Unit testing of process_files in pulled_search.py.
+    Description:  Unit testing of insert_data in pulled_search.py.
 
     Usage:
-        test/unit/pulled_search/process_files.py
+        test/unit/pulled_search/insert_data.py
 
     Arguments:
 
@@ -81,13 +81,12 @@ class UnitTest(unittest.TestCase):
 
                 """
 
-                self.file_regex = "*_docid.json"
-                self.doc_dir = "/dir_path/doc_dir"
-                self.error_dir = "/dir/path/error_dir"
-                self.archive_dir = "/dir/path/archive_dir"
+                self.mfile_regex = "*_insert.json"
+                self.monitor_dir = "/dir_path/monitor_dir"
+                self.merror_dir = "/dir/path/error_dir"
+                self.marchive_dir = "/dir/path/archive_dir"
 
         self.cfg = CfgTest()
-        self.log_files = ["/path/logfile1", "/path/logfile2"]
         self.args_array = {"-t": "name@domain"}
 
     @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
@@ -105,7 +104,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
+        self.assertFalse(pulled_search.insert_data({}, self.cfg, mock_log))
 
     @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
@@ -122,7 +121,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
+        self.assertFalse(pulled_search.insert_data({}, self.cfg, mock_log))
 
     @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
@@ -141,8 +140,8 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
 
-        self.assertFalse(pulled_search.process_files(self.args_array, self.cfg,
-                                                     mock_log))
+        self.assertFalse(pulled_search.insert_data(self.args_array, self.cfg,
+                                                   mock_log))
 
     @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
@@ -159,7 +158,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
+        self.assertFalse(pulled_search.insert_data({}, self.cfg, mock_log))
 
 
 if __name__ == "__main__":

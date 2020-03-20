@@ -115,7 +115,8 @@ class UnitTest(unittest.TestCase):
         self.docid_files2 = []
         self.error_dir = "/dir/error_dir"
 
-    def test_no_data(self):
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_no_data(self, mock_log):
 
         """Function:  test_no_data
 
@@ -125,12 +126,15 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_log.return_value = "Log Instance"
+
         self.assertFalse(pulled_search.non_processed(
-            self.docid_files2, self.error_dir, self.mail))
+            self.docid_files2, self.error_dir, mock_log, self.mail))
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
-    def test_no_mail(self):
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_no_mail(self, mock_log):
 
         """Function:  test_no_mail
 
@@ -140,12 +144,15 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_log.return_value = "Log Instance"
+
         self.assertFalse(pulled_search.non_processed(
-            self.docid_files, self.error_dir, None))
+            self.docid_files, self.error_dir, mock_log))
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
-    def test_with_data(self):
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_with_data(self, mock_log):
 
         """Function:  test_with_data
 
@@ -155,8 +162,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_log.return_value = "Log Instance"
+
         self.assertFalse(pulled_search.non_processed(
-            self.docid_files, self.error_dir, self.mail))
+            self.docid_files, self.error_dir, mock_log, self.mail))
 
 
 if __name__ == "__main__":

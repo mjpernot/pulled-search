@@ -1,0 +1,29 @@
+# Pulled Search Insert/Mongo DB Configuration section.
+user = "USERNAME"
+passwd = "PASSWORD"
+# Mongo DB host information
+host = "HOST_IP"
+name = "HOSTNAME"
+# Mongo database port (default is 27017)
+port = 27017
+# Mongo configuration settings
+conf_file = None
+# Authentication required:  True|False
+auth = True
+# Name of Mongo database.
+db = "DBNAME"
+# Name of Mongo table/collection.
+tbl = "TBLNAME"
+
+# Replica Set Mongo configuration settings.
+# Replica set name.
+#    None means the Mongo database is not part of a replica set.
+#    Example:  repset = "REPLICA_SET_NAME"
+repset = None
+# Replica host listing.
+#    None means the Mongo database is not part of a replica set.
+#    Example:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
+repset_hosts = None
+# Database to authentication to.
+#    Example:  db_auth = "AUTHENTICATION_DATABASE"
+db_auth = None 

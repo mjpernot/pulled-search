@@ -6,5 +6,6 @@ coverage.xml
 config/*.py
 config/*.pyc
 lib
+mongo_lib
 rabbit_lib
 checklog

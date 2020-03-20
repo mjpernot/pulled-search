@@ -2,7 +2,7 @@
 # Classification (U)
 
 # Description:
-  The pulled_search program will detect when new pulled product files are created, parse the file, call the check_log program to check log files for the docid in the file, any entries found will be converted into a JSON document and send to a RabbitMQ queue.
+  The pulled_search program is a multi-option program for use with the pulled product process.  It can detect when new pulled product files are created, parse the file, call the check_log program to check log files for the docid in the file, any entries found will be converted into a JSON document and send to a RabbitMQ queue.  It also can detect when new pulled product log files are available to be inserted into a Mongo database.
 
 ###  This README file is broken down into the following sections:
   * Features
@@ -15,7 +15,10 @@
 
 
 # Features:
-  * Locate docids in log files and sends them to RabbitMQ.
+  * Monitor a directory for DocID files that will be used to search log files with corresponding log entries.
+  * Parse and convert log entries into a JSON document and send them to a RabbitMQ queue for further processing.
+  * Monitor a directory for Pulled Product json log files.
+  * Parse and convert pulled product json logs and insert them into a Mongodb database.
 
 
 # Prerequisites:
@@ -28,6 +31,9 @@
     - lib/arg_parser
     - lib/gen_class
     - lib/gen_libs
+    - rabbit_lib/rabbit_class
+    - mongo_lib/mongo_libs
+    - mongo_lib/mongo_class
     - checklog/check_log
 
 
@@ -40,12 +46,12 @@ Install the project using git.
 umask 022
 cd {Python_Project}
 git clone git@sc.appdev.proj.coe.ic.gov:JAC-DSXD/pulled-search.git
+cd pulled-search
 ```
 
 Install/upgrade system modules.
 
 ```
-cd pulled-search
 sudo bash
 umask 022
 pip install -r requirements.txt --upgrade --trusted-host pypi.appdev.proj.coe.ic.gov
@@ -58,6 +64,8 @@ pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appd
 pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
 
@@ -70,7 +78,12 @@ cp search.py.TEMPLATE search.py
 ```
 
 Make the appropriate changes to the environment.
-  * Make the appropriate changes to connect to General setup section.
+  * Make the appropriate changes to General setup section.
+    - log_file = "DIR_PATH/pulled_search.log"
+    - admin_email = "USERNAME@EMAIL_DOMAIN"
+
+  * Make the appropriate changes to Process/Search setup section.
+  * NOTE:  Only required if selecting the -P option.
     - doc_dir = "DOC_DIR_PATH"
     - file_regex = "_docid.json"
     - log_dir = "LOG_DIR_PATH"
@@ -79,10 +92,9 @@ Make the appropriate changes to the environment.
     - enclave = "ENCLAVE"
     - error_dir = "ERROR_DIR_PATH"
     - archive_dir = "ARCHIVE_DIR_PATH"
-    - log_file = "DIR_PATH/pulled_search.log"
-    - admin_email = "USERNAME@EMAIL_DOMAIN"
 
-  * Make the appropriate changes to connect to RabbitMQ section.
+  * Make the appropriate changes to RabbitMQ section.
+  * NOTE:  Only required if selecting the -P option.
     - user = "USER"
     - pswd = "PSWD"
     - host = "HOSTNAME"
@@ -90,10 +102,40 @@ Make the appropriate changes to the environment.
     - r_key = "RKEYNAME" (Normally the same as the queue name.)
     - exchange_name = "EXCHANGE_NAME"
 
+  * Make the appropriate changes to Insert setup section.
+  * NOTE:  Only required if selecting the -I option.
+    - monitor_dir = "MONITOR_DIR_PATH"
+    - mfile_regex = "_mongo.json"
+    - marchive_dir = "ARCHIVE_DIR_PATH"
+    - merror_dir = "ERROR_DIR_PATH"
+
 ```
 vim search.py
 chmod 600 search.py
 ```
+
+Initialize Mongo configuration file.
+```
+cp mongo.py.TEMPLATE mongo.py
+```
+
+Make the appropriate changes to the Mongodb environment.
+  * Make the appropriate changes to Mongodb section.
+  * NOTE:  Only required if selecting the -P option.
+    - user = "USERNAME"
+    - passwd = "PASSWORD"
+    - host = "HOST_IP"
+    - name = "HOSTNAME"
+    - conf_file = None
+    - repset = None
+    - repset_hosts = None
+    - db_auth = None
+
+```
+vim mongo.py
+chmod 600 mongo.py
+```
+
 
 # Program Help Function:
 
@@ -121,12 +163,12 @@ Install the project using git.
 umask 022
 cd {Python_Project}
 git clone --branch {Branch_Name} git@sc.appdev.proj.coe.ic.gov:JAC-DSXD/pulled-search.git
+cd pulled-search
 ```
 
 Install/upgrade system modules.
 
 ```
-cd pulled-search
 sudo bash
 umask 022
 pip install -r requirements.txt --upgrade --trusted-host pypi.appdev.proj.coe.ic.gov
@@ -139,6 +181,8 @@ pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appd
 pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi.appdev.proj.coe.ic.gov
+pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
 # Unit test runs for pulled_search.py:
@@ -146,19 +190,27 @@ pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host 
 
 ```
 cd {Python_Project}/pulled-search
+test/unit/pulled_search/checks_dirs.py
+test/unit/pulled_search/cleanup_files.py
+test/unit/pulled_search/config_override.py
 test/unit/pulled_search/create_json.py
 test/unit/pulled_search/create_rmq.py
 test/unit/pulled_search/date_range.py
 test/unit/pulled_search/dir_file_search.py
 test/unit/pulled_search/get_archive_files.py
 test/unit/pulled_search/help_message.py
+test/unit/pulled_search/insert_data.py
 test/unit/pulled_search/main.py
+test/unit/pulled_search/mvalidate_dirs.py
 test/unit/pulled_search/month_days.py
 test/unit/pulled_search/non_processed.py
 test/unit/pulled_search/process_docid.py
 test/unit/pulled_search/process_files.py
+test/unit/pulled_search/process_insert.py
+test/unit/pulled_search/process_list.py
 test/unit/pulled_search/run_program.py
 test/unit/pulled_search/send_2_rabbitmq.py
+test/unit/pulled_search/setup_mail.py
 test/unit/pulled_search/validate_dirs.py
 ```
 
