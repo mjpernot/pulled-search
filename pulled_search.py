@@ -48,7 +48,7 @@
             # Administrator email for reporting errors detected during the
             #   program run.
             admin_email = "USERNAME@EMAIL_DOMAIN"
-            
+
             # Pulled Search Process Configuration section.
             # Directory where docid files to be processed are.
             doc_dir = "DOC_DIR_PATH"
@@ -68,7 +68,7 @@
             archive_dir = "ARCHIVE_DIR_PATH"
             # Directory path to where archived files are saved to.
             error_dir = "ERROR_DIR_PATH"
-            
+
             # Pulled Search Process/RabbitMQ Configuration section.
             user = "USER"
             pswd = "PSWD"
@@ -90,7 +90,7 @@
             # Do queues automatically delete once message is
             #   processed:  True|False
             auto_delete = False
-            
+
             # Pulled Search Insert Configuration section.
             # Directory where to monitor for new files to insert into Mongodb.
             monitor_dir = "MONITOR_DIR_PATH"
@@ -107,7 +107,7 @@
             # No not change unless changing the name of the external Mongo
             #   config file.
             mconfig = "mongo"
-        
+
         Configuration file (config/mongo.py.TEMPLATE).  Below is the
         configuration file format for the Mongo instance setup.
 
@@ -123,7 +123,7 @@
             conf_file = None
             # Authentication required:  True|False
             auth = True
-            
+
             # Replica Set Mongo configuration settings.
             # Replica set name.
             #    None means the Mongo database is not part of a replica set.
@@ -210,7 +210,7 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
             new_fname = os.path.basename(fname)
             gen_libs.mv_file2(fname, error_dir,
                               new_fname=new_fname + "." + dtg)
-    
+
         if mail:
             log.log_info("non_processed:  Sending email...")
             mail.add_2_msg(docid_files)
