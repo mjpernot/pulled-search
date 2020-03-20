@@ -93,7 +93,7 @@ class UnitTest(unittest.TestCase):
         self.results3 = {"-I": True}
 
     @mock.patch("pulled_search.mvalidate_dirs",
-        mock.Mock(return_value={"-I": True}))
+                mock.Mock(return_value={"-I": True}))
     def test_i_option(self):
 
         """Function:  test_i_option
@@ -108,7 +108,7 @@ class UnitTest(unittest.TestCase):
             self.args_array3, self.cfg), self.results3)
 
     @mock.patch("pulled_search.validate_dirs",
-        mock.Mock(return_value={"-P": True}))
+                mock.Mock(return_value={"-P": True}))
     def test_p_option(self):
 
         """Function:  test_p_option
