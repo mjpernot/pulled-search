@@ -8,7 +8,7 @@
         and if detected will send these log entries to a RabbitMQ queue.
 
     Usage:
-        pulled_search.py -c file -d path [-m path | -n path | -z |
+        pulled_search.py -c file -d path [-m path | -n path | -z | -P | -I |
             -y flavor_id | -a] [-t email {email2 email3 ...} {-s subject_line}]
             [-v | -h]
 
@@ -38,8 +38,8 @@
             of compressed file will not work.
 
     Configuration files:
-        Configuration file (search.py.TEMPLATE).  Below is the configuration
-        file format for the environment setup in the program.
+        Configuration file (config/search.py.TEMPLATE).  Below is the
+        configuration file format for the environment setup in the program.
 
             # Pulled Search General Configuration section.
             # Logger file for the storage of log entries.
@@ -139,6 +139,13 @@
 
     Examples:
         pulled_search.py -c search -d /opt/local/pulled/config -P
+            -t Mark.J.Pernot@coe.ic.gov -s Pulled Search Notification
+
+        pulled_search.py -c search -d /opt/local/pulled/config -P
+            -t Mark.J.Pernot@coe.ic.gov -s Pulled Search Notification
+
+        pulled_search.py -c search -d /opt/local/pulled/config -I
+            -n /opt/local/pulled/monitor -y pulled_insert
 
 """
 
