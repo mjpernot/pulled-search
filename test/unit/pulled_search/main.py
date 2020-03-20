@@ -90,6 +90,8 @@ class UnitTest(unittest.TestCase):
         test_con_req_or_true -> Test with arg_cond_req_or returns True.
         test_dir_chk_crt_true -> Test with arg_dir_chk_crt returns True.
         test_dir_chk_crt_false -> Test with arg_dir_chk_crt returns False.
+        test_xor_dict_false -> Test with arg_xor_dict returns False.
+        test_xor_dict_true -> Test with arg_xor_dict returns True.
         test_exception_handler -> Test with exception handler.
 
     """
@@ -237,15 +239,57 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.main())
 
-    @mock.patch("pulled_search.gen_class")
-    @mock.patch("pulled_search.run_program")
     @mock.patch("pulled_search.gen_libs.help_func")
     @mock.patch("pulled_search.arg_parser")
-    def test_dir_chk_crt_false(self, mock_arg, mock_help, mock_run, mock_lock):
+    def test_dir_chk_crt_false(self, mock_arg, mock_help):
 
         """Function:  test_dir_chk_crt_false
 
         Description:  Test with arg_dir_chk_crt returns False.
+
+        Arguments:
+
+        """
+
+        mock_arg.arg_parse2.return_value = self.args
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_cond_req_or.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_arg.arg_xor_dict.return_value = False
+
+        self.assertFalse(pulled_search.main())
+
+    @mock.patch("pulled_search.gen_libs.help_func")
+    @mock.patch("pulled_search.arg_parser")
+    def test_xor_dict_false(self, mock_arg, mock_help):
+
+        """Function:  test_xor_dict_false
+
+        Description:  Test with arg_xor_dict returns False.
+
+        Arguments:
+
+        """
+
+        mock_arg.arg_parse2.return_value = self.args
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_cond_req_or.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_arg.arg_xor_dict.return_value = False
+
+        self.assertFalse(pulled_search.main())
+
+    @mock.patch("pulled_search.gen_class")
+    @mock.patch("pulled_search.run_program")
+    @mock.patch("pulled_search.gen_libs.help_func")
+    @mock.patch("pulled_search.arg_parser")
+    def test_xor_dict_true(self, mock_arg, mock_help, mock_run, mock_lock):
+
+        """Function:  test_xor_dict_true
+
+        Description:  Test with arg_xor_dict returns True.
 
         Arguments:
 
@@ -257,6 +301,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_require.return_value = False
         mock_arg.arg_cond_req_or.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
+        mock_arg.arg_xor_dict.return_value = True
         mock_run.return_value = True
 
         self.assertFalse(pulled_search.main())
