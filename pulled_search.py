@@ -159,6 +159,7 @@ import os
 import socket
 import getpass
 import datetime
+import subprocess
 
 # Third-party
 import json
@@ -438,7 +439,7 @@ def zgrep_search(file_list, keyword, outfile, **kwargs):
         with open(outfile, "wb") as fout:
 
             # Search for keyword and write to file.
-            P1 = subprocess.Popen([cmd, keyword, infile], stdout=fout)
+            P1 = subprocess.Popen([cmd, keyword, fname], stdout=fout)
             P1.wait()
 
 
