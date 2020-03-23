@@ -165,6 +165,8 @@ import subprocess
 import json
 import calendar
 import re
+import platform
+import decimal
 
 # Local
 import lib.arg_parser as arg_parser
@@ -482,17 +484,23 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         log.log_info("process_docid:  Searching for apache log files...")
         log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
 
-    # Cannot use check_log in Centos 2.6.X and below.
-    if sys.version_info >= (2, 7):
+    is_centos = \
+        True if "centos" in platform.linux_distribution()[0].lower() else False
+    is_pre_7 = \
+        decimal.Decimal(platform.linux_distribution()[1]) < \
+        decimal.Decimal('7.0')
+
+    # Must use zgrep searching in pre-Centos 7 versions.
+    if is_centos and is_pre_7:
+        log.log_info("process_docid:  Running zgrep search...")
+        zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
+
+    else:
         # Create argument list for check_log program.
         search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
                        "-k": "or", "-o": cfg.outfile, "-z": True}
         log.log_info("process_docid:  Running check_log search...")
         check_log.run_program(search_args)
-
-    else:
-        log.log_info("process_docid:  Running zgrep search...")
-        zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
 
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")
