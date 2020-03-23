@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.1] - 2020-03-20
+
 ### Added
 - zgrep_search:  Zgrep compressed files for keyword and write to file.
+
+### Changed
+- process_docid:  Check for pre-Centos 7 OS to run zgrep search instead of check_log search.
 
 
 ## [0.1.0] - 2020-03-13
