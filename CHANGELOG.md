@@ -9,7 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - zgrep_search:  Zgrep compressed files for keyword and write to file.
 
 ### Changed
-- process_docid:  Check for pre-Centos 7 OS to run zgrep search instead of check_log search.
+- process_docid:  Check for pre-Centos 7 OS to call zgrep_search instead of calling check_log.
 
 
 ## [0.1.0] - 2020-03-13
