@@ -438,7 +438,7 @@ def zgrep_search(file_list, keyword, outfile, **kwargs):
 
     for fname in file_list:
 
-        with open(outfile, "wb") as fout:
+        with open(outfile, "ab") as fout:
 
             # Search for keyword and write to file.
             P1 = subprocess.Popen([cmd, keyword, fname], stdout=fout)
