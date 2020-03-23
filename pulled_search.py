@@ -416,10 +416,30 @@ def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
 
 
 def zgrep_search(file_list, keyword, outfile, **kwargs):
+
+    """Function:  zgrep_search
+
+    Description:  Zgrep compressed files for keyword and write to file.
+
+    NOTE:  This is for use on Centos 2.6.X systems and earlier.
+
+    Arguments:
+        (input) file_list -> List of files to search.
+        (input) keyword -> Value to search for.
+        (input) outfile -> File to write the results to.
+
+    """
+
     file_list = list(file_list)
+    cmd = "zgrep"
 
     for fname in file_list:
-        # Zgrep keyword in fname > outfile
+
+        with open(outfile, "wb") as fout:
+
+            # Search for keyword and write to file.
+            P1 = subprocess.Popen([cmd, keyword, infile], stdout=fout)
+            P1.wait()
 
 
 def process_docid(args_array, cfg, fname, log, **kwargs):
@@ -461,6 +481,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         log.log_info("process_docid:  Searching for apache log files...")
         log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
 
+    # Cannot use check_log in Centos 2.6.X and below.
     if sys.version_info >= (2, 7):
         # Create argument list for check_log program.
         search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
