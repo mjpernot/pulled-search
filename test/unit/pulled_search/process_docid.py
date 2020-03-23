@@ -142,6 +142,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_docid(
             self.args_array, self.cfg, self.fname, mock_log), True)
 
+    @mock.patch("pulled_search.platform.linux_distribution",
+                mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
@@ -170,6 +172,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_docid(
             self.args_array2, self.cfg, self.fname, mock_log), True)
 
+    @mock.patch("pulled_search.platform.linux_distribution",
+                mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
@@ -198,6 +202,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_docid(
             self.args_array, self.cfg, self.fname, mock_log), True)
 
+    @mock.patch("pulled_search.platform.linux_distribution",
+                mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
@@ -226,6 +232,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_docid(
             self.args_array, self.cfg, self.fname, mock_log), True)
 
+    @mock.patch("pulled_search.platform.linux_distribution",
+                mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=False))
@@ -254,6 +262,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_docid(
             self.args_array, self.cfg, self.fname, mock_log), False)
 
+    @mock.patch("pulled_search.platform.linux_distribution",
+                mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
@@ -280,6 +290,8 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_docid(
             self.args_array, self.cfg, self.fname, mock_log), True)
 
+    @mock.patch("pulled_search.platform.linux_distribution",
+                mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
