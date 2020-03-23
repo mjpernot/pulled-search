@@ -52,6 +52,7 @@ pipeline {
                 ./test/unit/pulled_search/send_2_rabbitmq.py
                 ./test/unit/pulled_search/setup_mail.py
                 ./test/unit/pulled_search/validate_dirs.py
+                ./test/unit/pulled_search/zgrep_search.py
                 """
             }
         }
