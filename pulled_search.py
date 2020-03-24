@@ -243,10 +243,11 @@ def create_rmq(cfg, q_name, r_key, **kwargs):
 
     """
 
-    return rabbitmq_class.RabbitMQPub(cfg.user, cfg.pswd, cfg.host, cfg.port,
-                                      cfg.exchange_name, cfg.exchange_type,
-                                      q_name, r_key, cfg.x_durable,
-                                      cfg.q_durable, cfg.auto_delete)
+    return rabbitmq_class.RabbitMQPub(
+        cfg.user, cfg.pswd, cfg.host, cfg.port,
+        exchange_name=cfg.exchange_name, exchange_type=cfg.exchange_type,
+        queue_name=q_name, routing_key=r_key, x_durable=cfg.x_durable,
+        q_durable=cfg.q_durable, auto_delete=cfg.auto_delete)
 
 
 # Look at creating a function in RabbitMQ class - setup todo item for this.
