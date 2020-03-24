@@ -278,6 +278,8 @@ def send_2_rabbitmq(cfg, log_json, **kwargs):
     else:
         status = False
 
+    rmq.drop_connection()
+
     return status
 
 
