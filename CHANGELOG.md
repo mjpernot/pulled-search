@@ -9,6 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - zgrep_search:  Zgrep compressed files for keyword and write to file.
 
 ### Changed
+- create_rmq:  Changed several parameters to keyword arguments in rabbitmq_class.RabbitMQPub call.
 - process_docid:  Check for pre-Centos 7 OS to call zgrep_search instead of calling check_log.
 
 
