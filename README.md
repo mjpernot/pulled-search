@@ -1,8 +1,8 @@
-# Python project for searching for entries for a pulled product in log files.
+# Python project for searching for entries for a pulled product in log files and inserting them into a database.
 # Classification (U)
 
 # Description:
-  The pulled_search program is a multi-option program for use with the pulled product process.  It can detect when new pulled product files are created, parse the file, call the check_log program to check log files for the docid in the file, any entries found will be converted into a JSON document and send to a RabbitMQ queue.  It also can detect when new pulled product log files are available to be inserted into a Mongo database.
+  The pulled_search program is a multi-optional program for use with the pulled product process.  It can detect when new pulled product files are created, parse the file, call the search program to check log files for the docid in the file.  Any entries found will be converted into a JSON document and send to a RabbitMQ queue.  The program also has the ability to detect when new search pulled product log entries are available to be inserted into a database.
 
 ###  This README file is broken down into the following sections:
   * Features
@@ -15,10 +15,10 @@
 
 
 # Features:
-  * Monitor a directory for DocID files that will be used to search log files with corresponding log entries.
-  * Parse and convert log entries into a JSON document and send them to a RabbitMQ queue for further processing.
-  * Monitor a directory for Pulled Product json log files.
-  * Parse and convert pulled product json logs and insert them into a Mongodb database.
+  * Monitor directory for DocID files that will be used to search log files with corresponding log entries.
+  * Parse and convert log entries into a JSON document and send them to a RabbitMQ queue.
+  * Monitor directory for Pulled Product searched json log entries.
+  * Parse and convert pulled product json log entries and insert them into a Mongodb database.
 
 
 # Prerequisites:
@@ -79,11 +79,12 @@ cp search.py.TEMPLATE search.py
 
 Make the appropriate changes to the environment.
   * Make the appropriate changes to General setup section.
+  * NOTE:  Required for all setups options.
     - log_file = "DIR_PATH/pulled_search.log"
     - admin_email = "USERNAME@EMAIL_DOMAIN"
 
   * Make the appropriate changes to Process/Search setup section.
-  * NOTE:  Only required if selecting the -P option.
+  * NOTE:  Only required if using the -P option.
     - doc_dir = "DOC_DIR_PATH"
     - file_regex = "_docid.json"
     - log_dir = "LOG_DIR_PATH"
@@ -94,7 +95,7 @@ Make the appropriate changes to the environment.
     - archive_dir = "ARCHIVE_DIR_PATH"
 
   * Make the appropriate changes to RabbitMQ section.
-  * NOTE:  Only required if selecting the -P option.
+  * NOTE:  Only required if using the -P option.
     - user = "USER"
     - pswd = "PSWD"
     - host = "HOSTNAME"
@@ -103,7 +104,7 @@ Make the appropriate changes to the environment.
     - exchange_name = "EXCHANGE_NAME"
 
   * Make the appropriate changes to Insert setup section.
-  * NOTE:  Only required if selecting the -I option.
+  * NOTE:  Only required if using the -I option.
     - monitor_dir = "MONITOR_DIR_PATH"
     - mfile_regex = "_mongo.json"
     - marchive_dir = "ARCHIVE_DIR_PATH"
@@ -121,7 +122,7 @@ cp mongo.py.TEMPLATE mongo.py
 
 Make the appropriate changes to the Mongodb environment.
   * Make the appropriate changes to Mongodb section.
-  * NOTE:  Only required if selecting the -P option.
+  * NOTE:  Only required if using the -P option.
     - user = "USERNAME"
     - passwd = "PASSWORD"
     - host = "HOST_IP"
@@ -212,6 +213,7 @@ test/unit/pulled_search/run_program.py
 test/unit/pulled_search/send_2_rabbitmq.py
 test/unit/pulled_search/setup_mail.py
 test/unit/pulled_search/validate_dirs.py
+test/unit/pulled_search/zgrep_search.py
 ```
 
 ### All unit testing
