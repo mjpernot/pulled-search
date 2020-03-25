@@ -67,6 +67,7 @@ class UnitTest(unittest.TestCase):
 
             Methods:
                 __init__ -> Initialize configuration environment.
+                drop_connection -> Stub holder for drop_connection method.
                 create_connection -> Stub holder for create_connection method.
                 publish_msg -> Stub holder for publish_msg method.
 
@@ -101,6 +102,18 @@ class UnitTest(unittest.TestCase):
                 """
 
                 return self.conn_status, self.err_msg
+
+            def drop_connection(self):
+
+                """Method:  drop_connection
+
+                Description:  Stub holder for drop_connection method.
+
+                Arguments:
+
+                """
+
+                return
 
             def publish_msg(self, msg):
 

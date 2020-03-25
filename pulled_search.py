@@ -159,11 +159,14 @@ import os
 import socket
 import getpass
 import datetime
+import subprocess
 
 # Third-party
 import json
 import calendar
 import re
+import platform
+import decimal
 
 # Local
 import lib.arg_parser as arg_parser
@@ -240,10 +243,11 @@ def create_rmq(cfg, q_name, r_key, **kwargs):
 
     """
 
-    return rabbitmq_class.RabbitMQPub(cfg.user, cfg.pswd, cfg.host, cfg.port,
-                                      cfg.exchange_name, cfg.exchange_type,
-                                      q_name, r_key, cfg.x_durable,
-                                      cfg.q_durable, cfg.auto_delete)
+    return rabbitmq_class.RabbitMQPub(
+        cfg.user, cfg.pswd, cfg.host, cfg.port,
+        exchange_name=cfg.exchange_name, exchange_type=cfg.exchange_type,
+        queue_name=q_name, routing_key=r_key, x_durable=cfg.x_durable,
+        q_durable=cfg.q_durable, auto_delete=cfg.auto_delete)
 
 
 # Look at creating a function in RabbitMQ class - setup todo item for this.
@@ -273,6 +277,8 @@ def send_2_rabbitmq(cfg, log_json, **kwargs):
 
     else:
         status = False
+
+    rmq.drop_connection()
 
     return status
 
@@ -415,6 +421,33 @@ def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
                 if re.search(file_str, x)]
 
 
+def zgrep_search(file_list, keyword, outfile, **kwargs):
+
+    """Function:  zgrep_search
+
+    Description:  Zgrep compressed files for keyword and write to file.
+
+    NOTE:  This is for use on Centos 2.6.X systems and earlier.
+
+    Arguments:
+        (input) file_list -> List of files to search.
+        (input) keyword -> Value to search for.
+        (input) outfile -> File to write the results to.
+
+    """
+
+    file_list = list(file_list)
+    cmd = "zgrep"
+
+    for fname in file_list:
+
+        with open(outfile, "ab") as fout:
+
+            # Search for keyword and write to file.
+            P1 = subprocess.Popen([cmd, keyword, fname], stdout=fout)
+            P1.wait()
+
+
 def process_docid(args_array, cfg, fname, log, **kwargs):
 
     """Function:  process_docid
@@ -454,11 +487,23 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         log.log_info("process_docid:  Searching for apache log files...")
         log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
 
-    # Create argument list for check_log program.
-    search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
-                   "-k": "or", "-o": cfg.outfile, "-z": True}
-    log.log_info("process_docid:  Running check_log search...")
-    check_log.run_program(search_args)
+    is_centos = \
+        True if "centos" in platform.linux_distribution()[0].lower() else False
+    is_pre_7 = \
+        decimal.Decimal(platform.linux_distribution()[1]) < \
+        decimal.Decimal('7.0')
+
+    # Must use zgrep searching in pre-Centos 7 versions.
+    if is_centos and is_pre_7:
+        log.log_info("process_docid:  Running zgrep search...")
+        zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
+
+    else:
+        # Create argument list for check_log program.
+        search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
+                       "-k": "or", "-o": cfg.outfile, "-z": True}
+        log.log_info("process_docid:  Running check_log search...")
+        check_log.run_program(search_args)
 
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")
