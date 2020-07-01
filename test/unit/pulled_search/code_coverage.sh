@@ -28,7 +28,6 @@ coverage run -a --source=pulled_search test/unit/pulled_search/process_insert.py
 coverage run -a --source=pulled_search test/unit/pulled_search/process_list.py
 coverage run -a --source=pulled_search test/unit/pulled_search/run_program.py
 coverage run -a --source=pulled_search test/unit/pulled_search/send_2_rabbitmq.py
-coverage run -a --source=pulled_search test/unit/pulled_search/setup_mail.py
 coverage run -a --source=pulled_search test/unit/pulled_search/validate_dirs.py
 coverage run -a --source=pulled_search test/unit/pulled_search/zgrep_search.py
 
