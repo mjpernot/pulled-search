@@ -3,26 +3,37 @@
 
 """Program:  pulled_search.py
 
-    Description:  The pulled_search program monitors for new files that contain
-        docids.  Once detected will search the Apache log files for any entries
-        and if detected will send these log entries to a RabbitMQ queue.
+    Description:  The pulled_search program is a multi-optional program for use
+        with the pulled product process.  It can detect when new pulled product
+        files are created, parse the file, call the search program to check log
+        files for the docid in the file.  Any entries found will be converted
+        into a JSON document and send to a RabbitMQ queue.  The program also
+        has the ability to detect when new search pulled product log entries
+        are available to be inserted into a database.
 
     Usage:
-        pulled_search.py -c file -d path [-m path | -n path | -z | -P | -I |
-            -y flavor_id | -a] [-t email {email2 email3 ...} {-s subject_line}]
+        pulled_search.py -c file -d path
+            {-P [-m path] [-z] [-a] | -I [-n path]}
+            [-t email {email2 email3 ...} {-s subject_line}]
+            [-y flavor_id]
             [-v | -h]
 
     Arguments:
-        -P => Process Doc ID files send to RabbitMQ.
-        -I => Insert Pulled Search files into Mongodb.
         -c file => Configuration file.  Required argument.
         -d dir_path => Directory path for option '-c'.  Required argument.
+        -P => Process Doc ID files send to RabbitMQ.
         -m dir_path => Directory to monitor for doc ID files.
-        -n dir_path => Directory to monitor for pulled search files.
+            Used for the -P option.
         -a => This is an archive log search.
+            Used for the -P option.
         -z => Use the zgrep option instead of check_log to check GZipped files.
+            Used for the -P option.
+        -I => Insert Pulled Search files into Mongodb.
+        -n dir_path => Directory to monitor for pulled search files.
+            Used for the -I option.
         -t email_address(es) => Send output to one or more email addresses.
-        -s subject_line => Subject line of email.  Requires -t option.
+        -s subject_line => Subject line of email.
+            Requires -t option.
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
@@ -138,9 +149,6 @@
             db_auth = None
 
     Examples:
-        pulled_search.py -c search -d /opt/local/pulled/config -P
-            -t Mark.J.Pernot@coe.ic.gov -s Pulled Search Notification
-
         pulled_search.py -c search -d /opt/local/pulled/config -P
             -t Mark.J.Pernot@coe.ic.gov -s Pulled Search Notification
 
