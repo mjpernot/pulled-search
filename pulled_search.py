@@ -584,6 +584,7 @@ def setup_mail(args_array, subj=None, **kwargs):
     mail = None
 
     if args_array.get("-t", None):
+
         mail = gen_class.setup_mail(args_array.get("-t"),
                                     subj=args_array.get("-s", subj))
 
@@ -876,7 +877,6 @@ def run_program(args_array, func_dict, **kwargs):
             log.log_err("Message: %s" % (msg_dict))
 
         else:
-            # Determine which functions to call.
             for opt in set(args_array.keys()) & set(func_dict.keys()):
                 func_dict[opt](args_array, cfg, log)
 
