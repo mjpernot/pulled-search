@@ -7,8 +7,6 @@
 # Logger file for the storage of log entries.
 # File name including directory path.
 log_file = "DIR_PATH/pulled_search.log"
-# Administrator email for reporting errors detected during the program run.
-admin_email = "USERNAME@EMAIL_DOMAIN"
 
 # Pulled Search Process Configuration section.
 # Update this section if using the -P option.
