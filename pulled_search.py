@@ -53,6 +53,7 @@
         configuration file format for the environment setup in the program.
 
             # Pulled Search General Configuration section.
+            # This section is for either the -P or -I option.
             # Logger file for the storage of log entries.
             # File name including directory path.
             log_file = "DIR_PATH/pulled_search.log"
@@ -61,6 +62,7 @@
             admin_email = "USERNAME@EMAIL_DOMAIN"
 
             # Pulled Search Process Configuration section.
+            # Update this section if using the -P option.
             # Directory where docid files to be processed are.
             doc_dir = "DOC_DIR_PATH"
             # Regular expression for search for log file names.
@@ -81,13 +83,14 @@
             error_dir = "ERROR_DIR_PATH"
 
             # Pulled Search Process/RabbitMQ Configuration section.
+            # Update this section if using the -P option.
             user = "USER"
             pswd = "PSWD"
             host = "HOSTNAME"
             # RabbitMQ Queue name.
             queue = "QUEUENAME"
-            # RabbitMQ R-Key name (normally same as queue name).
-            r_key = "RKEYNAME"
+            # RabbitMQ Routing Key
+            r_key = "ROUTING_KEY"
             # RabbitMQ Exchange name for each instance run.
             exchange_name = "EXCHANGE_NAME"
             # RabbitMQ listening port, default is 5672.
@@ -103,6 +106,7 @@
             auto_delete = False
 
             # Pulled Search Insert Configuration section.
+            # Update this section if using the -I option.
             # Directory where to monitor for new files to insert into Mongodb.
             monitor_dir = "MONITOR_DIR_PATH"
             # Regular expression for search for Insert/Mongodb file names.
@@ -121,6 +125,7 @@
 
         Configuration file (config/mongo.py.TEMPLATE).  Below is the
         configuration file format for the Mongo instance setup.
+            Update this file if using the -I option.
 
             # Pulled Search Insert/Mongo DB Configuration section.
             user = "USERNAME"
