@@ -42,6 +42,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_with_preamble -> Test with pre-amble subject.
         test_with_no_mail -> Test with no mail setup.
         test_nonprocessed_files -> Test with nonprocessed files.
         test_no_log_files -> Test with no log files detected.
@@ -90,6 +91,28 @@ class UnitTest(unittest.TestCase):
         self.log_files = ["/path/logfile1", "/path/logfile2"]
         self.args_array = {"-t": "name@domain"}
         self.args_array2 = {}
+        self.args_array3 = {"-t": "name@domain", "-s": "Pre-amble: "}
+
+    @mock.patch("pulled_search.gen_class.setup_mail",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_with_preamble(self, mock_log):
+
+        """Function:  test_with_preamble
+
+        Description:  Test with pre-amble subject.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertFalse(pulled_search.process_files(self.args_array3,
+                                                     self.cfg, mock_log))
 
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
