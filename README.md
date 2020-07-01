@@ -71,22 +71,18 @@ pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host
 
 # Configuration:
 
-Initialize configuration file.
-```
-cd config
-cp search.py.TEMPLATE search.py
-```
+### Initialize configuration file.
 
 Make the appropriate changes to the environment.
   * Make the appropriate changes to General setup section.
-  * NOTE:  Required for all setups options.
+  * This section is for either the -P or -I option.
     - log_file = "DIR_PATH/pulled_search.log"
     - admin_email = "USERNAME@EMAIL_DOMAIN"
 
   * Make the appropriate changes to Process/Search setup section.
-  * NOTE:  Only required if using the -P option.
+  * Update this section if using the -P option.
     - doc_dir = "DOC_DIR_PATH"
-    - file_regex = "_docid.json"
+    - file_regex = "\_docid.json"
     - log_dir = "LOG_DIR_PATH"
     - log_type = "access_log"
     - outfile = "DIR_PATH/checklog.out"
@@ -95,34 +91,33 @@ Make the appropriate changes to the environment.
     - archive_dir = "ARCHIVE_DIR_PATH"
 
   * Make the appropriate changes to RabbitMQ section.
-  * NOTE:  Only required if using the -P option.
+  * Update this section if using the -P option.
     - user = "USER"
     - pswd = "PSWD"
     - host = "HOSTNAME"
     - queue = "QUEUENAME"
-    - r_key = "RKEYNAME" (Normally the same as the queue name.)
+    - r_key = "ROUTING_KEY"
     - exchange_name = "EXCHANGE_NAME"
 
   * Make the appropriate changes to Insert setup section.
-  * NOTE:  Only required if using the -I option.
+  * Update this section if using the -I option.
     - monitor_dir = "MONITOR_DIR_PATH"
     - mfile_regex = "_mongo.json"
     - marchive_dir = "ARCHIVE_DIR_PATH"
     - merror_dir = "ERROR_DIR_PATH"
 
 ```
+cd config
+cp search.py.TEMPLATE search.py
 vim search.py
 chmod 600 search.py
 ```
 
-Initialize Mongo configuration file.
-```
-cp mongo.py.TEMPLATE mongo.py
-```
+### Initialize Mongo configuration file.
 
 Make the appropriate changes to the Mongodb environment.
   * Make the appropriate changes to Mongodb section.
-  * NOTE:  Only required if using the -P option.
+  * Update this section if using the -I option.
     - user = "USERNAME"
     - passwd = "PASSWORD"
     - host = "HOST_IP"
@@ -133,6 +128,7 @@ Make the appropriate changes to the Mongodb environment.
     - db_auth = None
 
 ```
+cp mongo.py.TEMPLATE mongo.py
 vim mongo.py
 chmod 600 mongo.py
 ```
@@ -151,8 +147,6 @@ chmod 600 mongo.py
 # Testing:
 
 # Unit Testing:
-
-### Description: Testing consists of unit testing for the functions in the pulled_search.py program.
 
 ### Installation:
 
@@ -186,43 +180,17 @@ pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi
 pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
-# Unit test runs for pulled_search.py:
+### Testing:
   * Replace **{Python_Project}** with the baseline path of the python program.
 
 ```
 cd {Python_Project}/pulled-search
-test/unit/pulled_search/checks_dirs.py
-test/unit/pulled_search/cleanup_files.py
-test/unit/pulled_search/config_override.py
-test/unit/pulled_search/create_json.py
-test/unit/pulled_search/create_rmq.py
-test/unit/pulled_search/date_range.py
-test/unit/pulled_search/dir_file_search.py
-test/unit/pulled_search/get_archive_files.py
-test/unit/pulled_search/help_message.py
-test/unit/pulled_search/insert_data.py
-test/unit/pulled_search/main.py
-test/unit/pulled_search/mvalidate_dirs.py
-test/unit/pulled_search/month_days.py
-test/unit/pulled_search/non_processed.py
-test/unit/pulled_search/process_docid.py
-test/unit/pulled_search/process_files.py
-test/unit/pulled_search/process_insert.py
-test/unit/pulled_search/process_list.py
-test/unit/pulled_search/run_program.py
-test/unit/pulled_search/send_2_rabbitmq.py
-test/unit/pulled_search/setup_mail.py
-test/unit/pulled_search/validate_dirs.py
-test/unit/pulled_search/zgrep_search.py
-```
-
-### All unit testing
-```
 test/unit/pulled_search/unit_test_run.sh
 ```
 
-### Code coverage program
+### Code coverage:
 ```
+cd {Python_Project}/pulled-search
 test/unit/pulled_search/code_coverage.sh
 ```
 
