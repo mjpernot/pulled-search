@@ -69,6 +69,7 @@ class UnitTest(unittest.TestCase):
         self.dt1 = datetime.datetime.strptime("20200201", "%Y%m%d")
         self.dt2 = datetime.datetime.strptime("20200301", "%Y%m%d")
         self.range = [self.dt1.date(), self.dt2.date()]
+        self.range2 = [self.dt1.date()]
         self.subresult1 = ["/dir/archive/command/2020/02/file1.txt",
                            "/dir/archive/command/2020/02/file2.txt"]
         self.subresult2 = ["/dir/archive/command/2020/03/file3.txt",
@@ -76,8 +77,32 @@ class UnitTest(unittest.TestCase):
         self.results = []
         self.results = self.results + self.subresult1
         self.results = self.results + self.subresult2
+        self.results2 = []
+        self.results2 = self.results2 + self.subresult1
 
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.date_range")
+    @mock.patch("pulled_search.datetime.datetime")
+    def test_one_month(self, mock_now, mock_range, mock_search):
+
+        """Function:  test_one_month
+
+        Description:  Test with data from one month.
+
+        Arguments:
+
+        """
+
+        mock_now.now.return_value = self.now_dt
+        mock_range.return_value = self.range2
+        mock_search.return_value = self.subresult1
+
+        self.assertEqual(
+            pulled_search.get_archive_files(self.archive_dir, self.cmd,
+                                            self.pubdate, self.cmd_regex),
+            self.results2)
+
+    @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.date_range")
     @mock.patch("pulled_search.datetime.datetime")
     def test_two_months(self, mock_now, mock_range, mock_search):
