@@ -679,7 +679,12 @@ def process_files(args_array, cfg, log, **kwargs):
     """
 
     args_array = dict(args_array)
-    mail = setup_mail(args_array, subj="Non-processed files")
+    mail = None
+
+    if args_array.get("-t", False):
+        mail = gen_class.setup_mail(args_array.get("-t"),
+                                    subj="Non-processed files")
+
     log.log_info("process_files:  Processing files to search...")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
     remove_list = process_list(args_array, cfg, log, docid_files, "search")
