@@ -684,10 +684,10 @@ def insert_data(args_array, cfg, log, **kwargs):
 
     args_array = dict(args_array)
     mail = None
+    subj = args_array.get("-s", "") + "Non-processed files"
 
     if args_array.get("-t", False):
-        mail = gen_class.setup_mail(args_array.get("-t"),
-                                    subj="Non-processed files")
+        mail = gen_class.setup_mail(args_array.get("-t"), subj=subj)
 
     log.log_info("insert_data:  Processing files to insert...")
     insert_list = dir_file_search(cfg.monitor_dir,

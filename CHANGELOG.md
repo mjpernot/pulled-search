@@ -8,7 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_list:  Fixed log entries.
 
 ### Changed
-- insert_data:  Replaced setup_mail call with gen_class.setup_mail call.
+- insert_data:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
 - process_files:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
 - config/search.py.TEMPLATE:  Removed admin_email entry.
 - run_program:  Removed admin emails and replaced with print commands or log entries.
