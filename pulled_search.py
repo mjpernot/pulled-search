@@ -616,18 +616,18 @@ def process_list(args_array, cfg, log, file_list, action, **kwargs):
     file_list = list(file_list)
 
     for fname in file_list:
-        log.log_info("process_docids:  Processing file: %s" % (fname))
+        log.log_info("process_list:  Processing file: %s" % (fname))
 
         if action == "search":
-            log.log_info("process_docids:  Action: search")
+            log.log_info("process_list:  Action: search")
             status = process_docid(args_array, cfg, fname, log)
 
         elif action == "insert":
-            log.log_info("process_docids:  Action: insert")
+            log.log_info("process_list:  Action: insert")
             status = process_insert(args_array, cfg, fname, log)
 
         else:
-            log.log_warn("process_docids:  Incorrect or no action detected: %s"
+            log.log_warn("process_list:  Incorrect or no action detected: %s"
                          % (action))
             status = False
 
