@@ -88,8 +88,31 @@ class UnitTest(unittest.TestCase):
 
         self.cfg = CfgTest()
         self.args_array = {"-t": "name@domain"}
+        self.args_array2 = {}
 
-    @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.setup_mail",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_with_no_mail(self, mock_log):
+
+        """Function:  test_with_no_mail
+
+        Description:  Test with no mail setup.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertFalse(pulled_search.insert_data(self.args_array2, self.cfg,
+                                                   mock_log))
+
+    @mock.patch("pulled_search.gen_class.setup_mail",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
@@ -106,7 +129,8 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.insert_data({}, self.cfg, mock_log))
 
-    @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.setup_mail",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
@@ -123,7 +147,8 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.insert_data({}, self.cfg, mock_log))
 
-    @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.setup_mail",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
@@ -143,7 +168,8 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(pulled_search.insert_data(self.args_array, self.cfg,
                                                    mock_log))
 
-    @mock.patch("pulled_search.setup_mail", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.setup_mail",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
