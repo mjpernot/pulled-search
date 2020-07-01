@@ -51,70 +51,6 @@ def process_files(args_array, cfg, log, **kwargs):
     pass
 
 
-class MailTest(object):
-
-    """Class:  MailTest
-
-    Description:  Class which is a representation of a Mail class.
-
-    Methods:
-        __init__ -> Initialize configuration environment.
-        add_2_msg -> Stub holder for Mail.add_2_msg method.
-        send_mail -> Stub holder for Mail.send_mail method.
-
-    """
-
-    def __init__(self):
-
-        """Method:  __init__
-
-        Description:  Initialization instance of the LoggerTest class.
-
-        Arguments:
-
-        """
-
-        pass
-
-    def add_2_msg(self, data):
-
-        """Method:  add_2_msg
-
-        Description:  Stub holder for Mail.add_2_msg method.
-
-        Arguments:
-            (input) data -> Data string.
-
-        """
-
-        pass
-
-    def send_mail(self):
-
-        """Method:  send_mail
-
-        Description:  Stub holder for Mail.send_mail method.
-
-        Arguments:
-
-        """
-
-        pass
-
-
-def setup_mail():
-
-    """Method:  setup_mail
-
-    Description:  Stub holder for gen_class.setup_mail function.
-
-    Arguments:
-
-    """
-
-    return MailTest()
-
-
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -212,12 +148,10 @@ class UnitTest(unittest.TestCase):
                 """
 
                 self.docid_dir = "/dir/path/docid_dir"
-                self.admin_email = "name@domain"
                 self.log_file = "/dir/path/log_file"
 
         self.cfg = CfgTest()
         self.log = LoggerTest()
-        self.setupmail = setup_mail()
         self.func_dict = {"-P": process_files}
         self.args_array = {"-c": "configfile", "-d": "/dir/config"}
         self.args_array2 = {"-c": "configfile", "-d": "/dir/config",
@@ -230,11 +164,9 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.config_override")
-    @mock.patch("pulled_search.gen_class.setup_mail")
     @mock.patch("pulled_search.gen_libs.load_module")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_validation_failure(self, mock_log, mock_cfg, mock_mail,
-                                mock_override):
+    def test_validation_failure(self, mock_log, mock_cfg, mock_override):
 
         """Function:  test_validation_failure
 
@@ -244,7 +176,6 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_mail.return_value = self.setupmail
         mock_log.return_value = self.log
         mock_cfg.return_value = self.cfg
         mock_override.return_value = self.cfg
@@ -256,8 +187,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(False, "Error Message")))
     @mock.patch("pulled_search.config_override")
     @mock.patch("pulled_search.gen_libs.load_module")
-    @mock.patch("pulled_search.gen_class.setup_mail")
-    def test_status_false(self, mock_mail, mock_cfg, mock_override):
+    def test_status_false(self, mock_cfg, mock_override):
 
         """Function:  test_status_false
 
@@ -267,12 +197,12 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_mail.return_value = self.setupmail
         mock_cfg.return_value = self.cfg
         mock_override.return_value = self.cfg
 
-        self.assertFalse(pulled_search.run_program(self.args_array,
-                                                   self.func_dict))
+        with gen_libs.no_std_out():
+            self.assertFalse(pulled_search.run_program(self.args_array,
+                                                       self.func_dict))
 
     @mock.patch("pulled_search.checks_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
