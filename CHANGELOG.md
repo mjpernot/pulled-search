@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_list:  Fixed log entries.
 
 ### Changed
+- run_program:  Removed admin emails and replaced with print commands or log entries.
 - Documentation updates.
 
 

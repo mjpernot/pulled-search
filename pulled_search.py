@@ -57,9 +57,6 @@
             # Logger file for the storage of log entries.
             # File name including directory path.
             log_file = "DIR_PATH/pulled_search.log"
-            # Administrator email for reporting errors detected during the
-            #   program run.
-            admin_email = "USERNAME@EMAIL_DOMAIN"
 
             # Pulled Search Process Configuration section.
             # Update this section if using the -P option.
@@ -877,10 +874,6 @@ def run_program(args_array, func_dict, **kwargs):
         if msg_dict:
             log.log_err("Validation of configuration directories failed")
             log.log_err("Message: %s" % (msg_dict))
-            mail = gen_class.setup_mail(cfg.admin_email,
-                                        subj="Directory Check Failure")
-            mail.add_2_msg(msg_dict)
-            mail.send_mail()
 
         else:
             # Determine which functions to call.
@@ -888,10 +881,8 @@ def run_program(args_array, func_dict, **kwargs):
                 func_dict[opt](args_array, cfg, log)
 
     else:
-        mail = gen_class.setup_mail(cfg.admin_email,
-                                    subj="Logger Directory Check Failure")
-        mail.add_2_msg(err_msg)
-        mail.send_mail()
+        print("Error:  Logger Directory Check Failure")
+        print("Error Message: %s" % (err_msg))
 
 
 def main():
