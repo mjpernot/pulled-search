@@ -32,7 +32,7 @@
         -n dir_path => Directory to monitor for pulled search files.
             Used for the -I option.
         -t email_address(es) => Send output to one or more email addresses.
-        -s subject_line => Subject line of email.
+        -s subject_line => Pre-amble to the subject line of email.
             Requires -t option.
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
@@ -657,10 +657,10 @@ def process_files(args_array, cfg, log, **kwargs):
 
     args_array = dict(args_array)
     mail = None
+    subj = args_array.get("-s", "") + "Non-processed files"
 
     if args_array.get("-t", False):
-        mail = gen_class.setup_mail(args_array.get("-t"),
-                                    subj="Non-processed files")
+        mail = gen_class.setup_mail(args_array.get("-t"), subj=subj)
 
     log.log_info("process_files:  Processing files to search...")
     docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
