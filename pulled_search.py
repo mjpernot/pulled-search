@@ -568,29 +568,6 @@ def process_insert(args_array, cfg, fname, log, **kwargs):
     return status
 
 
-def setup_mail(args_array, subj=None, **kwargs):
-
-    """Function:  setup_mail
-
-    Description:  Processes the docid files.
-
-    Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) subj -> Email subject line.
-        (output) mail -> Mail instance.
-
-    """
-
-    mail = None
-
-    if args_array.get("-t", None):
-
-        mail = gen_class.setup_mail(args_array.get("-t"),
-                                    subj=args_array.get("-s", subj))
-
-    return mail
-
-
 def process_list(args_array, cfg, log, file_list, action, **kwargs):
 
     """Function:  process_list

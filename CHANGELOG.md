@@ -14,6 +14,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_program:  Removed admin emails and replaced with print commands or log entries.
 - Documentation updates.
 
+### Removed
+- setup_mail function.
+
 
 ## [0.1.1] - 2020-03-20
 
