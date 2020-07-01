@@ -20,6 +20,9 @@
   * Monitor directory for Pulled Product searched json log entries.
   * Parse and convert pulled product json log entries and insert them into a Mongodb database.
 
+### Notes:
+  *  The monitor and insert into Mongo database option (-I option) is normally used in conjunction with the rmq-sysmon program.  The rmq-sysmon program is used to monitor RabbitMQ queues and write messages in the queue out to a file.
+
 
 # Prerequisites:
 
