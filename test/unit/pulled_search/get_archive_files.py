@@ -81,7 +81,7 @@ class UnitTest(unittest.TestCase):
         self.results2 = self.results2 + self.subresult1
 
     @mock.patch("pulled_search.gen_libs.filename_search")
-    @mock.patch("pulled_search.date_range")
+    @mock.patch("pulled_search.gen_libs.date_range")
     @mock.patch("pulled_search.datetime.datetime")
     def test_one_month(self, mock_now, mock_range, mock_search):
 
@@ -103,7 +103,7 @@ class UnitTest(unittest.TestCase):
             self.results2)
 
     @mock.patch("pulled_search.gen_libs.filename_search")
-    @mock.patch("pulled_search.date_range")
+    @mock.patch("pulled_search.gen_libs.date_range")
     @mock.patch("pulled_search.datetime.datetime")
     def test_two_months(self, mock_now, mock_range, mock_search):
 
