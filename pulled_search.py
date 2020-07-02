@@ -266,22 +266,6 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
 
 
 #Remove once completed testing.
-def month_days(dt, **kwargs):
-
-    """Function:  month_days
-
-    Description:  Return the number of days in the month for the date.
-
-    Arguments:
-        (input) dt -> Date, must be a datetime class instance.
-        (output) -> Number of days in the month for the date.
-
-    """
-
-    return calendar.monthrange(dt.year, dt.month)[1]
-
-
-#Remove once completed testing.
 def date_range(start_dt, end_dt, **kwargs):
 
     """Function:  date_range
