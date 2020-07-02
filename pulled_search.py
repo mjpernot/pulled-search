@@ -495,8 +495,10 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     else:
         log.log_info("process_docid:  Searching for apache log files...")
-        log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
+        log_files = gen_libs.filename_search(cfg.log_dir, cmd_regex,
+                                             add_path=True)
 
+    # Determine if running on a pre-7 CentOS system.
     is_centos = \
         True if "centos" in platform.linux_distribution()[0].lower() else False
     is_pre_7 = \
