@@ -116,7 +116,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '6.10')))
     @mock.patch("pulled_search.zgrep_search",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -146,7 +147,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -176,7 +178,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -206,7 +209,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(False, "Error Message")))
@@ -236,7 +240,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=False))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(False, "Error Message")))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -294,7 +299,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
