@@ -84,11 +84,11 @@ class UnitTest(unittest.TestCase):
         self.file_log = ["line1", "line2", "line3"]
         self.docid_dict = {"docid": "weotiuer", "command": "COMMAND",
                            "pubdate": "20200102-101134"}
-        self.results = {"docID": "weotiuer", "command": "COMMAND",
-                        "pubDate": "20200102-101134",
-                        "securityEnclave": "ENCLAVE",
-                        "asOf": "20200306 084503", "serverName": "SERVERNAME",
-                        "logEntries": ["line1", "line2", "line3"]}
+        self.results = {"DocID": "weotiuer", "Command": "COMMAND",
+                        "PubDate": "20200102-101134",
+                        "SecurityEnclave": "ENCLAVE",
+                        "AsOf": "20200306 084503", "ServerName": "SERVERNAME",
+                        "LogEntries": ["line1", "line2", "line3"]}
         self.indate = "20200306 084503"
 
     @mock.patch("pulled_search.socket.gethostname",
