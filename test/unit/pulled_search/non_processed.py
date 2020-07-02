@@ -111,7 +111,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.mail = Mail()
-        self.docid_files = ["/tmp/a", "/tmp/b"]
+        self.docid_files = ["/dir/a", "/dir/b"]
         self.docid_files2 = []
         self.error_dir = "/dir/error_dir"
 
