@@ -237,38 +237,6 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
             mail.send_mail()
 
 
-#Remove once completed testing.
-def send_2_rabbitmq(cfg, log_json, **kwargs):
-
-    """Function:  send_2_rabbitmq
-
-    Description:  Connect to RabbitMQ and publish message.
-
-    Arguments:
-        (input) cfg -> Configuration settings module for the program.
-        (input) log_json -> JSON document of log entries.
-        (output) status -> True|False - Success of publishing to RabbitMQ.
-
-    """
-
-    rmq = create_rmq(cfg, cfg.queue, cfg.r_key)
-    connect_status, err_msg = rmq.create_connection()
-
-    if connect_status and rmq.channel.is_open:
-        if rmq.publish_msg(log_json):
-            status = True
-
-        else:
-            status = False
-
-    else:
-        status = False
-
-    rmq.drop_connection()
-
-    return status
-
-
 def create_json(cfg, docid_dict, file_log, **kwargs):
 
     """Function:  create_json

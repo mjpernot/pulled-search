@@ -24,6 +24,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Documentation updates.
 
 ### Removed
+- send_2_rabbitmq function.
 - create_rmq function.
 - setup_mail function.
 
