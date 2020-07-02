@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_list:  Fixed log entries.
 
 ### Changed
+- process_docid:  Implemented the -z option to use the zgrep search capability.
 - process_docid:  Added check on return status from rabbitmq_class.pub_2_rmq.
 - process_docid:  Replaced send_2_rabbitmq call with rabbitmq_class.pub_2_rmq call.
 - create_json:  Changed JSON document to CamelCase.

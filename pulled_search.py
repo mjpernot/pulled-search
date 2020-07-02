@@ -237,8 +237,7 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
             mail.send_mail()
 
 
-# Look at creating a function in RabbitMQ class - setup todo item for this.
-# See mail_2_rmq.create_rq for details too.
+#Remove once completed testing.
 def create_rmq(cfg, q_name, r_key, **kwargs):
 
     """Function:  create_rmq
@@ -260,8 +259,7 @@ def create_rmq(cfg, q_name, r_key, **kwargs):
         q_durable=cfg.q_durable, auto_delete=cfg.auto_delete)
 
 
-# Look at creating a function in RabbitMQ class - setup todo item for this.
-# See mail_2_rmq.connect_process for details too.
+#Remove once completed testing.
 def send_2_rabbitmq(cfg, log_json, **kwargs):
 
     """Function:  send_2_rabbitmq
@@ -505,8 +503,8 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
         decimal.Decimal(platform.linux_distribution()[1]) < \
         decimal.Decimal('7.0')
 
-    # Must use zgrep searching in pre-Centos 7 versions.
-    if is_centos and is_pre_7:
+    # Must use zgrep searching in pre-7 Centos systems.
+    if args_array.get("-z", False) or (is_centos and is_pre_7):
         log.log_info("process_docid:  Running zgrep search...")
         zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
 
