@@ -394,7 +394,7 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
     end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
 
-    for x in date_range(start_dt, end_dt):
+    for x in gen_libs.date_range(start_dt, end_dt):
         yearmon = datetime.date.strftime(x, "%Y/%m")
         full_dir = os.path.join(cmd_dir, yearmon)
         log_files = log_files + gen_libs.filename_search(
