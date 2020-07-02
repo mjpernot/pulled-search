@@ -403,7 +403,7 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     return log_files
 
 
-# Move to python-lib.gen_libs.py.
+#Remove once completed testing.
 def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
 
     """Function:  dir_file_search
