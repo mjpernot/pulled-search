@@ -310,13 +310,13 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     docid_dict = dict(docid_dict)
     file_log = list(file_log)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
-    log_json = {"docID": docid_dict["docid"],
-                "command": docid_dict["command"],
-                "pubDate": docid_dict["pubdate"],
-                "securityEnclave": cfg.enclave,
-                "asOf": dtg,
-                "serverName": socket.gethostname(),
-                "logEntries": file_log}
+    log_json = {"DocID": docid_dict["docid"],
+                "Command": docid_dict["command"],
+                "PubDate": docid_dict["pubdate"],
+                "SecurityEnclave": cfg.enclave,
+                "AsOf": dtg,
+                "ServerName": socket.gethostname(),
+                "LogEntries": file_log}
 
     return log_json
 
