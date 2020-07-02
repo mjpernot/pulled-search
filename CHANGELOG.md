@@ -9,7 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ### Changed
 - process_docid:  Implemented the -z option to use the zgrep search capability.
-- process_docid:  Added a check on return status from rabbitmq_class.pub_2_rmq.
+- process_docid:  Added check on return status from rabbitmq_class.pub_2_rmq.
 - process_docid:  Replaced send_2_rabbitmq call with rabbitmq_class.pub_2_rmq call.
 - create_json:  Changed JSON document to CamelCase.
 - get_archive_files:  Replaced date_range call with gen_libs.date_range call.
