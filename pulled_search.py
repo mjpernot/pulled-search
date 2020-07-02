@@ -238,28 +238,6 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
 
 
 #Remove once completed testing.
-def create_rmq(cfg, q_name, r_key, **kwargs):
-
-    """Function:  create_rmq
-
-    Description:  Create and return a RabbitMQ Publisher instance.
-
-    Arguments:
-        (input) cfg -> Configuration settings module for the program.
-        (input) q_name -> Queue name in RabbitMQ.
-        (input) r_key -> Routing key in RabbitMQ.
-        (output) RabbitMQ Publisher instance.
-
-    """
-
-    return rabbitmq_class.RabbitMQPub(
-        cfg.user, cfg.pswd, cfg.host, cfg.port,
-        exchange_name=cfg.exchange_name, exchange_type=cfg.exchange_type,
-        queue_name=q_name, routing_key=r_key, x_durable=cfg.x_durable,
-        q_durable=cfg.q_durable, auto_delete=cfg.auto_delete)
-
-
-#Remove once completed testing.
 def send_2_rabbitmq(cfg, log_json, **kwargs):
 
     """Function:  send_2_rabbitmq
