@@ -51,7 +51,6 @@ pipeline {
                 ./test/unit/pulled_search/process_insert.py
                 ./test/unit/pulled_search/process_list.py
                 ./test/unit/pulled_search/run_program.py
-                ./test/unit/pulled_search/send_2_rabbitmq.py
                 ./test/unit/pulled_search/validate_dirs.py
                 ./test/unit/pulled_search/zgrep_search.py
                 deactivate
