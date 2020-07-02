@@ -693,8 +693,8 @@ def insert_data(args_array, cfg, log, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-t"), subj=subj)
 
     log.log_info("insert_data:  Processing files to insert...")
-    insert_list = dir_file_search(cfg.monitor_dir,
-                                  cfg.mfile_regex, add_path=True)
+    insert_list = gen_libs.filename_search(cfg.monitor_dir, cfg.mfile_regex,
+                                           add_path=True)
     remove_list = process_list(args_array, cfg, log, insert_list, "insert")
     insert_list = cleanup_files(insert_list, remove_list, cfg.marchive_dir,
                                 log)

@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_list:  Fixed log entries.
 
 ### Changed
+- insert_data:  Replaced dir_file_search call with gen_libs.filename_search call.
 - process_files:  Replaced dir_file_search call with gen_libs.filename_search call.
 - process_docid:  Replaced dir_file_search call with gen_libs.filename_search call.
 - get_archive_files:  Replaced dir_file_search call with gen_libs.filename_search call.
