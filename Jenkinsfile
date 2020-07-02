@@ -44,7 +44,6 @@ pipeline {
                 ./test/unit/pulled_search/insert_data.py
                 ./test/unit/pulled_search/main.py
                 ./test/unit/pulled_search/mvalidate_dirs.py
-                ./test/unit/pulled_search/month_days.py
                 ./test/unit/pulled_search/non_processed.py
                 ./test/unit/pulled_search/process_docid.py
                 ./test/unit/pulled_search/process_files.py
