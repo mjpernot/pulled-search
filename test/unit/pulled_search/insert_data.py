@@ -97,7 +97,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.gen_libs.filename_search",
+                mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_preamble(self, mock_log):
 
@@ -118,7 +119,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.gen_libs.filename_search",
+                mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_no_mail(self, mock_log):
 
@@ -139,7 +141,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.gen_libs.filename_search",
+                mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_nonprocessed_files(self, mock_log):
 
@@ -157,7 +160,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.gen_libs.filename_search",
+                mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_no_log_files(self, mock_log):
 
@@ -175,7 +179,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.gen_libs.filename_search",
+                mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_mail(self, mock_log):
 
@@ -196,7 +201,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.dir_file_search", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.gen_libs.filename_search",
+                mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_data(self, mock_log):
 
