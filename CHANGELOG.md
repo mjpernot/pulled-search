@@ -24,6 +24,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Documentation updates.
 
 ### Removed
+- date_range function.
 - month_days function.
 - send_2_rabbitmq function.
 - create_rmq function.

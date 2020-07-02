@@ -265,43 +265,6 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     return log_json
 
 
-#Remove once completed testing.
-def date_range(start_dt, end_dt, **kwargs):
-
-    """Function:  date_range
-
-    Description:  Generators a list of year-month combinations between two
-        dates.
-        NOTE:  The day will be included in the datetime instance, but all days
-            will be set to the beginning of each month (e.g. YYYY-MM-01).
-
-    Arguments:
-        (input) start_dt -> Start date - datetime class instance.
-        (input) end_dt -> End date - datetime class instance.
-        (output) Generator list of datetime instances.
-
-    """
-
-    start_dt = start_dt.replace(day=1)
-    end_dt = end_dt.replace(day=1)
-    forward = end_dt >= start_dt
-    finish = False
-    dt = start_dt
-
-    while not finish:
-        yield dt.date()
-
-        if forward:
-            days = month_days(dt)
-            dt = dt + datetime.timedelta(days=days)
-            finish = dt > end_dt
-
-        else:
-            _tmp_dt = dt.replace(day=1) - datetime.timedelta(days=1)
-            dt = (_tmp_dt.replace(day=dt.day))
-            finish = dt < end_dt
-
-
 def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
 
     """Function:  get_archive_files
