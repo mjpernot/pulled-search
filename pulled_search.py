@@ -321,7 +321,7 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     return log_json
 
 
-# Move to python_libs.gen_libs module.
+#Remove once completed testing.
 def month_days(dt, **kwargs):
 
     """Function:  month_days
@@ -337,7 +337,7 @@ def month_days(dt, **kwargs):
     return calendar.monthrange(dt.year, dt.month)[1]
 
 
-# Move to python_libs.gen_libs module.
+#Remove once completed testing.
 def date_range(start_dt, end_dt, **kwargs):
 
     """Function:  date_range
