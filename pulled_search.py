@@ -665,7 +665,8 @@ def process_files(args_array, cfg, log, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-t"), subj=subj)
 
     log.log_info("process_files:  Processing files to search...")
-    docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
+    docid_files = gen_libs.filename_search(cfg.doc_dir, cfg.file_regex,
+                                           add_path=True)
     remove_list = process_list(args_array, cfg, log, docid_files, "search")
     docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir, log)
     non_processed(docid_files, cfg.error_dir, log, mail)
