@@ -114,6 +114,7 @@ class UnitTest(unittest.TestCase):
         self.docid_files = ["/dir/a", "/dir/b"]
         self.docid_files2 = []
         self.error_dir = "/dir/error_dir"
+        self.log_str = "Log Instance"
 
     @mock.patch("pulled_search.gen_class.Logger")
     def test_no_data(self, mock_log):
@@ -126,7 +127,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.log_str
 
         self.assertFalse(pulled_search.non_processed(
             self.docid_files2, self.error_dir, mock_log, self.mail))
@@ -144,7 +145,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.log_str
 
         self.assertFalse(pulled_search.non_processed(
             self.docid_files, self.error_dir, mock_log))
@@ -162,7 +163,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.log_str
 
         self.assertFalse(pulled_search.non_processed(
             self.docid_files, self.error_dir, mock_log, self.mail))
