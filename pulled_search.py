@@ -294,34 +294,6 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     return log_files
 
 
-#Remove once completed testing.
-def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
-
-    """Function:  dir_file_search
-
-    Description:  Return a list of file names from a directory that contain
-        a the search string somewhere in the name.
-
-    NOTE:  file_str can handle regular expressions.
-
-    Arguments:
-        (input) dir_path -> Directory path to search in.
-        (input) file_str -> Name of search string.
-        (input) add_path -> True|False - Add path name to file name.
-        (output) Return a list of (path/)file names with search string.
-
-    """
-
-    if add_path:
-        return [os.path.join(dir_path, x)
-                for x in gen_libs.list_files(dir_path)
-                if re.search(file_str, x)]
-
-    else:
-        return [x for x in gen_libs.list_files(dir_path)
-                if re.search(file_str, x)]
-
-
 def zgrep_search(file_list, keyword, outfile, **kwargs):
 
     """Function:  zgrep_search
