@@ -8,6 +8,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_list:  Fixed log entries.
 
 ### Changed
+- process_docid:  Added check on return status from rabbitmq_class.pub_2_rmq.
+- process_docid:  Replaced send_2_rabbitmq call with rabbitmq_class.pub_2_rmq call.
 - create_json:  Changed JSON document to CamelCase.
 - get_archive_files:  Replaced date_range call with gen_libs.date_range call.
 - insert_data:  Replaced dir_file_search call with gen_libs.filename_search call.

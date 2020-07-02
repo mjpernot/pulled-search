@@ -531,8 +531,15 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     if file_log:
         log_json = create_json(cfg, docid_dict, file_log)
-        log.log_info("process_docid:  Log entries publishing to RabbitMQ.")
-        status = send_2_rabbitmq(cfg, json.dumps(log_json))
+        log.log_info("process_docid:  Publishing log entries...")
+        status, err_msg = rabbitmq_class.pub_2_rmq(cfg, json.dumps(log_json))
+
+        if status:
+            log.log_info("process_docid:  Log entries published to RabbitMQ.")
+
+        else:
+            log.log_err("process_docid:  Error detected during publication.")
+            log.log_err("process_docid:  Message: %s" % (err_msg))
 
     return status
 
