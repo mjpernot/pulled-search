@@ -10,7 +10,6 @@ test/unit/pulled_search/checks_dirs.py
 test/unit/pulled_search/cleanup_files.py
 test/unit/pulled_search/config_override.py
 test/unit/pulled_search/create_json.py
-test/unit/pulled_search/create_rmq.py
 test/unit/pulled_search/date_range.py
 test/unit/pulled_search/dir_file_search.py
 test/unit/pulled_search/get_archive_files.py
