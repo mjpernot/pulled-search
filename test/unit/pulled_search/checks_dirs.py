@@ -85,9 +85,10 @@ class UnitTest(unittest.TestCase):
                 self.log_dir = "/dir_path/log_dir"
 
         self.cfg = CfgTest()
-        self.args_array = {"-t": "name@domain"}
-        self.args_array2 = {"-t": "name@domain", "-P": True}
-        self.args_array3 = {"-t": "name@domain", "-I": True}
+        self.name = "name@domain"
+        self.args_array = {"-t": self.name}
+        self.args_array2 = {"-t": self.name, "-P": True}
+        self.args_array3 = {"-t": self.name, "-I": True}
         self.results = {}
         self.results2 = {"-P": True}
         self.results3 = {"-I": True}
