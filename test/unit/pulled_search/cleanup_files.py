@@ -60,16 +60,19 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.docid_files = ["/path/docidfile1"]
-        self.docid_files2 = ["/path/docidfile1", "/path/docidfile2"]
-        self.docid_files3 = ["/path/docidfile1", "/path/docidfile2",
+        self.docid1 = "/path/docidfile1"
+        self.docid2 = "/path/docidfile2"
+        self.docid_files = [self.docid1]
+        self.docid_files2 = [self.docid1, self.docid2]
+        self.docid_files3 = [self.docid1, self.docid2,
                              "/path/docidfile3"]
-        self.processed_list = ["/path/docidfile1"]
-        self.processed_list2 = ["/path/docidfile1", "/path/docidfile2"]
+        self.processed_list = [self.docid1]
+        self.processed_list2 = [self.docid1, self.docid2]
         self.dest_dir = "/path/dest_dir"
-        self.results = ["/path/docidfile2"]
+        self.results = [self.docid2]
         self.results2 = ["/path/docidfile3"]
-        self.results3 = ["/path/docidfile1"]
+        self.results3 = [self.docid1]
+        self.loginst = "Log Instance"
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
@@ -84,7 +87,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.loginst
 
         self.assertEqual(pulled_search.cleanup_files(
             self.docid_files3, self.processed_list2, self.dest_dir, mock_log),
@@ -103,7 +106,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.loginst
 
         self.assertEqual(pulled_search.cleanup_files(
             self.docid_files2, self.processed_list, self.dest_dir, mock_log),
@@ -122,7 +125,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.loginst
 
         self.assertEqual(pulled_search.cleanup_files(
             self.docid_files, self.processed_list, self.dest_dir, mock_log),
@@ -139,7 +142,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.loginst
 
         self.assertEqual(pulled_search.cleanup_files(
             self.docid_files, [], self.dest_dir, mock_log), self.results3)
