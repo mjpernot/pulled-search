@@ -5,6 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.2] - 2020-07-01
 ### Fixed
+- main: Fixed handling command line arguments from SonarQube scan finding.
 - zgrep_search:  Fixed handling subprocess line from SonarQube scan finding.
 - process_list:  Fixed log entries.
 
