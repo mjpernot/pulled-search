@@ -91,19 +91,22 @@ class UnitTest(unittest.TestCase):
                 self.archive_dir = "/dir_path/archive_dir"
 
         self.cfg = CfgTest()
-        self.chk = (True, None)
-        self.chk2 = (False, "Doc_dir failure")
-        self.chk3 = (False, "Log_dir failure")
-        self.chk4 = (False, "Outfile failure")
-        self.chk5 = (False, "Error_dir failure")
-        self.chk7 = (False, "Archive_dir failure")
-        self.results2 = {"/dir_path/doc_dir": "Doc_dir failure"}
+        self.dockey = "/dir_path/doc_dir"
+        self.errdir = "/dir_path/error_dir"
+        self.docval = "Doc_dir failure"
+        self.errval = "Error_dir failure"
+        self.results2 = {self.dockey: self.docval}
         self.results3 = {"/dir_path/log_dir": "Log_dir failure"}
         self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
-        self.results5 = {"/dir_path/error_dir": "Error_dir failure"}
-        self.results6 = {"/dir_path/doc_dir": "Doc_dir failure",
-                         "/dir_path/error_dir": "Error_dir failure"}
+        self.results5 = {self.errdir: self.errval}
+        self.results6 = {self.dockey: self.docval, self.errdir: self.errval}
         self.results7 = {"/dir_path/archive_dir": "Archive_dir failure"}
+        self.chk = (True, None)
+        self.chk2 = (False, self.docval)
+        self.chk3 = (False, "Log_dir failure")
+        self.chk4 = (False, "Outfile failure")
+        self.chk5 = (False, self.errval)
+        self.chk7 = (False, "Archive_dir failure")
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_archive_dir_failure(self, mock_chk):
