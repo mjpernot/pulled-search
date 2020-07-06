@@ -309,6 +309,7 @@ def zgrep_search(file_list, keyword, outfile, **kwargs):
 
     """
 
+    subp = gen_libs.get_inst(subprocess)
     file_list = list(file_list)
     cmd = "zgrep"
 
@@ -317,8 +318,8 @@ def zgrep_search(file_list, keyword, outfile, **kwargs):
         with open(outfile, "ab") as fout:
 
             # Search for keyword and write to file.
-            P1 = subprocess.Popen([cmd, keyword, fname], stdout=fout)
-            P1.wait()
+            proc1 = subp.Popen([cmd, keyword, fname], stdout=fout)
+            proc1.wait()
 
 
 def process_docid(args_array, cfg, fname, log, **kwargs):
