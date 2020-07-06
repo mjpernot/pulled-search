@@ -85,15 +85,18 @@ class UnitTest(unittest.TestCase):
                 self.monitor_dir = "/dir_path/monitor_dir"
 
         self.cfg = CfgTest()
-        self.args_array = {"-t": "name@domain"}
-        self.args_array2 = {"-t": "name@domain", "-m": "/new_path/doc_dir"}
-        self.args_array3 = {"-t": "name@domain", "-n": "/new_path/monitor_dir"}
-        self.args_array4 = {"-t": "name@domain", "-n": "/new_path/monitor_dir",
-                            "-m": "/new_path/doc_dir"}
+        self.name = "name@domain"
+        self.docdir = "/new_path/doc_dir"
+        self.monitordir = "/new_path/monitor_dir"
+        self.args_array = {"-t": self.name}
+        self.args_array2 = {"-t": self.name, "-m": self.docdir}
+        self.args_array3 = {"-t": self.name, "-n": self.monitordir}
+        self.args_array4 = {"-t": self.name, "-n": self.monitordir,
+                            "-m": self.docdir}
         self.results = "/dir_path/doc_dir"
         self.results2 = "/dir_path/monitor_dir"
-        self.results3 = "/new_path/doc_dir"
-        self.results4 = "/new_path/monitor_dir"
+        self.results3 = self.docdir
+        self.results4 = self.monitordir
 
     def test_all_changes(self):
 
