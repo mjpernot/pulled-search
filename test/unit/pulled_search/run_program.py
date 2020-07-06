@@ -153,10 +153,11 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.log = LoggerTest()
         self.func_dict = {"-P": process_files}
-        self.args_array = {"-c": "configfile", "-d": "/dir/config"}
-        self.args_array2 = {"-c": "configfile", "-d": "/dir/config",
+        self.dircfg = "/dir/config"
+        self.args_array = {"-c": "configfile", "-d": self.dircfg}
+        self.args_array2 = {"-c": "configfile", "-d": self.dircfg,
                             "-m": "/dir/newdir"}
-        self.args_array3 = {"-c": "configfile", "-d": "/dir/config",
+        self.args_array3 = {"-c": "configfile", "-d": self.dircfg,
                             "-P": True}
 
     @mock.patch("pulled_search.checks_dirs", mock.Mock(
