@@ -39,39 +39,27 @@ class ProgramLock(object):
 
     """Class:  ProgramLock
 
-    Description:  Mock of the gen_class.ProgramLock class.
+    Description:  Class stub holder for gen_class.ProgramLock class.
 
     Methods:
-        __init__ -> Class instance initilization.
-        __del__ -> Deletion of the ProgramLock instance.
+        __init__ -> Class initialization.
 
     """
 
-    def __init__(self, argv, flavor_id=""):
+    def __init__(self, cmdline, flavor):
 
         """Method:  __init__
 
-        Description:  Initialization of an instance of the ProgramLock class.
+        Description:  Class initialization.
 
         Arguments:
-            (input) argv -> Arguments from the command line.
-            (input) flavor_id -> Unique identifier for an instance.
+            (input) cmdline -> Argv command line.
+            (input) flavor -> Lock flavor ID.
 
         """
 
-        self.lock_created = True
-
-    def __del__(self):
-
-        """Method:  __del__
-
-        Description:  Deletion of the ProgramLock instance.
-
-        Arguments:
-
-        """
-
-        return True
+        self.cmdline = cmdline
+        self.flavor = flavor
 
 
 class UnitTest(unittest.TestCase):
@@ -92,7 +80,10 @@ class UnitTest(unittest.TestCase):
         test_dir_chk_crt_false -> Test with arg_dir_chk_crt returns False.
         test_xor_dict_false -> Test with arg_xor_dict returns False.
         test_xor_dict_true -> Test with arg_xor_dict returns True.
-        test_exception_handler -> Test with exception handler.
+        test_run_program -> Test run_program function.
+        test_programlock_true -> Test with ProgramLock returns True.
+        test_programlock_false -> Test with ProgramLock returns False.
+        test_programlock_id -> Test ProgramLock with flavor ID.
 
     """
 
@@ -107,6 +98,9 @@ class UnitTest(unittest.TestCase):
         """
 
         self.args = {"-c": "config_file", "-d": "config_dir", "-R": True}
+        self.args2 = {"-c": "config_file", "-d": "config_dir", "-R": True,
+                      "-y": "Flavor"}
+        self.proglock = ProgramLock(["cmdline"], "FlavorID")
 
     @mock.patch("pulled_search.gen_libs.help_func")
     @mock.patch("pulled_search.arg_parser.arg_parse2")
@@ -281,7 +275,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.main())
 
-    @mock.patch("pulled_search.gen_class")
+    @mock.patch("pulled_search.gen_class.ProgramLock")
     @mock.patch("pulled_search.run_program")
     @mock.patch("pulled_search.gen_libs.help_func")
     @mock.patch("pulled_search.arg_parser")
@@ -295,7 +289,57 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_lock.ProgramLock.return_value = ProgramLock([], "FlavorID")
+        mock_lock.return_value = self.proglock
+        mock_arg.arg_parse2.return_value = self.args
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_cond_req_or.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_arg.arg_xor_dict.return_value = True
+        mock_run.return_value = True
+
+        self.assertFalse(pulled_search.main())
+
+    @mock.patch("pulled_search.gen_class.ProgramLock")
+    @mock.patch("pulled_search.run_program")
+    @mock.patch("pulled_search.gen_libs.help_func")
+    @mock.patch("pulled_search.arg_parser")
+    def test_run_program(self, mock_arg, mock_help, mock_run, mock_lock):
+
+        """Function:  test_run_program
+
+        Description:  Test run_program function.
+
+        Arguments:
+
+        """
+
+        mock_lock.return_value = self.proglock
+        mock_arg.arg_parse2.return_value = self.args
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_cond_req_or.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_arg.arg_xor_dict.return_value = True
+        mock_run.return_value = True
+
+        self.assertFalse(pulled_search.main())
+
+    @mock.patch("pulled_search.gen_class.ProgramLock")
+    @mock.patch("pulled_search.run_program")
+    @mock.patch("pulled_search.gen_libs.help_func")
+    @mock.patch("pulled_search.arg_parser")
+    def test_programlock_true(self, mock_arg, mock_help, mock_run, mock_lock):
+
+        """Function:  test_programlock_true
+
+        Description:  Test with ProgramLock returns True.
+
+        Arguments:
+
+        """
+
+        mock_lock.return_value = self.proglock
         mock_arg.arg_parse2.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
@@ -309,11 +353,11 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.ProgramLock")
     @mock.patch("pulled_search.gen_libs.help_func")
     @mock.patch("pulled_search.arg_parser")
-    def test_exception_handler(self, mock_arg, mock_help, mock_lock):
+    def test_programlock_false(self, mock_arg, mock_help, mock_lock):
 
-        """Function:  test_exception_handler
+        """Function:  test_programlock_false
 
-        Description:  Test with exception handler.
+        Description:  Test with ProgramLock returns False.
 
         Arguments:
 
@@ -329,6 +373,31 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             self.assertFalse(pulled_search.main())
+
+    @mock.patch("pulled_search.gen_class.ProgramLock")
+    @mock.patch("pulled_search.run_program")
+    @mock.patch("pulled_search.gen_libs.help_func")
+    @mock.patch("pulled_search.arg_parser")
+    def test_programlock_id(self, mock_arg, mock_help, mock_run, mock_lock):
+
+        """Function:  test_programlock_id
+
+        Description:  Test ProgramLock with flavor ID.
+
+        Arguments:
+
+        """
+
+        mock_lock.return_value = self.proglock
+        mock_arg.arg_parse2.return_value = self.args2
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_cond_req_or.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_arg.arg_xor_dict.return_value = True
+        mock_run.return_value = True
+
+        self.assertFalse(pulled_search.main())
 
 
 if __name__ == "__main__":

@@ -29,7 +29,6 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import pulled_search
-import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
@@ -58,7 +57,7 @@ class Mail(object):
 
         """
 
-        pass
+        self.data = None
 
     def add_2_msg(self, data):
 
@@ -70,6 +69,8 @@ class Mail(object):
             (input) data -> Message line to add to email body.
 
         """
+
+        self.data = data
 
         return True
 
@@ -111,9 +112,10 @@ class UnitTest(unittest.TestCase):
         """
 
         self.mail = Mail()
-        self.docid_files = ["/tmp/a", "/tmp/b"]
+        self.docid_files = ["/dir/a", "/dir/b"]
         self.docid_files2 = []
         self.error_dir = "/dir/error_dir"
+        self.log_str = "Log Instance"
 
     @mock.patch("pulled_search.gen_class.Logger")
     def test_no_data(self, mock_log):
@@ -126,7 +128,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.log_str
 
         self.assertFalse(pulled_search.non_processed(
             self.docid_files2, self.error_dir, mock_log, self.mail))
@@ -144,7 +146,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.log_str
 
         self.assertFalse(pulled_search.non_processed(
             self.docid_files, self.error_dir, mock_log))
@@ -162,7 +164,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_log.return_value = "Log Instance"
+        mock_log.return_value = self.log_str
 
         self.assertFalse(pulled_search.non_processed(
             self.docid_files, self.error_dir, mock_log, self.mail))

@@ -29,7 +29,6 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import pulled_search
-import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
@@ -91,11 +90,13 @@ class UnitTest(unittest.TestCase):
                 self.archive_dir = "/dir/path/archive_dir"
 
         self.cfg = CfgTest()
-        self.docid_files = ["/path/docidfile1"]
-        self.docid_files2 = ["/path/docidfile1", "/path/docidfile2"]
-        self.results = ["/path/docidfile1"]
-        self.results2 = ["/path/docidfile1", "/path/docidfile2"]
-        self.results3 = ["/path/docidfile2"]
+        self.docid1 = "/path/docidfile1"
+        self.docid2 = "/path/docidfile2"
+        self.docid_files = [self.docid1]
+        self.docid_files2 = [self.docid1, self.docid2]
+        self.results = [self.docid1]
+        self.results2 = [self.docid1, self.docid2]
+        self.results3 = [self.docid2]
         self.args_array = {"-t": "name@domain"}
         self.action = "search"
         self.action2 = "insert"

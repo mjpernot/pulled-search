@@ -44,6 +44,7 @@ setuptools.setup(
         "Development Status :: 2 - Alpha",
         "Operating System :: Linux",
         "Operating System :: Linux :: Centos",
+        "Operating System :: Linux :: Ubuntu",
         "Topic :: Database :: RabbitMQ",
         "Topic :: Database :: RabbitMQ :: 3.6.6",
         "Topic :: Database :: Mongodb",

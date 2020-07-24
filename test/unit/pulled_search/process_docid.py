@@ -29,7 +29,6 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import pulled_search
-import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
@@ -43,6 +42,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_z_option -> Test with the -z option.
         test_pre_centos_7 -> Test with pre-CentOS 7 OS.
         test_exception_cmd -> Test with exception command passed.
         test_rm_file_failed -> Test with failure to remove outfile.
@@ -91,6 +91,7 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.args_array = {}
         self.args_array2 = {"-a": True}
+        self.args_array3 = {"-z": True}
         self.data_list = ['{',
                           '"docid": "weotiuer",',
                           '"command": "COMMAND",',
@@ -113,16 +114,48 @@ class UnitTest(unittest.TestCase):
         self.log_files = ["/path/logfile1", "/path/logfile2"]
 
     @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '6.10')))
+                mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.zgrep_search",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_z_option(self, mock_log, mock_list, mock_match):
+
+        """Function:  test_z_option
+
+        Description:  Test with the -z option.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+        mock_list.side_effect = [self.data_list, self.file_log]
+        mock_match.return_value = self.log_files
+
+        self.assertEqual(pulled_search.process_docid(
+            self.args_array3, self.cfg, self.fname, mock_log), True)
+
+    @mock.patch("pulled_search.platform.linux_distribution",
+                mock.Mock(return_value=('Centos', '6.10')))
+    @mock.patch("pulled_search.zgrep_search",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_pre_centos_7(self, mock_log, mock_list, mock_match):
@@ -146,7 +179,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -176,13 +210,14 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_exception_cmd(self, mock_log, mock_list, mock_match):
@@ -206,13 +241,14 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(False, "Error Message")))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_rm_file_failed(self, mock_log, mock_list, mock_match):
@@ -236,13 +272,14 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=False))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(False, "Error Message")))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_rabbitmq_failed(self, mock_log, mock_list, mock_match):
@@ -270,7 +307,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_file_empty(self, mock_log, mock_list, mock_match):
@@ -294,13 +331,14 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.send_2_rabbitmq", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
-    @mock.patch("pulled_search.dir_file_search")
+    @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_with_data(self, mock_log, mock_list, mock_match):
