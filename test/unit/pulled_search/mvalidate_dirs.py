@@ -29,7 +29,6 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import pulled_search
-import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
@@ -87,17 +86,21 @@ class UnitTest(unittest.TestCase):
                 self.marchive_dir = "/dir_path/archive_dir"
 
         self.cfg = CfgTest()
-        self.chk = (True, None)
-        self.chk2 = (False, "Monitor_dir failure")
-        self.chk4 = (False, "Outfile failure")
-        self.chk5 = (False, "Error_dir failure")
-        self.chk7 = (False, "Archive_dir failure")
-        self.results2 = {"/dir_path/monitor_dir": "Monitor_dir failure"}
+        self.monitorkey = "/dir_path/monitor_dir"
+        self.errorkey = "/dir_path/error_dir"
+        self.monitorval = "Monitor_dir failure"
+        self.errorval = "Error_dir failure"
+        self.results2 = {self.monitorkey: self.monitorval}
         self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
-        self.results5 = {"/dir_path/error_dir": "Error_dir failure"}
-        self.results6 = {"/dir_path/monitor_dir": "Monitor_dir failure",
-                         "/dir_path/error_dir": "Error_dir failure"}
+        self.results5 = {self.errorkey: self.errorval}
+        self.results6 = {self.monitorkey: self.monitorval,
+                         self.errorkey: self.errorval}
         self.results7 = {"/dir_path/archive_dir": "Archive_dir failure"}
+        self.chk = (True, None)
+        self.chk2 = (False, self.monitorval)
+        self.chk4 = (False, "Outfile failure")
+        self.chk5 = (False, self.errorval)
+        self.chk7 = (False, "Archive_dir failure")
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_archive_dir_failure(self, mock_chk):

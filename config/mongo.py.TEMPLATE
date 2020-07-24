@@ -1,4 +1,5 @@
 # Pulled Search Insert/Mongo DB Configuration section.
+# Update this file if using the -I option.
 user = "USERNAME"
 passwd = "PASSWORD"
 # Mongo DB host information
@@ -18,12 +19,13 @@ tbl = "TBLNAME"
 # Replica Set Mongo configuration settings.
 # Replica set name.
 #    None means the Mongo database is not part of a replica set.
-#    Example:  repset = "REPLICA_SET_NAME"
+#    Format:  repset = "REPLICA_SET_NAME"
 repset = None
 # Replica host listing.
 #    None means the Mongo database is not part of a replica set.
-#    Example:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
+#    Format:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
 repset_hosts = None
 # Database to authentication to.
-#    Example:  db_auth = "AUTHENTICATION_DATABASE"
+#    Format:  db_auth = "AUTHENTICATION_DATABASE"
 db_auth = None 
+

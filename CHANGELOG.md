@@ -3,6 +3,38 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.2] - 2020-07-01
+### Fixed
+- main: Fixed handling command line arguments from SonarQube scan finding.
+- zgrep_search:  Fixed handling subprocess line from SonarQube scan finding.
+- process_list:  Fixed log entries.
+
+### Changed
+- process_docid:  Refactored the check on the command being processed.
+- process_docid:  Implemented the -z option to use the zgrep search capability.
+- process_docid:  Added check on return status from rabbitmq_class.pub_2_rmq.
+- process_docid:  Replaced send_2_rabbitmq call with rabbitmq_class.pub_2_rmq call.
+- create_json:  Changed JSON document to CamelCase.
+- get_archive_files:  Replaced date_range call with gen_libs.date_range call.
+- insert_data:  Replaced dir_file_search call with gen_libs.filename_search call.
+- process_files:  Replaced dir_file_search call with gen_libs.filename_search call.
+- process_docid:  Replaced dir_file_search call with gen_libs.filename_search call.
+- get_archive_files:  Replaced dir_file_search call with gen_libs.filename_search call.
+- insert_data:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
+- process_files:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
+- config/search.py.TEMPLATE:  Removed admin_email entry.
+- run_program:  Removed admin emails and replaced with print commands or log entries.
+- Documentation updates.
+
+### Removed
+- dir_file_search function.
+- date_range function.
+- month_days function.
+- send_2_rabbitmq function.
+- create_rmq function.
+- setup_mail function.
+
+
 ## [0.1.1] - 2020-03-20
 
 ### Added

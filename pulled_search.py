@@ -3,26 +3,37 @@
 
 """Program:  pulled_search.py
 
-    Description:  The pulled_search program monitors for new files that contain
-        docids.  Once detected will search the Apache log files for any entries
-        and if detected will send these log entries to a RabbitMQ queue.
+    Description:  The pulled_search program is a multi-optional program for use
+        with the pulled product process.  It can detect when new pulled product
+        files are created, parse the file, call the search program to check log
+        files for the docid in the file.  Any entries found will be converted
+        into a JSON document and send to a RabbitMQ queue.  The program also
+        has the ability to detect when new search pulled product log entries
+        are available to be inserted into a database.
 
     Usage:
-        pulled_search.py -c file -d path [-m path | -n path | -z | -P | -I |
-            -y flavor_id | -a] [-t email {email2 email3 ...} {-s subject_line}]
+        pulled_search.py -c file -d path
+            {-P [-m path] [-z] [-a] | -I [-n path]}
+            [-t email {email2 email3 ...} {-s subject_line}]
+            [-y flavor_id]
             [-v | -h]
 
     Arguments:
-        -P => Process Doc ID files send to RabbitMQ.
-        -I => Insert Pulled Search files into Mongodb.
         -c file => Configuration file.  Required argument.
         -d dir_path => Directory path for option '-c'.  Required argument.
+        -P => Process Doc ID files send to RabbitMQ.
         -m dir_path => Directory to monitor for doc ID files.
-        -n dir_path => Directory to monitor for pulled search files.
+            Used for the -P option.
         -a => This is an archive log search.
+            Used for the -P option.
         -z => Use the zgrep option instead of check_log to check GZipped files.
+            Used for the -P option.
+        -I => Insert Pulled Search files into Mongodb.
+        -n dir_path => Directory to monitor for pulled search files.
+            Used for the -I option.
         -t email_address(es) => Send output to one or more email addresses.
-        -s subject_line => Subject line of email.  Requires -t option.
+        -s subject_line => Pre-amble to the subject line of email.
+            Requires -t option.
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
@@ -42,14 +53,13 @@
         configuration file format for the environment setup in the program.
 
             # Pulled Search General Configuration section.
+            # This section is for either the -P or -I option.
             # Logger file for the storage of log entries.
             # File name including directory path.
             log_file = "DIR_PATH/pulled_search.log"
-            # Administrator email for reporting errors detected during the
-            #   program run.
-            admin_email = "USERNAME@EMAIL_DOMAIN"
 
             # Pulled Search Process Configuration section.
+            # Update this section if using the -P option.
             # Directory where docid files to be processed are.
             doc_dir = "DOC_DIR_PATH"
             # Regular expression for search for log file names.
@@ -70,13 +80,14 @@
             error_dir = "ERROR_DIR_PATH"
 
             # Pulled Search Process/RabbitMQ Configuration section.
+            # Update this section if using the -P option.
             user = "USER"
             pswd = "PSWD"
             host = "HOSTNAME"
             # RabbitMQ Queue name.
             queue = "QUEUENAME"
-            # RabbitMQ R-Key name (normally same as queue name).
-            r_key = "RKEYNAME"
+            # RabbitMQ Routing Key
+            r_key = "ROUTING_KEY"
             # RabbitMQ Exchange name for each instance run.
             exchange_name = "EXCHANGE_NAME"
             # RabbitMQ listening port, default is 5672.
@@ -92,6 +103,7 @@
             auto_delete = False
 
             # Pulled Search Insert Configuration section.
+            # Update this section if using the -I option.
             # Directory where to monitor for new files to insert into Mongodb.
             monitor_dir = "MONITOR_DIR_PATH"
             # Regular expression for search for Insert/Mongodb file names.
@@ -110,6 +122,7 @@
 
         Configuration file (config/mongo.py.TEMPLATE).  Below is the
         configuration file format for the Mongo instance setup.
+            Update this file if using the -I option.
 
             # Pulled Search Insert/Mongo DB Configuration section.
             user = "USERNAME"
@@ -138,9 +151,6 @@
             db_auth = None
 
     Examples:
-        pulled_search.py -c search -d /opt/local/pulled/config -P
-            -t Mark.J.Pernot@coe.ic.gov -s Pulled Search Notification
-
         pulled_search.py -c search -d /opt/local/pulled/config -P
             -t Mark.J.Pernot@coe.ic.gov -s Pulled Search Notification
 
@@ -227,62 +237,6 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
             mail.send_mail()
 
 
-# Look at creating a function in RabbitMQ class - setup todo item for this.
-# See mail_2_rmq.create_rq for details too.
-def create_rmq(cfg, q_name, r_key, **kwargs):
-
-    """Function:  create_rmq
-
-    Description:  Create and return a RabbitMQ Publisher instance.
-
-    Arguments:
-        (input) cfg -> Configuration settings module for the program.
-        (input) q_name -> Queue name in RabbitMQ.
-        (input) r_key -> Routing key in RabbitMQ.
-        (output) RabbitMQ Publisher instance.
-
-    """
-
-    return rabbitmq_class.RabbitMQPub(
-        cfg.user, cfg.pswd, cfg.host, cfg.port,
-        exchange_name=cfg.exchange_name, exchange_type=cfg.exchange_type,
-        queue_name=q_name, routing_key=r_key, x_durable=cfg.x_durable,
-        q_durable=cfg.q_durable, auto_delete=cfg.auto_delete)
-
-
-# Look at creating a function in RabbitMQ class - setup todo item for this.
-# See mail_2_rmq.connect_process for details too.
-def send_2_rabbitmq(cfg, log_json, **kwargs):
-
-    """Function:  send_2_rabbitmq
-
-    Description:  Connect to RabbitMQ and publish message.
-
-    Arguments:
-        (input) cfg -> Configuration settings module for the program.
-        (input) log_json -> JSON document of log entries.
-        (output) status -> True|False - Success of publishing to RabbitMQ.
-
-    """
-
-    rmq = create_rmq(cfg, cfg.queue, cfg.r_key)
-    connect_status, err_msg = rmq.create_connection()
-
-    if connect_status and rmq.channel.is_open:
-        if rmq.publish_msg(log_json):
-            status = True
-
-        else:
-            status = False
-
-    else:
-        status = False
-
-    rmq.drop_connection()
-
-    return status
-
-
 def create_json(cfg, docid_dict, file_log, **kwargs):
 
     """Function:  create_json
@@ -300,68 +254,15 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     docid_dict = dict(docid_dict)
     file_log = list(file_log)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
-    log_json = {"docID": docid_dict["docid"],
-                "command": docid_dict["command"],
-                "pubDate": docid_dict["pubdate"],
-                "securityEnclave": cfg.enclave,
-                "asOf": dtg,
-                "serverName": socket.gethostname(),
-                "logEntries": file_log}
+    log_json = {"DocID": docid_dict["docid"],
+                "Command": docid_dict["command"],
+                "PubDate": docid_dict["pubdate"],
+                "SecurityEnclave": cfg.enclave,
+                "AsOf": dtg,
+                "ServerName": socket.gethostname(),
+                "LogEntries": file_log}
 
     return log_json
-
-
-# Move to python_libs.gen_libs module.
-def month_days(dt, **kwargs):
-
-    """Function:  month_days
-
-    Description:  Return the number of days in the month for the date.
-
-    Arguments:
-        (input) dt -> Date, must be a datetime class instance.
-        (output) -> Number of days in the month for the date.
-
-    """
-
-    return calendar.monthrange(dt.year, dt.month)[1]
-
-
-# Move to python_libs.gen_libs module.
-def date_range(start_dt, end_dt, **kwargs):
-
-    """Function:  date_range
-
-    Description:  Generators a list of year-month combinations between two
-        dates.
-        NOTE:  The day will be included in the datetime instance, but all days
-            will be set to the beginning of each month (e.g. YYYY-MM-01).
-
-    Arguments:
-        (input) start_dt -> Start date - datetime class instance.
-        (input) end_dt -> End date - datetime class instance.
-        (output) Generator list of datetime instances.
-
-    """
-
-    start_dt = start_dt.replace(day=1)
-    end_dt = end_dt.replace(day=1)
-    forward = end_dt >= start_dt
-    finish = False
-    dt = start_dt
-
-    while not finish:
-        yield dt.date()
-
-        if forward:
-            days = month_days(dt)
-            dt = dt + datetime.timedelta(days=days)
-            finish = dt > end_dt
-
-        else:
-            _tmp_dt = dt.replace(day=1) - datetime.timedelta(days=1)
-            dt = (_tmp_dt.replace(day=dt.day))
-            finish = dt < end_dt
 
 
 def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
@@ -384,41 +285,13 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
     end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
 
-    for x in date_range(start_dt, end_dt):
+    for x in gen_libs.date_range(start_dt, end_dt):
         yearmon = datetime.date.strftime(x, "%Y/%m")
         full_dir = os.path.join(cmd_dir, yearmon)
-        log_files = log_files + dir_file_search(full_dir, cmd_regex,
-                                                add_path=True)
+        log_files = log_files + gen_libs.filename_search(
+            full_dir, cmd_regex, add_path=True)
 
     return log_files
-
-
-# Move to python-lib.gen_libs.py.
-def dir_file_search(dir_path, file_str, add_path=False, **kwargs):
-
-    """Function:  dir_file_search
-
-    Description:  Return a list of file names from a directory that contain
-        a the search string somewhere in the name.
-
-    NOTE:  file_str can handle regular expressions.
-
-    Arguments:
-        (input) dir_path -> Directory path to search in.
-        (input) file_str -> Name of search string.
-        (input) add_path -> True|False - Add path name to file name.
-        (output) Return a list of (path/)file names with search string.
-
-    """
-
-    if add_path:
-        return [os.path.join(dir_path, x)
-                for x in gen_libs.list_files(dir_path)
-                if re.search(file_str, x)]
-
-    else:
-        return [x for x in gen_libs.list_files(dir_path)
-                if re.search(file_str, x)]
 
 
 def zgrep_search(file_list, keyword, outfile, **kwargs):
@@ -436,6 +309,7 @@ def zgrep_search(file_list, keyword, outfile, **kwargs):
 
     """
 
+    subp = gen_libs.get_inst(subprocess)
     file_list = list(file_list)
     cmd = "zgrep"
 
@@ -444,8 +318,8 @@ def zgrep_search(file_list, keyword, outfile, **kwargs):
         with open(outfile, "ab") as fout:
 
             # Search for keyword and write to file.
-            P1 = subprocess.Popen([cmd, keyword, fname], stdout=fout)
-            P1.wait()
+            proc1 = subp.Popen([cmd, keyword, fname], stdout=fout)
+            proc1.wait()
 
 
 def process_docid(args_array, cfg, fname, log, **kwargs):
@@ -468,13 +342,11 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     status = True
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
+    cmd = docid_dict["command"].lower()
 
-    # Special case exception for one command.
-    if docid_dict["command"].lower() == "eucom":
+    # Special case exception for "Eucom" command.
+    if cmd == "eucom":
         cmd = "intelink"
-
-    else:
-        cmd = docid_dict["command"].lower()
 
     cmd_regex = cmd + ".*" + cfg.log_type
 
@@ -485,16 +357,18 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     else:
         log.log_info("process_docid:  Searching for apache log files...")
-        log_files = dir_file_search(cfg.log_dir, cmd_regex, add_path=True)
+        log_files = gen_libs.filename_search(cfg.log_dir, cmd_regex,
+                                             add_path=True)
 
+    # Determine if running on a pre-7 CentOS system.
     is_centos = \
         True if "centos" in platform.linux_distribution()[0].lower() else False
     is_pre_7 = \
         decimal.Decimal(platform.linux_distribution()[1]) < \
         decimal.Decimal('7.0')
 
-    # Must use zgrep searching in pre-Centos 7 versions.
-    if is_centos and is_pre_7:
+    # Must use zgrep searching in pre-7 Centos systems.
+    if args_array.get("-z", False) or (is_centos and is_pre_7):
         log.log_info("process_docid:  Running zgrep search...")
         zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
 
@@ -519,8 +393,15 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
 
     if file_log:
         log_json = create_json(cfg, docid_dict, file_log)
-        log.log_info("process_docid:  Log entries publishing to RabbitMQ.")
-        status = send_2_rabbitmq(cfg, json.dumps(log_json))
+        log.log_info("process_docid:  Publishing log entries...")
+        status, err_msg = rabbitmq_class.pub_2_rmq(cfg, json.dumps(log_json))
+
+        if status:
+            log.log_info("process_docid:  Log entries published to RabbitMQ.")
+
+        else:
+            log.log_err("process_docid:  Error detected during publication.")
+            log.log_err("process_docid:  Message: %s" % (err_msg))
 
     return status
 
@@ -558,28 +439,6 @@ def process_insert(args_array, cfg, fname, log, **kwargs):
     return status
 
 
-def setup_mail(args_array, subj=None, **kwargs):
-
-    """Function:  setup_mail
-
-    Description:  Processes the docid files.
-
-    Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) subj -> Email subject line.
-        (output) mail -> Mail instance.
-
-    """
-
-    mail = None
-
-    if args_array.get("-t", None):
-        mail = gen_class.setup_mail(args_array.get("-t"),
-                                    subj=args_array.get("-s", subj))
-
-    return mail
-
-
 def process_list(args_array, cfg, log, file_list, action, **kwargs):
 
     """Function:  process_list
@@ -603,18 +462,18 @@ def process_list(args_array, cfg, log, file_list, action, **kwargs):
     file_list = list(file_list)
 
     for fname in file_list:
-        log.log_info("process_docids:  Processing file: %s" % (fname))
+        log.log_info("process_list:  Processing file: %s" % (fname))
 
         if action == "search":
-            log.log_info("process_docids:  Action: search")
+            log.log_info("process_list:  Action: search")
             status = process_docid(args_array, cfg, fname, log)
 
         elif action == "insert":
-            log.log_info("process_docids:  Action: insert")
+            log.log_info("process_list:  Action: insert")
             status = process_insert(args_array, cfg, fname, log)
 
         else:
-            log.log_warn("process_docids:  Incorrect or no action detected: %s"
+            log.log_warn("process_list:  Incorrect or no action detected: %s"
                          % (action))
             status = False
 
@@ -668,9 +527,15 @@ def process_files(args_array, cfg, log, **kwargs):
     """
 
     args_array = dict(args_array)
-    mail = setup_mail(args_array, subj="Non-processed files")
+    mail = None
+    subj = args_array.get("-s", "") + "Non-processed files"
+
+    if args_array.get("-t", False):
+        mail = gen_class.setup_mail(args_array.get("-t"), subj=subj)
+
     log.log_info("process_files:  Processing files to search...")
-    docid_files = dir_file_search(cfg.doc_dir, cfg.file_regex, add_path=True)
+    docid_files = gen_libs.filename_search(cfg.doc_dir, cfg.file_regex,
+                                           add_path=True)
     remove_list = process_list(args_array, cfg, log, docid_files, "search")
     docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir, log)
     non_processed(docid_files, cfg.error_dir, log, mail)
@@ -690,13 +555,18 @@ def insert_data(args_array, cfg, log, **kwargs):
     """
 
     args_array = dict(args_array)
+    mail = None
+    subj = args_array.get("-s", "") + "Non-processed files"
+
+    if args_array.get("-t", False):
+        mail = gen_class.setup_mail(args_array.get("-t"), subj=subj)
+
     log.log_info("insert_data:  Processing files to insert...")
-    insert_list = dir_file_search(cfg.monitor_dir,
-                                  cfg.mfile_regex, add_path=True)
+    insert_list = gen_libs.filename_search(cfg.monitor_dir, cfg.mfile_regex,
+                                           add_path=True)
     remove_list = process_list(args_array, cfg, log, insert_list, "insert")
     insert_list = cleanup_files(insert_list, remove_list, cfg.marchive_dir,
                                 log)
-    mail = setup_mail(args_array, subj="Non-processed files")
     non_processed(insert_list, cfg.merror_dir, log, mail)
 
 
@@ -864,21 +734,14 @@ def run_program(args_array, func_dict, **kwargs):
         if msg_dict:
             log.log_err("Validation of configuration directories failed")
             log.log_err("Message: %s" % (msg_dict))
-            mail = gen_class.setup_mail(cfg.admin_email,
-                                        subj="Directory Check Failure")
-            mail.add_2_msg(msg_dict)
-            mail.send_mail()
 
         else:
-            # Determine which functions to call.
             for opt in set(args_array.keys()) & set(func_dict.keys()):
                 func_dict[opt](args_array, cfg, log)
 
     else:
-        mail = gen_class.setup_mail(cfg.admin_email,
-                                    subj="Logger Directory Check Failure")
-        mail.add_2_msg(err_msg)
-        mail.send_mail()
+        print("Error:  Logger Directory Check Failure")
+        print("Error Message: %s" % (err_msg))
 
 
 def main():
@@ -902,6 +765,7 @@ def main():
 
     """
 
+    cmdline = gen_libs.get_inst(sys)
     dir_chk_list = ["-d", "-m", "-n"]
     func_dict = {"-P": process_files, "-I": insert_data}
     opt_con_req_dict = {"-s": ["-t"]}
@@ -911,7 +775,7 @@ def main():
     opt_xor_dict = {"-I": ["-P"], "-P": ["-I"]}
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(sys.argv, opt_val_list,
+    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
                                        multi_val=opt_multi_list)
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
@@ -921,7 +785,7 @@ def main():
        and arg_parser.arg_xor_dict(args_array, opt_xor_dict):
 
         try:
-            prog_lock = gen_class.ProgramLock(sys.argv,
+            prog_lock = gen_class.ProgramLock(cmdline.argv,
                                               args_array.get("-y", ""))
             run_program(args_array, func_dict)
             del prog_lock
