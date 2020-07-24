@@ -29,7 +29,6 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import pulled_search
-import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
@@ -58,7 +57,7 @@ class Mail(object):
 
         """
 
-        pass
+        self.data = None
 
     def add_2_msg(self, data):
 
@@ -70,6 +69,8 @@ class Mail(object):
             (input) data -> Message line to add to email body.
 
         """
+
+        self.data = data
 
         return True
 

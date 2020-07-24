@@ -29,7 +29,6 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import pulled_search
-import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
@@ -89,9 +88,10 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = self.loginst
 
-        self.assertEqual(pulled_search.cleanup_files(
-            self.docid_files3, self.processed_list2, self.dest_dir, mock_log),
-            self.results2)
+        self.assertEqual(
+            pulled_search.cleanup_files(
+                self.docid_files3, self.processed_list2, self.dest_dir,
+                mock_log), self.results2)
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
@@ -108,9 +108,10 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = self.loginst
 
-        self.assertEqual(pulled_search.cleanup_files(
-            self.docid_files2, self.processed_list, self.dest_dir, mock_log),
-            self.results)
+        self.assertEqual(
+            pulled_search.cleanup_files(
+                self.docid_files2, self.processed_list, self.dest_dir,
+                mock_log), self.results)
 
     @mock.patch("pulled_search.gen_libs.mv_file2",
                 mock.Mock(return_value=True))
@@ -127,9 +128,10 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = self.loginst
 
-        self.assertEqual(pulled_search.cleanup_files(
-            self.docid_files, self.processed_list, self.dest_dir, mock_log),
-            [])
+        self.assertEqual(
+            pulled_search.cleanup_files(
+                self.docid_files, self.processed_list, self.dest_dir,
+                mock_log), [])
 
     @mock.patch("pulled_search.gen_class.Logger")
     def test_empty_list(self, mock_log):
