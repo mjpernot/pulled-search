@@ -41,13 +41,13 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_with_preamble -> Test with pre-amble subject.
-        test_with_no_mail -> Test with no mail setup.
-        test_nonprocessed_files -> Test with nonprocessed files.
-        test_no_log_files -> Test with no log files detected.
-        test_with_mail -> Test with mail setup.
-        test_with_data -> Test with successful log file check.
+        setUp
+        test_with_preamble
+        test_with_no_mail
+        test_nonprocessed_files
+        test_no_log_files
+        test_with_mail
+        test_with_data
 
     """
 
@@ -68,7 +68,7 @@ class UnitTest(unittest.TestCase):
             Description:  Class which is a representation of a cfg module.
 
             Methods:
-                __init__ -> Initialize configuration environment.
+                __init__
 
             """
 
