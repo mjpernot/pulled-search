@@ -21,7 +21,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid:  Implemented the -z option to use the zgrep search capability.
 - process_docid:  Added check on return status from rabbitmq_class.pub_2_rmq.
 - process_docid:  Replaced send_2_rabbitmq call with rabbitmq_class.pub_2_rmq call.
-- create_json:  Changed JSON document to CamelCase.
+- create_json:  Changed JSON document to PascalCase.
 - get_archive_files, insert_data, process_files, process_docid: Replaced date_range call with gen_libs.date_range call.
 - insert_data, process_files:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
 - config/search.py.TEMPLATE:  Removed admin_email entry.
