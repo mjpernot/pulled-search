@@ -21,24 +21,19 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid:  Added check on return status from rabbitmq_class.pub_2_rmq.
 - process_docid:  Replaced send_2_rabbitmq call with rabbitmq_class.pub_2_rmq call.
 - create_json:  Changed JSON document to CamelCase.
-- get_archive_files:  Replaced date_range call with gen_libs.date_range call.
-- insert_data:  Replaced dir_file_search call with gen_libs.filename_search call.
-- process_files:  Replaced dir_file_search call with gen_libs.filename_search call.
-- process_docid:  Replaced dir_file_search call with gen_libs.filename_search call.
-- get_archive_files:  Replaced dir_file_search call with gen_libs.filename_search call.
-- insert_data:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
-- process_files:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
+- get_archive_files, insert_data, process_files, process_docid: Replaced date_range call with gen_libs.date_range call.
+- insert_data, process_files:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
 - config/search.py.TEMPLATE:  Removed admin_email entry.
 - run_program:  Removed admin emails and replaced with print commands or log entries.
 - Documentation updates.
 
 ### Removed
-- dir_file_search function.
-- date_range function.
-- month_days function.
-- send_2_rabbitmq function.
-- create_rmq function.
-- setup_mail function.
+- dir_file_search
+- date_range
+- month_days
+- send_2_rabbitmq
+- create_rmq
+- setup_mail
 
 
 ## [0.1.1] - 2020-03-20
