@@ -6,6 +6,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [0.1.3] - 2021-12-15
 ### Changed
 - config/mongo.py.TEMPLATE:  Added SSL connection entries.
+- config/search.py.TEMPLATE:  Added entry to connect to RabbitMQ cluster.
 
 
 ## [0.1.2] - 2020-07-01
