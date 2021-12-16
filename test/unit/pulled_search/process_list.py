@@ -41,15 +41,15 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_incorrect_action -> Test with incorrect action passed.
+        setUp
+        test_incorrect_action
         test_fails_item_list2 -> Test with some failures in insert file list
-        test_multiple_item_list2 -> Test multiple entries in insert file list.
-        test_single_item_list2 -> Test with one entry in insert file list.
+        test_multiple_item_list2
+        test_single_item_list2
         test_fails_item_list -> Test with some failures in search file list
-        test_multiple_item_list -> Test multiple entries in search file list.
-        test_single_item_list -> Test with one entry in search file list.
-        test_empty_list -> Test with an empty docid file list.
+        test_multiple_item_list
+        test_single_item_list
+        test_empty_list
 
     """
 
@@ -70,7 +70,7 @@ class UnitTest(unittest.TestCase):
             Description:  Class which is a representation of a cfg module.
 
             Methods:
-                __init__ -> Initialize configuration environment.
+                __init__
 
             """
 
