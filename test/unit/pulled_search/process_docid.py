@@ -41,14 +41,14 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_z_option -> Test with the -z option.
-        test_pre_centos_7 -> Test with pre-CentOS 7 OS.
-        test_exception_cmd -> Test with exception command passed.
-        test_rm_file_failed -> Test with failure to remove outfile.
-        test_rabbitmq_failed -> Test with failure to send to RabbitMQ.
-        test_file_empty -> Test with no log entries returned.
-        test_with_data -> Test with successful log file check.
+        setUp
+        test_z_option
+        test_pre_centos_7
+        test_exception_cmd
+        test_rm_file_failed
+        test_rabbitmq_failed
+        test_file_empty
+        test_with_data
 
     """
 
@@ -69,7 +69,7 @@ class UnitTest(unittest.TestCase):
             Description:  Class which is a representation of a cfg module.
 
             Methods:
-                __init__ -> Initialize configuration environment.
+                __init__
 
             """
 
