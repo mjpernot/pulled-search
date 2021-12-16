@@ -42,7 +42,7 @@ class ProgramLock(object):
     Description:  Class stub holder for gen_class.ProgramLock class.
 
     Methods:
-        __init__ -> Class initialization.
+        __init__
 
     """
 
@@ -53,8 +53,6 @@ class ProgramLock(object):
         Description:  Class initialization.
 
         Arguments:
-            (input) cmdline -> Argv command line.
-            (input) flavor -> Lock flavor ID.
 
         """
 
@@ -69,21 +67,21 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Unit testing initilization.
-        test_help_true -> Test with help_func returns True.
-        test_help_false ->  Test with help_func returns False.
-        test_require_true -> Test with arg_require returns True.
-        test_require_false -> Test with arg_require returns False.
-        test_con_req_or_false -> Test with arg_cond_req_or returns False.
-        test_con_req_or_true -> Test with arg_cond_req_or returns True.
-        test_dir_chk_crt_true -> Test with arg_dir_chk_crt returns True.
-        test_dir_chk_crt_false -> Test with arg_dir_chk_crt returns False.
-        test_xor_dict_false -> Test with arg_xor_dict returns False.
-        test_xor_dict_true -> Test with arg_xor_dict returns True.
-        test_run_program -> Test run_program function.
-        test_programlock_true -> Test with ProgramLock returns True.
-        test_programlock_false -> Test with ProgramLock returns False.
-        test_programlock_id -> Test ProgramLock with flavor ID.
+        setUp
+        test_help_true
+        test_help_false
+        test_require_true
+        test_require_false
+        test_con_req_or_false
+        test_con_req_or_true
+        test_dir_chk_crt_true
+        test_dir_chk_crt_false
+        test_xor_dict_false
+        test_xor_dict_true
+        test_run_program
+        test_programlock_true
+        test_programlock_false
+        test_programlock_id
 
     """
 
