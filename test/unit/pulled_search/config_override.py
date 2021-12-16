@@ -40,11 +40,11 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_all_changes -> Test with changes to both configuration settings.
-        test_monitordir_change -> Test  monitor_dir change to config settings.
-        test_docdir_change -> Test doc_dir change to configuration settings.
-        test_no_changes -> Test with no changes to configuration settings.
+        setUp
+        test_all_changes
+        test_monitordir_change
+        test_docdir_change
+        test_no_changes
 
     """
 
@@ -65,7 +65,7 @@ class UnitTest(unittest.TestCase):
             Description:  Class which is a representation of a cfg module.
 
             Methods:
-                __init__ -> Initialize configuration environment.
+                __init__
 
             """
 
