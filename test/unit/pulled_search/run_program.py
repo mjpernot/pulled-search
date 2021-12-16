@@ -42,9 +42,6 @@ def process_files(args_array, cfg, log):
     Description:  This is a function stub for pulled_search.process_files.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) cfg -> Configuration setup.
-        (input) log -> Log class instance.
 
     """
 
@@ -63,10 +60,10 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_validation_failure -> Test with directory validation failure.
-        test_status_false -> Test with status set to False.
-        test_status_true -> Test with status set to True.
+        setUp
+        test_validation_failure
+        test_status_false
+        test_status_true
 
     """
 
@@ -87,9 +84,9 @@ class UnitTest(unittest.TestCase):
             Description:  Class which is a representation of a Logger class.
 
             Methods:
-                __init__ -> Initialize configuration environment.
-                log_info -> Stub holder for Logger.log_info method.
-                log_err -> Stub holder for Logger.log_err method.
+                __init__
+                log_info
+                log_err
 
             """
 
@@ -112,7 +109,6 @@ class UnitTest(unittest.TestCase):
                 Description:  Stub holder for Logger.log_info method.
 
                 Arguments:
-                    (input) data -> Data string.
 
                 """
 
@@ -125,7 +121,6 @@ class UnitTest(unittest.TestCase):
                 Description:  Stub holder for Logger.log_err method.
 
                 Arguments:
-                    (input) data -> Data string.
 
                 """
 
@@ -138,7 +133,7 @@ class UnitTest(unittest.TestCase):
             Description:  Class which is a representation of a cfg module.
 
             Methods:
-                __init__ -> Initialize configuration environment.
+                __init__
 
             """
 
