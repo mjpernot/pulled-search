@@ -466,8 +466,16 @@ def process_insert(args_array, cfg, fname, log, **kwargs):
     if isinstance(insert_dict, dict):
         log.log_info("process_insert:  Inserting data into Mongodb.")
         mcfg = gen_libs.load_module(cfg.mconfig, args_array["-d"])
-        mongo_libs.ins_doc(mcfg, mcfg.db, mcfg.tbl, insert_dict)
-        status = True
+        mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.db, mcfg.tbl, insert_dict)
+
+        if not mongo_stat[0]:
+            log.log_err("process_insert:  Insert of data into MongoDB failed.")
+            log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
+            status = False
+
+        else:
+            log.log_info("process_insert:  Mongo database insertion.")
+            status = True
 
     else:
         log.log_err("process_insert: Data failed to convert to JSON.")
