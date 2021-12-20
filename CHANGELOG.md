@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_insert:  Captured and processed status return from mongo_libs.ins_doc call.
 - config/mongo.py.TEMPLATE:  Added SSL connection entries.
 - config/search.py.TEMPLATE:  Added entry to connect to RabbitMQ cluster.
+- Removed non-required \*\*kwargs from function parameter lists.
 - Documentation updates.
 
 

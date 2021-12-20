@@ -241,7 +241,7 @@ def help_message():
     print(__doc__)
 
 
-def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
+def non_processed(docid_files, error_dir, log, mail=None):
 
     """Function:  non_processed
 
@@ -274,7 +274,7 @@ def non_processed(docid_files, error_dir, log, mail=None, **kwargs):
             mail.send_mail()
 
 
-def create_json(cfg, docid_dict, file_log, **kwargs):
+def create_json(cfg, docid_dict, file_log):
 
     """Function:  create_json
 
@@ -302,7 +302,7 @@ def create_json(cfg, docid_dict, file_log, **kwargs):
     return log_json
 
 
-def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
+def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
 
     """Function:  get_archive_files
 
@@ -331,7 +331,7 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     return log_files
 
 
-def zgrep_search(file_list, keyword, outfile, **kwargs):
+def zgrep_search(file_list, keyword, outfile):
 
     """Function:  zgrep_search
 
@@ -359,7 +359,7 @@ def zgrep_search(file_list, keyword, outfile, **kwargs):
             proc1.wait()
 
 
-def process_docid(args_array, cfg, fname, log, **kwargs):
+def process_docid(args_array, cfg, fname, log):
 
     """Function:  process_docid
 
@@ -443,7 +443,7 @@ def process_docid(args_array, cfg, fname, log, **kwargs):
     return status
 
 
-def process_insert(args_array, cfg, fname, log, **kwargs):
+def process_insert(args_array, cfg, fname, log):
 
     """Function:  process_insert
 
@@ -484,7 +484,7 @@ def process_insert(args_array, cfg, fname, log, **kwargs):
     return status
 
 
-def process_list(args_array, cfg, log, file_list, action, **kwargs):
+def process_list(args_array, cfg, log, file_list, action):
 
     """Function:  process_list
 
@@ -528,7 +528,7 @@ def process_list(args_array, cfg, log, file_list, action, **kwargs):
     return done_list
 
 
-def cleanup_files(docid_files, processed_list, dest_dir, log, **kwargs):
+def cleanup_files(docid_files, processed_list, dest_dir, log):
 
     """Function:  cleanup_files
 
@@ -558,7 +558,7 @@ def cleanup_files(docid_files, processed_list, dest_dir, log, **kwargs):
     return docid_files
 
 
-def process_files(args_array, cfg, log, **kwargs):
+def process_files(args_array, cfg, log):
 
     """Function:  process_files
 
@@ -586,7 +586,7 @@ def process_files(args_array, cfg, log, **kwargs):
     non_processed(docid_files, cfg.error_dir, log, mail)
 
 
-def insert_data(args_array, cfg, log, **kwargs):
+def insert_data(args_array, cfg, log):
 
     """Function:  insert_data
 
@@ -615,7 +615,7 @@ def insert_data(args_array, cfg, log, **kwargs):
     non_processed(insert_list, cfg.merror_dir, log, mail)
 
 
-def validate_dirs(cfg, **kwargs):
+def validate_dirs(cfg):
 
     """Function:  validate_dirs
 
@@ -662,7 +662,7 @@ def validate_dirs(cfg, **kwargs):
     return msg_dict
 
 
-def mvalidate_dirs(cfg, **kwargs):
+def mvalidate_dirs(cfg):
 
     """Function:  mvalidate_dirs
 
@@ -698,7 +698,7 @@ def mvalidate_dirs(cfg, **kwargs):
     return msg_dict
 
 
-def checks_dirs(args_array, cfg, **kwargs):
+def checks_dirs(args_array, cfg):
 
     """Function:  checks_dirs
 
@@ -724,7 +724,7 @@ def checks_dirs(args_array, cfg, **kwargs):
     return msg_dict
 
 
-def config_override(args_array, cfg, **kwargs):
+def config_override(args_array, cfg):
 
     """Function:  config_override
 
@@ -747,7 +747,7 @@ def config_override(args_array, cfg, **kwargs):
     return cfg
 
 
-def run_program(args_array, func_dict, **kwargs):
+def run_program(args_array, func_dict):
 
     """Function:  run_program
 
