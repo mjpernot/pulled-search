@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.3] - 2021-12-15
+- Upgraded check-log to v4.0.1
+- Upgrade mongo-libs to v4.2.1
+- Upgrade python-lib to v2.9.2
+
 ### Changed
 - process_insert:  Captured and processed status return from mongo_libs.ins_doc call.
-- config/mongo.py.TEMPLATE:  Added SSL connection entries.
+- config/mongo.py.TEMPLATE:  Added SSL connection entriesi and removed some old entries.
 - config/search.py.TEMPLATE:  Added entry to connect to RabbitMQ cluster.
 - Removed non-required \*\*kwargs from function parameter lists.
 - Documentation updates.
