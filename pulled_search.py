@@ -809,7 +809,8 @@ def main():
     """
 
     cmdline = gen_libs.get_inst(sys)
-    dir_chk_list = ["-d", "-m", "-n"]
+#    dir_chk_list = ["-d", "-m", "-n"]
+    dir_perms_chk = {"-d": 5, "-m": 7, "-n": 7}
     func_dict = {"-P": process_files, "-I": insert_data}
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
@@ -818,24 +819,33 @@ def main():
     opt_xor_dict = {"-I": ["-P"], "-P": ["-I"]}
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
-                                       multi_val=opt_multi_list)
+    args = gen_class.ArgParser(
+        cmdline.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
+        do_parse=True)
+#    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
+#                                       multi_val=opt_multi_list)
 
-    if not gen_libs.help_func(args_array, __version__, help_message) \
-       and not arg_parser.arg_require(args_array, opt_req_list) \
-       and arg_parser.arg_cond_req_or(args_array, opt_con_req_dict) \
-       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list) \
-       and arg_parser.arg_xor_dict(args_array, opt_xor_dict):
+    if not gen_libs.help_func(args.get_args(), __version__, help_message)   \
+       and args.arg_require(opt_req=opt_req_list)                           \
+       and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)                \
+       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
+       and args.arg_xor_dict(opt_xor_val=opt_xor_dict):
+
+#    if not gen_libs.help_func(args_array, __version__, help_message) \
+#       and not arg_parser.arg_require(args_array, opt_req_list) \
+#       and arg_parser.arg_cond_req_or(args_array, opt_con_req_dict) \
+#       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list) \
+#       and arg_parser.arg_xor_dict(args_array, opt_xor_dict):
 
         try:
-            prog_lock = gen_class.ProgramLock(cmdline.argv,
-                                              args_array.get("-y", ""))
-            run_program(args_array, func_dict)
+            prog_lock = gen_class.ProgramLock(
+                cmdline.argv, args.get_val("-y", def_val=""))
+            run_program(args, func_dict)
             del prog_lock
 
         except gen_class.SingleInstanceException:
             print("WARNING:  Lock in place for pulled_search with id of: %s"
-                  % (args_array.get("-y", "")))
+                  % (args.get_val("-y", def_val="")))
 
 
 if __name__ == "__main__":
