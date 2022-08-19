@@ -34,6 +34,44 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        get_val
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.cmdline = None
+        self.args_array = dict()
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+
 class CfgTest(object):
 
     """Class:  CfgTest
@@ -163,11 +201,12 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args = ArgParser()
+        self.args.args_array = {"-d": "/config_path"}
         self.cfg = CfgTest()
         self.cfg2 = CfgTest2()
         self.logger = Logger("Name", "Name", "INFO", "%(asctime)s%(message)s",
                              "%m-%d-%YT%H:%M:%SZ|")
-        self.args_array = {"-d": "/config_path"}
         self.data_list = ['{',
                           '"docID": "weotiuer",',
                           '"command": "COMMAND",',
@@ -197,7 +236,7 @@ class UnitTest(unittest.TestCase):
         mock_load.return_value = self.cfg2
 
         self.assertEqual(pulled_search.process_insert(
-            self.args_array, self.cfg, self.fname, self.logger), False)
+            self.args, self.cfg, self.fname, self.logger), False)
 
     @mock.patch("pulled_search.mongo_libs.ins_doc",
                 mock.Mock(return_value=(True, None)))
@@ -217,7 +256,7 @@ class UnitTest(unittest.TestCase):
         mock_load.return_value = self.cfg2
 
         self.assertEqual(pulled_search.process_insert(
-            self.args_array, self.cfg, self.fname, self.logger), True)
+            self.args, self.cfg, self.fname, self.logger), True)
 
     @mock.patch("pulled_search.mongo_libs.ins_doc",
                 mock.Mock(return_value=(True, None)))
@@ -236,7 +275,7 @@ class UnitTest(unittest.TestCase):
         mock_list.return_value = self.data_list
 
         self.assertEqual(pulled_search.process_insert(
-            self.args_array, self.cfg, self.fname, self.logger), False)
+            self.args, self.cfg, self.fname, self.logger), False)
 
     @mock.patch("pulled_search.mongo_libs.ins_doc",
                 mock.Mock(return_value=(True, None)))
@@ -256,7 +295,7 @@ class UnitTest(unittest.TestCase):
         mock_load.return_value = self.cfg2
 
         self.assertEqual(pulled_search.process_insert(
-            self.args_array, self.cfg, self.fname, self.logger), True)
+            self.args, self.cfg, self.fname, self.logger), True)
 
 
 if __name__ == "__main__":
