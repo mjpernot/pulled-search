@@ -34,6 +34,71 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        get_val
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.cmdline = None
+        self.args_array = dict()
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+
+class CfgTest(object):
+
+    """Class:  CfgTest
+
+    Description:  Class which is a representation of a cfg module.
+
+    Methods:
+        __init__
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization instance of the CfgTest class.
+
+        Arguments:
+
+        """
+
+        self.log_type = "access_log"
+        self.log_dir = "/dir_path/log"
+        self.outfile = "/dir/path/outfile"
+        self.archive_dir = "/dir/archive_dir"
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -62,32 +127,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        class CfgTest(object):
-
-            """Class:  CfgTest
-
-            Description:  Class which is a representation of a cfg module.
-
-            Methods:
-                __init__
-
-            """
-
-            def __init__(self):
-
-                """Method:  __init__
-
-                Description:  Initialization instance of the CfgTest class.
-
-                Arguments:
-
-                """
-
-                self.log_type = "access_log"
-                self.log_dir = "/dir_path/log"
-                self.outfile = "/dir/path/outfile"
-                self.archive_dir = "/dir/archive_dir"
-
+        self.args = ArgParser()
         self.cfg = CfgTest()
         self.args_array = {}
         self.args_array2 = {"-a": True}
@@ -137,12 +177,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array3
+
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.args_array3, self.cfg, self.fname, mock_log), True)
+            self.args, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '6.10')))
@@ -168,12 +210,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array
+
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.args_array, self.cfg, self.fname, mock_log), True)
+            self.args, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
@@ -199,12 +243,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array2
+
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.args_array2, self.cfg, self.fname, mock_log), True)
+            self.args, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
@@ -230,12 +276,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array
+
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list2, self.file_log]
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.args_array, self.cfg, self.fname, mock_log), True)
+            self.args, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
@@ -261,12 +309,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array
+
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.args_array, self.cfg, self.fname, mock_log), True)
+            self.args, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
@@ -292,12 +342,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array
+
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.args_array, self.cfg, self.fname, mock_log), False)
+            self.args, self.cfg, self.fname, mock_log), False)
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
@@ -320,12 +372,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array
+
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.args_array, self.cfg, self.fname, mock_log), True)
+            self.args, self.cfg, self.fname, mock_log), True)
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
@@ -351,12 +405,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array
+
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
 
         self.assertEqual(pulled_search.process_docid(
-            self.args_array, self.cfg, self.fname, mock_log), True)
+            self.args, self.cfg, self.fname, mock_log), True)
 
 
 if __name__ == "__main__":

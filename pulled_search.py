@@ -142,8 +142,6 @@
             auth = True
             auth_db = "admin"
             auth_mech = "SCRAM-SHA-1"
-            use_arg = True
-            use_uri = False
 
             Replica set connection:  Same format as above, but with these
                 additional entries at the end of the configuration file.  By
@@ -248,10 +246,10 @@ def non_processed(docid_files, error_dir, log, mail=None):
     Description:  Process non-processed files.
 
     Arguments:
-        (input) docid_files -> List of files not processed.
-        (input) error_dir -> Directory to move non-processed files to.
-        (input) log -> Log class instance.
-        (input) mail -> Mail instance.
+        (input) docid_files -> List of files not processed
+        (input) error_dir -> Directory to move non-processed files to
+        (input) log -> Log class instance
+        (input) mail -> Mail instance
 
     """
 
@@ -281,10 +279,10 @@ def create_json(cfg, docid_dict, file_log):
     Description:  Create the JSON from the docid file and log entries.
 
     Arguments:
-        (input) cfg -> Configuration setup.
-        (input) docid_dict -> Dictionary of docid file.
-        (input) file_log -> List of log file entries.
-        (output) log_json -> Dictionary of docid file and log entries.
+        (input) cfg -> Configuration setup
+        (input) docid_dict -> Dictionary of docid file
+        (input) file_log -> List of log file entries
+        (output) log_json -> Dictionary of docid file and log entries
 
     """
 
@@ -309,11 +307,11 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
     Description:  Get list of archive log files.
 
     Arguments:
-        (input) archive_dir -> Directory path to base archive logs.
-        (input) cmd -> Command to search in.
-        (input) pubdate -> Published date of document.
-        (input) cmd_regex -> Regular expression of log file name.
-        (output) log_files -> List of archive log files to search.
+        (input) archive_dir -> Directory path to base archive logs
+        (input) cmd -> Command to search in
+        (input) pubdate -> Published date of document
+        (input) cmd_regex -> Regular expression of log file name
+        (output) log_files -> List of archive log files to search
 
     """
 
@@ -340,9 +338,9 @@ def zgrep_search(file_list, keyword, outfile):
     NOTE:  This is for use on Centos 2.6.X systems and earlier.
 
     Arguments:
-        (input) file_list -> List of files to search.
-        (input) keyword -> Value to search for.
-        (input) outfile -> File to write the results to.
+        (input) file_list -> List of files to search
+        (input) keyword -> Value to search for
+        (input) outfile -> File to write the results to
 
     """
 
@@ -359,22 +357,21 @@ def zgrep_search(file_list, keyword, outfile):
             proc1.wait()
 
 
-def process_docid(args_array, cfg, fname, log):
+def process_docid(args, cfg, fname, log):
 
     """Function:  process_docid
 
     Description:  Processes the docid.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) cfg -> Configuration setup.
-        (input) fname -> Docid file name.
-        (input) log -> Log class instance.
-        (output) status -> True|False - File has successfully processed.
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) fname -> Docid file name
+        (input) log -> Log class instance
+        (output) status -> True|False - File has successfully processed
 
     """
 
-    args_array = dict(args_array)
     file_log = list()
     status = True
     data_list = gen_libs.file_2_list(fname)
@@ -387,7 +384,7 @@ def process_docid(args_array, cfg, fname, log):
 
     cmd_regex = cmd + ".*" + cfg.log_type
 
-    if args_array.get("-a", None):
+    if args.get_val("-a", def_val=None):
         log.log_info("process_docid:  Searching for archive log files...")
         log_files = get_archive_files(cfg.archive_dir, cmd,
                                       docid_dict["pubdate"], cmd_regex)
@@ -405,14 +402,15 @@ def process_docid(args_array, cfg, fname, log):
         decimal.Decimal('7.0')
 
     # Must use zgrep searching in pre-7 Centos systems.
-    if args_array.get("-z", False) or (is_centos and is_pre_7):
+    if args.get_val("-z", def_val=False) or (is_centos and is_pre_7):
         log.log_info("process_docid:  Running zgrep search...")
         zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
 
     else:
         # Create argument list for check_log program.
-        search_args = {"-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
-                       "-k": "or", "-o": cfg.outfile, "-z": True}
+        search_args = {
+            "-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
+            "-k": "or", "-o": cfg.outfile, "-z": True}
         log.log_info("process_docid:  Running check_log search...")
         check_log.run_program(search_args)
 
@@ -443,29 +441,28 @@ def process_docid(args_array, cfg, fname, log):
     return status
 
 
-def process_insert(args_array, cfg, fname, log):
+def process_insert(args, cfg, fname, log):
 
     """Function:  process_insert
 
     Description:  Process the insert file and send to a database.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) cfg -> Configuration setup.
-        (input) fname -> Insert file name.
-        (input) log -> Log class instance.
-        (output) status -> True|False - File has successfully processed.
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) fname -> Insert file name
+        (input) log -> Log class instance
+        (output) status -> True|False - File has successfully processed
 
     """
 
-    args_array = dict(args_array)
     log.log_info("process_insert:  Converting data to JSON.")
     data_list = gen_libs.file_2_list(fname)
     insert_dict = json.loads(gen_libs.list_2_str(data_list))
 
     if isinstance(insert_dict, dict):
         log.log_info("process_insert:  Inserting data into Mongodb.")
-        mcfg = gen_libs.load_module(cfg.mconfig, args_array["-d"])
+        mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
         mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.db, mcfg.tbl, insert_dict)
 
         if not mongo_stat[0]:
@@ -484,26 +481,25 @@ def process_insert(args_array, cfg, fname, log):
     return status
 
 
-def process_list(args_array, cfg, log, file_list, action):
+def process_list(args, cfg, log, file_list, action):
 
     """Function:  process_list
 
     Description:  Processes the docid files.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) cfg -> Configuration setup.
-        (input) log -> Log class instance.
-        (input) file_list -> List of files to be processed.
-        (input) action -> Type of processing to complete.
-            "search" -> Execute a pulled search on the file.
-            "insert" -> Insert data file into database.
-        (output) done_list -> List of files successfully processed.
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) file_list -> List of files to be processed
+        (input) action -> Type of processing to complete
+            "search" => Execute a pulled search on the file
+            "insert" => Insert data file into database
+        (output) done_list -> List of files successfully processed
 
     """
 
     done_list = list()
-    args_array = dict(args_array)
     file_list = list(file_list)
 
     for fname in file_list:
@@ -511,11 +507,11 @@ def process_list(args_array, cfg, log, file_list, action):
 
         if action == "search":
             log.log_info("process_list:  Action: search")
-            status = process_docid(args_array, cfg, fname, log)
+            status = process_docid(args, cfg, fname, log)
 
         elif action == "insert":
             log.log_info("process_list:  Action: insert")
-            status = process_insert(args_array, cfg, fname, log)
+            status = process_insert(args, cfg, fname, log)
 
         else:
             log.log_warn("process_list:  Incorrect or no action detected: %s"
@@ -536,11 +532,11 @@ def cleanup_files(docid_files, processed_list, dest_dir, log):
         from master file list.
 
     Arguments:
-        (input) docid_files -> List of files to be processed.
-        (input) processed_list -> List of files that were processed.
-        (input) dest_dir -> Directory to move processed files to.
-        (input) log -> Log class instance.
-        (output) docid_files -> Modified list of files not processed.
+        (input) docid_files -> List of files to be processed
+        (input) processed_list -> List of files that were processed
+        (input) dest_dir -> Directory to move processed files to
+        (input) log -> Log class instance
+        (output) docid_files -> Modified list of files not processed
 
     """
 
@@ -549,8 +545,8 @@ def cleanup_files(docid_files, processed_list, dest_dir, log):
 
     for fname in processed_list:
         log.log_info("cleanup_files:  Archiving file: %s" % (fname))
-        dtg = datetime.datetime.strftime(datetime.datetime.now(),
-                                         "%Y%m%d_%H%M%S")
+        dtg = datetime.datetime.strftime(
+            datetime.datetime.now(), "%Y%m%d_%H%M%S")
         new_fname = os.path.basename(fname)
         gen_libs.mv_file2(fname, dest_dir, new_fname=new_fname + "." + dtg)
         docid_files.remove(fname)
@@ -558,60 +554,58 @@ def cleanup_files(docid_files, processed_list, dest_dir, log):
     return docid_files
 
 
-def process_files(args_array, cfg, log):
+def process_files(args, cfg, log):
 
     """Function:  process_files
 
     Description:  Processes the docid files.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) cfg -> Configuration setup.
-        (input) log -> Log class instance.
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
 
     """
 
-    args_array = dict(args_array)
     mail = None
-    subj = args_array.get("-s", "") + "Non-processed files"
+    subj = args.get_val("-s", def_val="") + "Non-processed files"
 
-    if args_array.get("-t", False):
-        mail = gen_class.setup_mail(args_array.get("-t"), subj=subj)
+    if args.get_val("-t", def_val=False):
+        mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
 
     log.log_info("process_files:  Processing files to search...")
-    docid_files = gen_libs.filename_search(cfg.doc_dir, cfg.file_regex,
-                                           add_path=True)
-    remove_list = process_list(args_array, cfg, log, docid_files, "search")
+    docid_files = gen_libs.filename_search(
+        cfg.doc_dir, cfg.file_regex, add_path=True)
+    remove_list = process_list(args, cfg, log, docid_files, "search")
     docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir, log)
     non_processed(docid_files, cfg.error_dir, log, mail)
 
 
-def insert_data(args_array, cfg, log):
+def insert_data(args, cfg, log):
 
     """Function:  insert_data
 
     Description:  Insert pulled search files into Mongodb.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) cfg -> Configuration setup.
-        (input) log -> Log class instance.
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
 
     """
 
-    args_array = dict(args_array)
     mail = None
-    subj = args_array.get("-s", "") + "Non-processed files"
+    subj = args.get_val("-s", def_val="") + "Non-processed files"
 
-    if args_array.get("-t", False):
-        mail = gen_class.setup_mail(args_array.get("-t"), subj=subj)
+    if args.get_val("-t", def_val=False):
+        mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
 
     log.log_info("insert_data:  Processing files to insert...")
-    insert_list = gen_libs.filename_search(cfg.monitor_dir, cfg.mfile_regex,
-                                           add_path=True)
-    remove_list = process_list(args_array, cfg, log, insert_list, "insert")
-    insert_list = cleanup_files(insert_list, remove_list, cfg.marchive_dir,
-                                log)
+    insert_list = gen_libs.filename_search(
+        cfg.monitor_dir, cfg.mfile_regex, add_path=True)
+    remove_list = process_list(args, cfg, log, insert_list, "insert")
+    insert_list = cleanup_files(
+        insert_list, remove_list, cfg.marchive_dir, log)
     non_processed(insert_list, cfg.merror_dir, log, mail)
 
 
@@ -623,8 +617,8 @@ def validate_dirs(cfg):
         -P option.
 
     Arguments:
-        (input) cfg -> Configuration setup.
-        (output) msg_dict -> Dictionary of any error messages detected.
+        (input) cfg -> Configuration setup
+        (output) msg_dict -> Dictionary of any error messages detected
 
     """
 
@@ -641,20 +635,20 @@ def validate_dirs(cfg):
         msg_dict[cfg.log_dir] = msg
 
     basepath = gen_libs.get_base_dir(cfg.outfile)
-    status, msg = gen_libs.chk_crt_dir(basepath, write=True, create=True,
-                                       no_print=True)
+    status, msg = gen_libs.chk_crt_dir(
+        basepath, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[basepath] = msg
 
-    status, msg = gen_libs.chk_crt_dir(cfg.error_dir, write=True, create=True,
-                                       no_print=True)
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.error_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.error_dir] = msg
 
-    status, msg = gen_libs.chk_crt_dir(cfg.archive_dir, write=True,
-                                       create=True, no_print=True)
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.archive_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.archive_dir] = msg
@@ -670,27 +664,27 @@ def mvalidate_dirs(cfg):
         -I option.
 
     Arguments:
-        (input) cfg -> Configuration setup.
-        (output) msg_dict -> Dictionary of any error messages detected.
+        (input) cfg -> Configuration setup
+        (output) msg_dict -> Dictionary of any error messages detected
 
     """
 
     msg_dict = dict()
 
-    status, msg = gen_libs.chk_crt_dir(cfg.monitor_dir, write=True,
-                                       no_print=True)
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.monitor_dir, write=True, no_print=True)
 
     if not status:
         msg_dict[cfg.monitor_dir] = msg
 
-    status, msg = gen_libs.chk_crt_dir(cfg.merror_dir, write=True, create=True,
-                                       no_print=True)
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.merror_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.merror_dir] = msg
 
-    status, msg = gen_libs.chk_crt_dir(cfg.marchive_dir, write=True,
-                                       create=True, no_print=True)
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.marchive_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.marchive_dir] = msg
@@ -698,7 +692,7 @@ def mvalidate_dirs(cfg):
     return msg_dict
 
 
-def checks_dirs(args_array, cfg):
+def checks_dirs(args, cfg):
 
     """Function:  checks_dirs
 
@@ -706,25 +700,24 @@ def checks_dirs(args_array, cfg):
         on the options selected.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) cfg -> Configuration setup.
-        (output) msg_dict -> Dictionary of any error messages detected.
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (output) msg_dict -> Dictionary of any error messages detected
 
     """
 
-    args_array = dict(args_array)
     msg_dict = dict()
 
-    if args_array.get("-P", None):
+    if args.get_val("-P", def_val=None):
         msg_dict = validate_dirs(cfg)
 
-    elif args_array.get("-I", None):
+    elif args.get_val("-I", def_val=None):
         msg_dict = mvalidate_dirs(cfg)
 
     return msg_dict
 
 
-def config_override(args_array, cfg):
+def config_override(args, cfg):
 
     """Function:  config_override
 
@@ -732,22 +725,22 @@ def config_override(args_array, cfg):
         values for some configuration settings.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) cfg -> Configuration setup.
-        (output) cfg -> Modified configuration setup.
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (output) cfg -> Modified configuration setup
 
     """
 
-    if args_array.get("-m", None):
-        cfg.doc_dir = args_array["-m"]
+    if args.get_val("-m", def_val=None):
+        cfg.doc_dir = args.get_val("-m")
 
-    if args_array.get("-n", None):
-        cfg.monitor_dir = args_array["-n"]
+    if args.get_val("-n", def_val=None):
+        cfg.monitor_dir = args.get_val("-n")
 
     return cfg
 
 
-def run_program(args_array, func_dict):
+def run_program(args, func_dict):
 
     """Function:  run_program
 
@@ -756,33 +749,32 @@ def run_program(args_array, func_dict):
         process the docid files.
 
     Arguments:
-        (input) args_array -> Dictionary of command line options and values.
-        (input) func_dict -> Dict of function calls for different options.
+        (input) args -> ArgParser class instance
+        (input) func_dict -> Dict of function calls for different options
 
     """
 
-    args_array = dict(args_array)
     func_dict = dict(func_dict)
-    cfg = gen_libs.load_module(args_array["-c"], args_array["-d"])
+    cfg = gen_libs.load_module(args.get_val("-c"), args.get_val("-d"))
     basepath = gen_libs.get_base_dir(cfg.log_file)
-    status, err_msg = gen_libs.chk_crt_dir(basepath, write=True, create=True,
-                                           no_print=True)
+    status, err_msg = gen_libs.chk_crt_dir(
+        basepath, write=True, create=True, no_print=True)
 
     if status:
-        log = gen_class.Logger(cfg.log_file, cfg.log_file, "INFO",
-                               "%(asctime)s %(levelname)s %(message)s",
-                               "%Y-%m-%dT%H:%M:%SZ")
+        log = gen_class.Logger(
+            cfg.log_file, cfg.log_file, "INFO",
+            "%(asctime)s %(levelname)s %(message)s", "%Y-%m-%dT%H:%M:%SZ")
         log.log_info("Program initialization...")
-        cfg = config_override(args_array, cfg)
-        msg_dict = checks_dirs(args_array, cfg)
+        cfg = config_override(args, cfg)
+        msg_dict = checks_dirs(args, cfg)
 
         if msg_dict:
             log.log_err("Validation of configuration directories failed")
             log.log_err("Message: %s" % (msg_dict))
 
         else:
-            for opt in set(args_array.keys()) & set(func_dict.keys()):
-                func_dict[opt](args_array, cfg, log)
+            for opt in set(args.get_args_keys()) & set(func_dict.keys()):
+                func_dict[opt](args, cfg, log)
 
     else:
         print("Error:  Logger Directory Check Failure")
@@ -797,21 +789,21 @@ def main():
         line arguments and values.
 
     Variables:
-        dir_chk_list -> contains options which will be directories.
-        func_dict -> dictionary of function calls for different options.
-        opt_con_req_dict -> contains options requiring other options.
-        opt_multi_list -> contains the options that will have multiple values.
-        opt_req_list -> contains options that are required for the program.
-        opt_val_list -> contains options which require values.
-        opt_xor_dict -> contains dict with key that is xor with it's values.
+        dir_chk_list -> contains options which will be directories
+        func_dict -> dictionary of function calls for different options
+        opt_con_req_dict -> contains options requiring other options
+        opt_multi_list -> contains the options that will have multiple values
+        opt_req_list -> contains options that are required for the program
+        opt_val_list -> contains options which require values
+        opt_xor_dict -> contains dict with key that is xor with it's values
 
     Arguments:
-        (input) argv -> Arguments from the command line.
+        (input) argv -> Arguments from the command line
 
     """
 
     cmdline = gen_libs.get_inst(sys)
-    dir_chk_list = ["-d", "-m", "-n"]
+    dir_perms_chk = {"-d": 5, "-m": 7, "-n": 7}
     func_dict = {"-P": process_files, "-I": insert_data}
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
@@ -820,24 +812,25 @@ def main():
     opt_xor_dict = {"-I": ["-P"], "-P": ["-I"]}
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
-                                       multi_val=opt_multi_list)
+    args = gen_class.ArgParser(
+        cmdline.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
+        do_parse=True)
 
-    if not gen_libs.help_func(args_array, __version__, help_message) \
-       and not arg_parser.arg_require(args_array, opt_req_list) \
-       and arg_parser.arg_cond_req_or(args_array, opt_con_req_dict) \
-       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list) \
-       and arg_parser.arg_xor_dict(args_array, opt_xor_dict):
+    if not gen_libs.help_func(args.get_args(), __version__, help_message)   \
+       and args.arg_require(opt_req=opt_req_list)                           \
+       and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)                \
+       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
+       and args.arg_xor_dict(opt_xor_val=opt_xor_dict):
 
         try:
-            prog_lock = gen_class.ProgramLock(cmdline.argv,
-                                              args_array.get("-y", ""))
-            run_program(args_array, func_dict)
+            prog_lock = gen_class.ProgramLock(
+                cmdline.argv, args.get_val("-y", def_val=""))
+            run_program(args, func_dict)
             del prog_lock
 
         except gen_class.SingleInstanceException:
             print("WARNING:  Lock in place for pulled_search with id of: %s"
-                  % (args_array.get("-y", "")))
+                  % (args.get_val("-y", def_val="")))
 
 
 if __name__ == "__main__":

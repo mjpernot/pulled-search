@@ -34,6 +34,70 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        get_val
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.cmdline = None
+        self.args_array = dict()
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+
+class CfgTest(object):
+
+    """Class:  CfgTest
+
+    Description:  Class which is a representation of a cfg module.
+
+    Methods:
+        __init__
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization instance of the CfgTest class.
+
+        Arguments:
+
+        """
+
+        self.doc_dir = "/dir_path/doc_dir"
+        self.monitor_dir = "/dir_path/monitor_dir"
+        self.log_dir = "/dir_path/log_dir"
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -58,31 +122,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        class CfgTest(object):
-
-            """Class:  CfgTest
-
-            Description:  Class which is a representation of a cfg module.
-
-            Methods:
-                __init__
-
-            """
-
-            def __init__(self):
-
-                """Method:  __init__
-
-                Description:  Initialization instance of the CfgTest class.
-
-                Arguments:
-
-                """
-
-                self.doc_dir = "/dir_path/doc_dir"
-                self.monitor_dir = "/dir_path/monitor_dir"
-                self.log_dir = "/dir_path/log_dir"
-
+        self.args = ArgParser()
         self.cfg = CfgTest()
         self.name = "name@domain"
         self.args_array = {"-t": self.name}
@@ -104,8 +144,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(pulled_search.checks_dirs(
-            self.args_array3, self.cfg), self.results3)
+        self.args.args_array = self.args_array3
+
+        self.assertEqual(
+            pulled_search.checks_dirs(self.args, self.cfg), self.results3)
 
     @mock.patch("pulled_search.validate_dirs",
                 mock.Mock(return_value={"-P": True}))
@@ -119,8 +161,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(pulled_search.checks_dirs(
-            self.args_array2, self.cfg), self.results2)
+        self.args.args_array = self.args_array2
+
+        self.assertEqual(
+            pulled_search.checks_dirs(self.args, self.cfg), self.results2)
 
     def test_no_options(self):
 
@@ -132,8 +176,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(pulled_search.checks_dirs(
-            self.args_array, self.cfg), self.results)
+        self.args.args_array = self.args_array
+
+        self.assertEqual(
+            pulled_search.checks_dirs(self.args, self.cfg), self.results)
 
 
 if __name__ == "__main__":

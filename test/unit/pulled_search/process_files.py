@@ -34,6 +34,71 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        get_val
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.cmdline = None
+        self.args_array = dict()
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+
+class CfgTest(object):
+
+    """Class:  CfgTest
+
+    Description:  Class which is a representation of a cfg module.
+
+    Methods:
+        __init__
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization instance of the CfgTest class.
+
+        Arguments:
+
+        """
+
+        self.file_regex = "*_docid.json"
+        self.doc_dir = "/dir_path/doc_dir"
+        self.error_dir = "/dir/path/error_dir"
+        self.archive_dir = "/dir/path/archive_dir"
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -61,32 +126,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        class CfgTest(object):
-
-            """Class:  CfgTest
-
-            Description:  Class which is a representation of a cfg module.
-
-            Methods:
-                __init__
-
-            """
-
-            def __init__(self):
-
-                """Method:  __init__
-
-                Description:  Initialization instance of the CfgTest class.
-
-                Arguments:
-
-                """
-
-                self.file_regex = "*_docid.json"
-                self.doc_dir = "/dir_path/doc_dir"
-                self.error_dir = "/dir/path/error_dir"
-                self.archive_dir = "/dir/path/archive_dir"
-
+        self.args = ArgParser()
         self.cfg = CfgTest()
         self.log_files = ["/path/logfile1", "/path/logfile2"]
         self.args_array = {"-t": "name@domain"}
@@ -110,10 +150,12 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array3
+
         mock_log.return_value = True
 
-        self.assertFalse(pulled_search.process_files(self.args_array3,
-                                                     self.cfg, mock_log))
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
@@ -132,10 +174,12 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array2
+
         mock_log.return_value = True
 
-        self.assertFalse(pulled_search.process_files(self.args_array2,
-                                                     self.cfg, mock_log))
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
@@ -154,7 +198,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
+        self.args.args_array = dict()
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
@@ -173,7 +220,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
+        self.args.args_array = dict()
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
@@ -192,10 +242,12 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array
+
         mock_log.return_value = True
 
-        self.assertFalse(pulled_search.process_files(self.args_array, self.cfg,
-                                                     mock_log))
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
@@ -214,7 +266,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(pulled_search.process_files({}, self.cfg, mock_log))
+        self.args.args_array = dict()
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
 
 
 if __name__ == "__main__":

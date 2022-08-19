@@ -34,6 +34,58 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.cmdline = None
+        self.args_array = dict()
+
+
+class CfgTest(object):
+
+    """Class:  CfgTest
+
+    Description:  Class which is a representation of a cfg module.
+
+    Methods:
+        __init__
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization instance of the CfgTest class.
+
+        Arguments:
+
+        """
+
+        self.file_regex = "*_docid.json"
+        self.doc_dir = "/dir_path/doc_dir"
+        self.error_dir = "/dir/path/error_dir"
+        self.archive_dir = "/dir/path/archive_dir"
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -63,32 +115,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        class CfgTest(object):
-
-            """Class:  CfgTest
-
-            Description:  Class which is a representation of a cfg module.
-
-            Methods:
-                __init__
-
-            """
-
-            def __init__(self):
-
-                """Method:  __init__
-
-                Description:  Initialization instance of the CfgTest class.
-
-                Arguments:
-
-                """
-
-                self.file_regex = "*_docid.json"
-                self.doc_dir = "/dir_path/doc_dir"
-                self.error_dir = "/dir/path/error_dir"
-                self.archive_dir = "/dir/path/archive_dir"
-
+        self.args = ArgParser()
+        self.args.args_array = {"-t": "name@domain"}
         self.cfg = CfgTest()
         self.docid1 = "/path/docidfile1"
         self.docid2 = "/path/docidfile2"
@@ -97,7 +125,6 @@ class UnitTest(unittest.TestCase):
         self.results = [self.docid1]
         self.results2 = [self.docid1, self.docid2]
         self.results3 = [self.docid2]
-        self.args_array = {"-t": "name@domain"}
         self.action = "search"
         self.action2 = "insert"
         self.action3 = "badaction"
@@ -116,7 +143,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.args, self.cfg, mock_log, self.docid_files2,
             self.action3), [])
 
     @mock.patch("pulled_search.process_insert",
@@ -135,7 +162,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.args, self.cfg, mock_log, self.docid_files2,
             self.action2), self.results3)
 
     @mock.patch("pulled_search.process_insert", mock.Mock(return_value=True))
@@ -153,7 +180,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.args, self.cfg, mock_log, self.docid_files2,
             self.action2), self.results2)
 
     @mock.patch("pulled_search.process_insert", mock.Mock(return_value=True))
@@ -171,7 +198,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files,
+            self.args, self.cfg, mock_log, self.docid_files,
             self.action2), self.results)
 
     @mock.patch("pulled_search.process_docid",
@@ -190,7 +217,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.args, self.cfg, mock_log, self.docid_files2,
             self.action), self.results3)
 
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
@@ -208,7 +235,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files2,
+            self.args, self.cfg, mock_log, self.docid_files2,
             self.action), self.results2)
 
     @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
@@ -226,7 +253,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, self.docid_files,
+            self.args, self.cfg, mock_log, self.docid_files,
             self.action), self.results)
 
     @mock.patch("pulled_search.gen_class.Logger")
@@ -243,7 +270,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_list(
-            self.args_array, self.cfg, mock_log, [], self.action), [])
+            self.args, self.cfg, mock_log, [], self.action), [])
 
 
 if __name__ == "__main__":
