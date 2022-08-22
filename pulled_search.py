@@ -85,6 +85,14 @@
             user = "USER"
             japd = "PSWORD"
             host = "HOSTNAME"
+            # List of hosts along with their ports to a multiple node RabbitMQ
+            #   cluster.
+            # Format of each entry is: "IP:PORT".
+            # Example: host_list =
+            #   ["hostname:5672", "hostname2:5672", "hostname:5673"]
+            # Note:  If host_list is set, it will take precedence over the host
+            #   entry.
+            host_list = []
             # RabbitMQ Queue name.
             queue = "QUEUENAME"
             # RabbitMQ Routing Key
@@ -109,11 +117,11 @@
             monitor_dir = "MONITOR_DIR_PATH"
             # Regular expression for search for Insert/Mongodb file names.
             mfile_regex = "_mongo.json"
-            # Directory path to where Insert/Mongodb error and non-processed
-            #   files are saved to.
-            marchive_dir = "ARCHIVE_DIR_PATH"
             # Directory path to where Insert/Mongodb archived files are saved
             #   to.
+            marchive_dir = "ARCHIVE_DIR_PATH"
+            # Directory path to where Insert/Mongodb error and non-processed
+            #   files are saved to.
             merror_dir = "ERROR_DIR_PATH"
             # Name of Mongo configuration file.  (Do not include the ".py"
             #   in the name.)
@@ -320,8 +328,8 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
     start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
     end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
 
-    for x in gen_libs.date_range(start_dt, end_dt):
-        yearmon = datetime.date.strftime(x, "%Y/%m")
+    for date in gen_libs.date_range(start_dt, end_dt):
+        yearmon = datetime.date.strftime(date, "%Y/%m")
         full_dir = os.path.join(cmd_dir, yearmon)
         log_files = log_files + gen_libs.filename_search(
             full_dir, cmd_regex, add_path=True)
@@ -408,11 +416,14 @@ def process_docid(args, cfg, fname, log):
 
     else:
         # Create argument list for check_log program.
-        search_args = {
-            "-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
-            "-k": "or", "-o": cfg.outfile, "-z": True}
+        cmdline = [
+            "check_log.py", "-g", "w", "-f", log_files, "-S",
+            [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
+        chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
+        chk_args = gen_class.ArgParser(
+            cmdline, opt_val=chk_opt_val, do_parse=True)
         log.log_info("process_docid:  Running check_log search...")
-        check_log.run_program(search_args)
+        check_log.run_program(chk_args)
 
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")

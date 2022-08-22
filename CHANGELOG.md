@@ -9,6 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Upgrade python-lib to v2.9.3
 
 ### Changed
+- process_docid: Create gen_class.ArgParser class instance for the check_log.run_program call.
 - Multiple functions: Replaced the use of arg_parser (args_array) with gen_class.ArgParser class (args).
 - process_insert:  Captured and processed status return from mongo_libs.ins_doc call.
 - config/mongo.py.TEMPLATE:  Added SSL connection entriesi and removed some old entries.
