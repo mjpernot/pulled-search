@@ -408,11 +408,14 @@ def process_docid(args, cfg, fname, log):
 
     else:
         # Create argument list for check_log program.
-        search_args = {
-            "-g": "w", "-f": log_files, "-S": [docid_dict["docid"]],
-            "-k": "or", "-o": cfg.outfile, "-z": True}
+        cmdline = [
+            "check_log.py", "-g", "w", "-f", log_files, "-S",
+            [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
+        chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
+        chk_args = gen_class.ArgParser(
+            cmdline, opt_val=chk_opt_val, do_parse=True)
         log.log_info("process_docid:  Running check_log search...")
-        check_log.run_program(search_args)
+        check_log.run_program(chk_args)
 
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")

@@ -128,29 +128,26 @@ class UnitTest(unittest.TestCase):
         """
 
         self.args = ArgParser()
+        self.chk_args = ArgParser()
         self.cfg = CfgTest()
         self.args_array = {}
         self.args_array2 = {"-a": True}
         self.args_array3 = {"-z": True}
-        self.data_list = ['{',
-                          '"docid": "weotiuer",',
-                          '"command": "COMMAND",',
-                          '"pubdate": "20200102-101134"',
-                          '}']
-        self.data_list2 = ['{',
-                           '"docid": "weotiuer",',
-                           '"command": "EUCOM",',
-                           '"pubdate": "20200102-101134"',
-                           '}']
+        self.data_list = [
+            '{', '"docid": "weotiuer",', '"command": "COMMAND",',
+            '"pubdate": "20200102-101134"', '}']
+        self.data_list2 = [
+            '{', '"docid": "weotiuer",', '"command": "EUCOM",',
+            '"pubdate": "20200102-101134"', '}']
         self.file_log = ["Line1", "Line2", "Line3"]
         self.fname = "/dir_path/092438k234_docid.json"
         self.docid_dict = {"docid": "weotiuer", "command": "COMMAND",
                            "pubdate": "20200102-101134"}
-        self.log_json = {"docID": "weotiuer", "command": "COMMAND",
-                         "pubDate": "20200102-101134",
-                         "securityEnclave": "ENCLAVE",
-                         "asOf": "20200306 084503", "serverName": "SERVERNAME",
-                         "logEntries": ["line1", "line2", "line3"]}
+        self.log_json = {
+            "docID": "weotiuer", "command": "COMMAND",
+            "pubDate": "20200102-101134", "securityEnclave": "ENCLAVE",
+            "asOf": "20200306 084503", "serverName": "SERVERNAME",
+            "logEntries": ["line1", "line2", "line3"]}
         self.log_files = ["/path/logfile1", "/path/logfile2"]
 
     @mock.patch("pulled_search.platform.linux_distribution",
@@ -230,10 +227,11 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
     @mock.patch("pulled_search.get_archive_files")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_archive_option(self, mock_log, mock_list, mock_match):
+    def test_archive_option(self, mock_log, mock_list, mock_match, mock_arg):
 
         """Function:  test_archive_option
 
@@ -248,6 +246,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
+        mock_arg.return_value = self.chk_args
 
         self.assertEqual(pulled_search.process_docid(
             self.args, self.cfg, self.fname, mock_log), True)
@@ -263,10 +262,11 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_exception_cmd(self, mock_log, mock_list, mock_match):
+    def test_exception_cmd(self, mock_log, mock_list, mock_match, mock_arg):
 
         """Function:  test_exception_cmd
 
@@ -281,6 +281,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list2, self.file_log]
         mock_match.return_value = self.log_files
+        mock_arg.return_value = self.chk_args
 
         self.assertEqual(pulled_search.process_docid(
             self.args, self.cfg, self.fname, mock_log), True)
@@ -296,10 +297,11 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(False, "Error Message")))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_rm_file_failed(self, mock_log, mock_list, mock_match):
+    def test_rm_file_failed(self, mock_log, mock_list, mock_match, mock_arg):
 
         """Function:  test_rm_file_failed
 
@@ -314,6 +316,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
+        mock_arg.return_value = self.chk_args
 
         self.assertEqual(pulled_search.process_docid(
             self.args, self.cfg, self.fname, mock_log), True)
@@ -329,10 +332,11 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_rabbitmq_failed(self, mock_log, mock_list, mock_match):
+    def test_rabbitmq_failed(self, mock_log, mock_list, mock_match, mock_arg):
 
         """Function:  test_rabbitmq_failed
 
@@ -347,6 +351,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
+        mock_arg.return_value = self.chk_args
 
         self.assertEqual(pulled_search.process_docid(
             self.args, self.cfg, self.fname, mock_log), False)
@@ -359,10 +364,11 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.ArgParser")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_file_empty(self, mock_log, mock_list, mock_match):
+    def test_file_empty(self, mock_log, mock_list, mock_match, mock_arg):
 
         """Function:  test_file_empty
 
@@ -377,6 +383,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
+        mock_arg.return_value = self.chk_args
 
         self.assertEqual(pulled_search.process_docid(
             self.args, self.cfg, self.fname, mock_log), True)
@@ -392,10 +399,11 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_with_data(self, mock_log, mock_list, mock_match):
+    def test_with_data(self, mock_log, mock_list, mock_match, mock_arg):
 
         """Function:  test_with_data
 
@@ -410,6 +418,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_list.side_effect = [self.data_list, self.file_log]
         mock_match.return_value = self.log_files
+        mock_arg.return_value = self.chk_args
 
         self.assertEqual(pulled_search.process_docid(
             self.args, self.cfg, self.fname, mock_log), True)
