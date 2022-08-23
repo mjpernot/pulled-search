@@ -100,6 +100,8 @@ Make the appropriate changes to the environment.
 
   * Make the appropriate changes to RabbitMQ section.
   * Update this section if using the -P option.
+    - to_addr = None
+    - subj = None
     - user = "USER"
     - japd = "PSWORD"
     - host = "HOSTNAME"

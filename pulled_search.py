@@ -82,8 +82,27 @@
 
             # Pulled Search Process/RabbitMQ Configuration section.
             # Update this section if using the -P option.
+            # Fill either the mail section to send to RabbitMQ via email or
+            #   fill in the RabbitMQ section to publish to RabbitMQ directly.
+            #   If using mail option this is normally used in conjunction with
+            #   the rmq_2_mail.py program.
+            # Note: If the email is filled in then this will override the
+            #   RabbitMQ section.
+            #
+            # Email section
+            # Email address to rabbitmq alias for the rmq_2_mail.py program.
+            #   Note:  Leave to_addr set to None if not using email capability.
+            # Example: to_addr = "rabbitmq@domain.name"
+            to_addr = None
+            # Name of the RabbitMQ queue.
+            # Example:  subj = "Pulledsearch"
+            subj = None
+            #
+            # RabbitMQ section
+            # Login information.
             user = "USER"
             japd = "PSWORD"
+            # Address to single RabbitMQ node.
             host = "HOSTNAME"
             # List of hosts along with their ports to a multiple node RabbitMQ
             #   cluster.
@@ -428,16 +447,6 @@ def process_docid(args, cfg, fname, log):
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
-
-    else:
-        log.log_info("process_docid:  No log entries detected.")
-
-    err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
-
-    if err_flag:
-        log.log_warn("process_docid:  %s" % (err_msg))
-
-    if file_log:
         log_json = create_json(cfg, docid_dict, file_log)
         log.log_info("process_docid:  Publishing log entries...")
         status, err_msg = rabbitmq_class.pub_2_rmq(cfg, json.dumps(log_json))
@@ -448,6 +457,26 @@ def process_docid(args, cfg, fname, log):
         else:
             log.log_err("process_docid:  Error detected during publication.")
             log.log_err("process_docid:  Message: %s" % (err_msg))
+
+    else:
+        log.log_info("process_docid:  No log entries detected.")
+
+    err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
+
+    if err_flag:
+        log.log_warn("process_docid:  %s" % (err_msg))
+
+#    if file_log:
+#        log_json = create_json(cfg, docid_dict, file_log)
+#        log.log_info("process_docid:  Publishing log entries...")
+#        status, err_msg = rabbitmq_class.pub_2_rmq(cfg, json.dumps(log_json))
+#
+#        if status:
+#            log.log_info("process_docid:  Log entries published to RabbitMQ.")
+#
+#        else:
+#            log.log_err("process_docid:  Error detected during publication.")
+#            log.log_err("process_docid:  Message: %s" % (err_msg))
 
     return status
 
