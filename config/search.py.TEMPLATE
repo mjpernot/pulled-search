@@ -27,6 +27,10 @@ enclave = "ENCLAVE"
 archive_dir = "ARCHIVE_DIR_PATH"
 # Directory path to where error and non-processed files are saved to.
 error_dir = "ERROR_DIR_PATH"
+# Mapping of commands to keywords.
+# This is for the naming of the access logs which are not always under the command name.
+command = {"eucom": "intelink"}
+
 
 # Pulled Search Process/RabbitMQ Configuration section.
 # Update this section if using the -P option.

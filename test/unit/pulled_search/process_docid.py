@@ -97,6 +97,7 @@ class CfgTest(object):
         self.log_dir = "/dir_path/log"
         self.outfile = "/dir/path/outfile"
         self.archive_dir = "/dir/archive_dir"
+        self.command = {"eucom": "intelink"}
 
 
 class UnitTest(unittest.TestCase):

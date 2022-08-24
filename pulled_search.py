@@ -405,9 +405,12 @@ def process_docid(args, cfg, fname, log):
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
     cmd = docid_dict["command"].lower()
 
-    # Special case exception for "Eucom" command.
-    if cmd == "eucom":
-        cmd = "intelink"
+    # Check to see if the command is mapped to a different keyword file
+    if cmd in cfg.command:
+        cmd = cfg.command[cmd]
+#    # Special case exception for "Eucom" command.
+#    if cmd == "eucom":
+#        cmd = "intelink"
 
     cmd_regex = cmd + ".*" + cfg.log_type
 
