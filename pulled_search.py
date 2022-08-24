@@ -455,7 +455,7 @@ def process_docid(args, cfg, fname, log):
         file_log = gen_libs.file_2_list(cfg.outfile)
         log_json = create_json(cfg, docid_dict, file_log)
 
-# New Function - Start (process_json)
+# New Function - Start (process_json) Args:(cfg, log, log_json)
 #############################################################
         if cfg.to_addr and cfg.subj:
             log.log_info("process_docid:  Emailing log entries...")
