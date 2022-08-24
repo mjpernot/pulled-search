@@ -42,10 +42,11 @@ command = {"eucom": "intelink"}
 #
 # Email section
 # Email address to rabbitmq alias for the rmq_2_mail.py program.
-#   Note:  Leave to_addr set to None if not using email capability.
+#   Note:  Leave to_addr and subj set to None if not using email capability.
 # Example: to_addr = "rabbitmq@domain.name"
 to_addr = None
 # Name of the RabbitMQ queue.
+# Note: Subject must match exactly the RabbitMQ queue name and is case-sensitive.
 # Example:  subj = "Pulledsearch"
 subj = None
 #

@@ -91,10 +91,13 @@
             #
             # Email section
             # Email address to rabbitmq alias for the rmq_2_mail.py program.
-            #   Note:  Leave to_addr set to None if not using email capability.
+            #   Note:  Leave to_addr and subj set to None if not using email
+            #   capability.
             # Example: to_addr = "rabbitmq@domain.name"
             to_addr = None
             # Name of the RabbitMQ queue.
+            # Note: Subject must match exactly the RabbitMQ queue name and is
+            #   case-sensitive.
             # Example:  subj = "Pulledsearch"
             subj = None
             #
@@ -451,15 +454,43 @@ def process_docid(args, cfg, fname, log):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
         log_json = create_json(cfg, docid_dict, file_log)
-        log.log_info("process_docid:  Publishing log entries...")
-        status, err_msg = rabbitmq_class.pub_2_rmq(cfg, json.dumps(log_json))
 
-        if status:
-            log.log_info("process_docid:  Log entries published to RabbitMQ.")
+# New Function - Start (process_json)
+#############################################################
+        if cfg.to_addr and cfg.subj:
+            log.log_info("process_docid:  Emailing log entries...")
+            mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
+            mail.add_2_msg(log_json)
+            mail.send_mail()
 
         else:
-            log.log_err("process_docid:  Error detected during publication.")
-            log.log_err("process_docid:  Message: %s" % (err_msg))
+            log.log_info("process_docid:  Publishing log entries...")
+            status, err_msg = rabbitmq_class.pub_2_rmq(
+                cfg, json.dumps(log_json))
+
+            if status:
+                log.log_info(
+                    "process_docid:  Log entries published to RabbitMQ.")
+
+            else:
+                log.log_err(
+                    "process_docid:  Error detected during publication.")
+                log.log_err("process_docid:  Message: %s" % (err_msg))
+                dtg = datetime.datetime.strftime(
+                    datetime.datetime.now(), "%Y%m%d_%H%M%S")
+                name = "NonPublished." + log_json["DocID"] \
+                    + log_json["ServerName"] + "." + dtg
+                fname = os.path.join(cfg.error_dir, name)
+                gen_libs.write_file(fname, mode="w", data=log_json)
+                subj = args.get_val("-s", def_val="") + "Error: NonPublished"
+
+                if args.get_val("-t", def_val=False):
+                    mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
+                    mail.add_2_msg("Unable to publish message to RabbitMQ")
+                    mail.add_2_msg("File: " + fname)
+                    mail.sendmail()
+#############################################################
+# New Function - End
 
     else:
         log.log_info("process_docid:  No log entries detected.")
