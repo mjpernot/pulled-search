@@ -232,19 +232,15 @@ from __future__ import print_function
 import sys
 import os
 import socket
-import getpass
 import datetime
 import subprocess
 
 # Third-party
 import json
-import calendar
-import re
 import platform
 import decimal
 
 # Local
-import lib.arg_parser as arg_parser
 import lib.gen_libs as gen_libs
 import lib.gen_class as gen_class
 import rabbit_lib.rabbitmq_class as rabbitmq_class
@@ -451,7 +447,7 @@ def process_docid(args, cfg, fname, log):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
         log_json = create_json(cfg, docid_dict, file_log)
-        process_json(cfg, log, log_json)
+        process_json(args, cfg, log, log_json)
 
     else:
         log.log_info("process_docid:  No log entries detected.")
