@@ -530,7 +530,7 @@ def process_insert(args, cfg, fname, log):
     if isinstance(insert_dict, dict):
         log.log_info("process_insert:  Inserting data into Mongodb.")
         mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
-        mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.db, mcfg.tbl, insert_dict)
+        mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, insert_dict)
 
         if not mongo_stat[0]:
             log.log_err("process_insert:  Insert of data into MongoDB failed.")

@@ -54,7 +54,7 @@ ssl_client_cert = None
 ssl_client_phrase = None
 
 # Name of Mongo database for data insertion
-db = "DATABASE"
+dbs = "DATABASE"
 # Name of Mongo collection
 tbl = "COLLECTION"
 
