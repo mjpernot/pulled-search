@@ -82,8 +82,30 @@
 
             # Pulled Search Process/RabbitMQ Configuration section.
             # Update this section if using the -P option.
+            # Fill either the mail section to send to RabbitMQ via email or
+            #   fill in the RabbitMQ section to publish to RabbitMQ directly.
+            #   If using mail option this is normally used in conjunction with
+            #   the rmq_2_mail.py program.
+            # Note: If the email is filled in then this will override the
+            #   RabbitMQ section.
+            #
+            # Email section
+            # Email address to rabbitmq alias for the rmq_2_mail.py program.
+            #   Note:  Leave to_addr and subj set to None if not using email
+            #   capability.
+            # Example: to_addr = "rabbitmq@domain.name"
+            to_addr = None
+            # Name of the RabbitMQ queue.
+            # Note: Subject must match exactly the RabbitMQ queue name and is
+            #   case-sensitive.
+            # Example:  subj = "Pulledsearch"
+            subj = None
+            #
+            # RabbitMQ section
+            # Login information.
             user = "USER"
             japd = "PSWORD"
+            # Address to single RabbitMQ node.
             host = "HOSTNAME"
             # List of hosts along with their ports to a multiple node RabbitMQ
             #   cluster.
@@ -210,19 +232,15 @@ from __future__ import print_function
 import sys
 import os
 import socket
-import getpass
 import datetime
 import subprocess
 
 # Third-party
 import json
-import calendar
-import re
 import platform
 import decimal
 
 # Local
-import lib.arg_parser as arg_parser
 import lib.gen_libs as gen_libs
 import lib.gen_class as gen_class
 import rabbit_lib.rabbitmq_class as rabbitmq_class
@@ -386,9 +404,9 @@ def process_docid(args, cfg, fname, log):
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
     cmd = docid_dict["command"].lower()
 
-    # Special case exception for "Eucom" command.
-    if cmd == "eucom":
-        cmd = "intelink"
+    # Check to see if the command is mapped to a different keyword file
+    if cmd in cfg.command:
+        cmd = cfg.command[cmd]
 
     cmd_regex = cmd + ".*" + cfg.log_type
 
@@ -428,6 +446,8 @@ def process_docid(args, cfg, fname, log):
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
+        log_json = create_json(cfg, docid_dict, file_log)
+        process_json(args, cfg, log, log_json)
 
     else:
         log.log_info("process_docid:  No log entries detected.")
@@ -437,19 +457,55 @@ def process_docid(args, cfg, fname, log):
     if err_flag:
         log.log_warn("process_docid:  %s" % (err_msg))
 
-    if file_log:
-        log_json = create_json(cfg, docid_dict, file_log)
+    return status
+
+
+def process_json(args, cfg, log, log_json):
+
+    """Function:  process_json
+
+    Description:  Process the JSON document from the pulled search results.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) log_json -> JSON log document
+
+    """
+
+    if cfg.to_addr and cfg.subj:
+        log.log_info("process_docid:  Emailing log entries...")
+        mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
+        mail.add_2_msg(log_json)
+        mail.send_mail()
+
+    else:
         log.log_info("process_docid:  Publishing log entries...")
-        status, err_msg = rabbitmq_class.pub_2_rmq(cfg, json.dumps(log_json))
+        status, err_msg = rabbitmq_class.pub_2_rmq(
+            cfg, json.dumps(log_json))
 
         if status:
-            log.log_info("process_docid:  Log entries published to RabbitMQ.")
+            log.log_info(
+                "process_docid:  Log entries published to RabbitMQ.")
 
         else:
-            log.log_err("process_docid:  Error detected during publication.")
+            log.log_err(
+                "process_docid:  Error detected during publication.")
             log.log_err("process_docid:  Message: %s" % (err_msg))
+            dtg = datetime.datetime.strftime(
+                datetime.datetime.now(), "%Y%m%d_%H%M%S")
+            name = "NonPublished." + log_json["DocID"] \
+                + log_json["ServerName"] + "." + dtg
+            fname = os.path.join(cfg.error_dir, name)
+            gen_libs.write_file(fname, mode="w", data=log_json)
+            subj = args.get_val("-s", def_val="") + "Error: NonPublished"
 
-    return status
+            if args.get_val("-t", def_val=False):
+                mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
+                mail.add_2_msg("Unable to publish message to RabbitMQ")
+                mail.add_2_msg("File: " + fname)
+                mail.send_mail()
 
 
 def process_insert(args, cfg, fname, log):
@@ -474,7 +530,7 @@ def process_insert(args, cfg, fname, log):
     if isinstance(insert_dict, dict):
         log.log_info("process_insert:  Inserting data into Mongodb.")
         mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
-        mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.db, mcfg.tbl, insert_dict)
+        mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, insert_dict)
 
         if not mongo_stat[0]:
             log.log_err("process_insert:  Insert of data into MongoDB failed.")

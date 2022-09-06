@@ -97,6 +97,7 @@ class CfgTest(object):
         self.log_dir = "/dir_path/log"
         self.outfile = "/dir/path/outfile"
         self.archive_dir = "/dir/archive_dir"
+        self.command = {"eucom": "intelink"}
 
 
 class UnitTest(unittest.TestCase):
@@ -111,7 +112,6 @@ class UnitTest(unittest.TestCase):
         test_pre_centos_7
         test_exception_cmd
         test_rm_file_failed
-        test_rabbitmq_failed
         test_file_empty
         test_with_data
 
@@ -154,7 +154,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.zgrep_search",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+    @mock.patch("pulled_search.process_json",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
@@ -187,7 +187,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '6.10')))
     @mock.patch("pulled_search.zgrep_search",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+    @mock.patch("pulled_search.process_json",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
@@ -220,7 +220,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+    @mock.patch("pulled_search.process_json",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
@@ -255,7 +255,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+    @mock.patch("pulled_search.process_json",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
@@ -290,7 +290,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+    @mock.patch("pulled_search.process_json",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
@@ -320,41 +320,6 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(pulled_search.process_docid(
             self.args, self.cfg, self.fname, mock_log), True)
-
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
-    @mock.patch("pulled_search.check_log.run_program",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
-                mock.Mock(return_value=(False, "Error Message")))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.rm_file",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_class.ArgParser")
-    @mock.patch("pulled_search.gen_libs.filename_search")
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_rabbitmq_failed(self, mock_log, mock_list, mock_match, mock_arg):
-
-        """Function:  test_rabbitmq_failed
-
-        Description:  Test with failure to send to RabbitMQ.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array
-
-        mock_log.return_value = True
-        mock_list.side_effect = [self.data_list, self.file_log]
-        mock_match.return_value = self.log_files
-        mock_arg.return_value = self.chk_args
-
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.fname, mock_log), False)
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
@@ -392,7 +357,7 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
+    @mock.patch("pulled_search.process_json",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",

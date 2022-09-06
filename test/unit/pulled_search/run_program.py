@@ -153,6 +153,7 @@ class LoggerTest(object):
 
         pass
 
+
 class CfgTest(object):
 
     """Class:  CfgTest

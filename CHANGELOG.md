@@ -8,13 +8,19 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Upgrade mongo-libs to v4.2.1
 - Upgrade python-lib to v2.9.3
 
+### Added
+- process_json: Process the JSON document from the pulled search results by either emailing them or publishing them to RabbitMQ.
+
 ### Changed
-- process_docid: Create gen_class.ArgParser class instance for the check_log.run_program call.
+- process_docid: Create gen_class.ArgParser class instance for the check_log.run_program call, replaced hardcoding of command check with configuration check and added call to process_json.
 - Multiple functions: Replaced the use of arg_parser (args_array) with gen_class.ArgParser class (args).
 - process_insert:  Captured and processed status return from mongo_libs.ins_doc call.
 - config/mongo.py.TEMPLATE:  Added SSL connection entriesi and removed some old entries.
-- config/search.py.TEMPLATE:  Added entry to connect to RabbitMQ cluster.
+- config/search.py.TEMPLATE:  Added entry to connect to RabbitMQ cluster and email option entriesi and added command-keyword entry.
 - Documentation updates.
+
+### Removed
+- Removed support for Python 2.6
 
 
 ## [0.1.2] - 2020-07-01

@@ -117,7 +117,7 @@ class CfgTest2(object):
 
         """
 
-        self.db = "databasename"
+        self.dbs = "databasename"
         self.tbl = "tablename"
 
 
