@@ -167,6 +167,7 @@ class ArgParser(object):
 
         return self.opt_xor_val2
 
+
 class ProgramLock(object):
 
     """Class:  ProgramLock

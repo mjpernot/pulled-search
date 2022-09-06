@@ -212,7 +212,6 @@ class UnitTest(unittest.TestCase):
             "AsOf": "20200306 084503", "ServerName": "SERVERNAME",
             "LogEntries": ["line1", "line2", "line3"]}
 
-
     @mock.patch("pulled_search.gen_class.setup_mail")
     @mock.patch("pulled_search.gen_class.Logger")
     def test_email_json(self, mock_log, mock_mail):
@@ -224,7 +223,6 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
-
 
         mock_log.return_value = True
         mock_mail.return_value = self.mail
@@ -248,7 +246,6 @@ class UnitTest(unittest.TestCase):
 
         """
 
-
         mock_log.return_value = True
 
         self.assertFalse(
@@ -269,7 +266,6 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
-
 
         mock_log.return_value = True
 
@@ -292,7 +288,6 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
-
 
         mock_log.return_value = True
         mock_mail.return_value = self.mail
