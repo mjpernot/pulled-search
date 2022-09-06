@@ -19,6 +19,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - config/search.py.TEMPLATE:  Added entry to connect to RabbitMQ cluster and email option entriesi and added command-keyword entry.
 - Documentation updates.
 
+### Removed
+- Removed support for Python 2.6
+
 
 ## [0.1.2] - 2020-07-01
 ### Fixed
