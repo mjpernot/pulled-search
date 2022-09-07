@@ -398,7 +398,6 @@ def process_docid(args, cfg, fname, log):
 
     """
 
-    file_log = list()
     status = True
     data_list = gen_libs.file_2_list(fname)
     docid_dict = json.loads(gen_libs.list_2_str(data_list))
