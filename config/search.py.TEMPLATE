@@ -27,21 +27,51 @@ enclave = "ENCLAVE"
 archive_dir = "ARCHIVE_DIR_PATH"
 # Directory path to where error and non-processed files are saved to.
 error_dir = "ERROR_DIR_PATH"
+# Mapping of commands to keywords.
+# This is for the naming of the access logs which are not always under the command name.
+command = {"eucom": "intelink"}
+
 
 # Pulled Search Process/RabbitMQ Configuration section.
 # Update this section if using the -P option.
+# Fill either the mail section to send to RabbitMQ via email or fill in the
+#   RabbitMQ section to publish to RabbitMQ directly.  If using mail option
+#   this is normally used in conjunction with the rmq_2_mail.py program.
+# Note: If the email is filled in then this will override the RabbitMQ
+#   section.
+#
+# Email section
+# Email address to rabbitmq alias for the rmq_2_mail.py program.
+#   Note:  Leave to_addr and subj set to None if not using email capability.
+# Example: to_addr = "rabbitmq@domain.name"
+to_addr = None
+# Name of the RabbitMQ queue.
+# Note: Subject must match exactly the RabbitMQ queue name and is case-sensitive.
+# Example:  subj = "Pulledsearch"
+subj = None
+#
+# RabbitMQ section
+# Login information.
 user = "USER"
-pswd = "PSWD"
+japd = "PSWORD"
+# Address to single RabbitMQ node.
 host = "HOSTNAME"
+# List of hosts along with their ports to a multiple node RabbitMQ cluster.
+# Format of each entry is: "IP:PORT".
+# Example: host_list = ["hostname:5672", "hostname2:5672", "hostname:5673"]
+# Note:  If host_list is set, it will take precedence over the host entry.
+host_list = []
 # RabbitMQ Queue name.
 queue = "QUEUENAME"
 # RabbitMQ R-Key name (normally same as queue name).
 r_key = "RKEYNAME"
 # RabbitMQ Exchange name for each instance run.
 exchange_name = "EXCHANGE_NAME"
-# RabbitMQ listening port, default is 5672.
+# RabbitMQ listening port
+# Default is 5672
 port = 5672
-# Type of exchange:  direct, topic, fanout, headers
+# Type of exchange
+# Names allowed:  direct, topic, fanout, headers
 exchange_type = "direct"
 # Is exchange durable: True|False
 x_durable = True

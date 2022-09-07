@@ -3,6 +3,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.3] - 2021-12-15
+- Upgraded check-log to v4.0.1
+- Upgrade mongo-libs to v4.2.1
+- Upgrade python-lib to v2.9.3
+
+### Added
+- process_json: Process the JSON document from the pulled search results by either emailing them or publishing them to RabbitMQ.
+
+### Changed
+- process_docid: Create gen_class.ArgParser class instance for the check_log.run_program call, replaced hardcoding of command check with configuration check and added call to process_json.
+- Multiple functions: Replaced the use of arg_parser (args_array) with gen_class.ArgParser class (args).
+- process_insert:  Captured and processed status return from mongo_libs.ins_doc call.
+- config/mongo.py.TEMPLATE:  Added SSL connection entriesi and removed some old entries.
+- config/search.py.TEMPLATE:  Added entry to connect to RabbitMQ cluster and email option entriesi and added command-keyword entry.
+- Documentation updates.
+
+### Removed
+- Removed support for Python 2.6
+
+
 ## [0.1.2] - 2020-07-01
 ### Fixed
 - main: Fixed handling command line arguments from SonarQube scan finding.
@@ -14,25 +34,20 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid:  Implemented the -z option to use the zgrep search capability.
 - process_docid:  Added check on return status from rabbitmq_class.pub_2_rmq.
 - process_docid:  Replaced send_2_rabbitmq call with rabbitmq_class.pub_2_rmq call.
-- create_json:  Changed JSON document to CamelCase.
-- get_archive_files:  Replaced date_range call with gen_libs.date_range call.
-- insert_data:  Replaced dir_file_search call with gen_libs.filename_search call.
-- process_files:  Replaced dir_file_search call with gen_libs.filename_search call.
-- process_docid:  Replaced dir_file_search call with gen_libs.filename_search call.
-- get_archive_files:  Replaced dir_file_search call with gen_libs.filename_search call.
-- insert_data:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
-- process_files:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
+- create_json:  Changed JSON document to PascalCase.
+- get_archive_files, insert_data, process_files, process_docid: Replaced date_range call with gen_libs.date_range call.
+- insert_data, process_files:  Replaced setup_mail call with gen_class.setup_mail call and added -s option to subject line.
 - config/search.py.TEMPLATE:  Removed admin_email entry.
 - run_program:  Removed admin emails and replaced with print commands or log entries.
 - Documentation updates.
 
 ### Removed
-- dir_file_search function.
-- date_range function.
-- month_days function.
-- send_2_rabbitmq function.
-- create_rmq function.
-- setup_mail function.
+- dir_file_search
+- date_range
+- month_days
+- send_2_rabbitmq
+- create_rmq
+- setup_mail
 
 
 ## [0.1.1] - 2020-03-20

@@ -41,12 +41,12 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_archive_dir_failure -> Test with failure on archive_dir check.
-        test_multiple_failures -> Test with multiple failures.
-        test_error_dir_failure -> Test with failure on error_dir check.
-        test_monitor_dir_failure -> Test with failure on monitor_dir check.
-        test_no_failures -> Test with no failures on directory checks.
+        setUp
+        test_archive_dir_failure
+        test_multiple_failures
+        test_error_dir_failure
+        test_monitor_dir_failure
+        test_no_failures
 
     """
 
@@ -67,7 +67,7 @@ class UnitTest(unittest.TestCase):
             Description:  Class which is a representation of a cfg module.
 
             Methods:
-                __init__ -> Initialize configuration environment.
+                __init__
 
             """
 
