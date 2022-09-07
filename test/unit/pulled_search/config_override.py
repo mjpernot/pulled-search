@@ -33,6 +33,69 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        get_val
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.cmdline = None
+        self.args_array = dict()
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+
+class CfgTest(object):
+
+    """Class:  CfgTest
+
+    Description:  Class which is a representation of a cfg module.
+
+    Methods:
+        __init__
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization instance of the CfgTest class.
+
+        Arguments:
+
+        """
+
+        self.doc_dir = "/dir_path/doc_dir"
+        self.monitor_dir = "/dir_path/monitor_dir"
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -40,11 +103,11 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_all_changes -> Test with changes to both configuration settings.
-        test_monitordir_change -> Test  monitor_dir change to config settings.
-        test_docdir_change -> Test doc_dir change to configuration settings.
-        test_no_changes -> Test with no changes to configuration settings.
+        setUp
+        test_all_changes
+        test_monitordir_change
+        test_docdir_change
+        test_no_changes
 
     """
 
@@ -58,30 +121,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        class CfgTest(object):
-
-            """Class:  CfgTest
-
-            Description:  Class which is a representation of a cfg module.
-
-            Methods:
-                __init__ -> Initialize configuration environment.
-
-            """
-
-            def __init__(self):
-
-                """Method:  __init__
-
-                Description:  Initialization instance of the CfgTest class.
-
-                Arguments:
-
-                """
-
-                self.doc_dir = "/dir_path/doc_dir"
-                self.monitor_dir = "/dir_path/monitor_dir"
-
+        self.args = ArgParser()
         self.cfg = CfgTest()
         self.name = "name@domain"
         self.docdir = "/new_path/doc_dir"
@@ -106,9 +146,11 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        cfg = pulled_search.config_override(self.args_array4, self.cfg)
-        self.assertEqual((cfg.doc_dir, cfg.monitor_dir),
-                         (self.results3, self.results4))
+        self.args.args_array = self.args_array4
+        cfg = pulled_search.config_override(self.args, self.cfg)
+
+        self.assertEqual(
+            (cfg.doc_dir, cfg.monitor_dir), (self.results3, self.results4))
 
     def test_monitordir_change(self):
 
@@ -120,9 +162,11 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        cfg = pulled_search.config_override(self.args_array3, self.cfg)
-        self.assertEqual((cfg.doc_dir, cfg.monitor_dir),
-                         (self.results, self.results4))
+        self.args.args_array = self.args_array3
+        cfg = pulled_search.config_override(self.args, self.cfg)
+
+        self.assertEqual(
+            (cfg.doc_dir, cfg.monitor_dir), (self.results, self.results4))
 
     def test_docdir_change(self):
 
@@ -134,9 +178,11 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        cfg = pulled_search.config_override(self.args_array2, self.cfg)
-        self.assertEqual((cfg.doc_dir, cfg.monitor_dir),
-                         (self.results3, self.results2))
+        self.args.args_array = self.args_array2
+        cfg = pulled_search.config_override(self.args, self.cfg)
+
+        self.assertEqual(
+            (cfg.doc_dir, cfg.monitor_dir), (self.results3, self.results2))
 
     def test_no_changes(self):
 
@@ -148,9 +194,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        cfg = pulled_search.config_override(self.args_array, self.cfg)
-        self.assertEqual((cfg.doc_dir, cfg.monitor_dir),
-                         (self.results, self.results2))
+        self.args.args_array = self.args_array
+        cfg = pulled_search.config_override(self.args, self.cfg)
+        self.assertEqual(
+            (cfg.doc_dir, cfg.monitor_dir), (self.results, self.results2))
 
 
 if __name__ == "__main__":
