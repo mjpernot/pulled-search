@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.4] - 2022-10-13
+- Updated to work in Python 3 too
+- Upgraded python-lib to v2.9.4
+- Upgraded mongo-lib to v4.2.2
+- Upgraded rabbitmq-lib to v2.2.1
+- Upgraded check-log to v4.0.2
+
+### Changed
+- Documentation updates.
+
+
 ## [0.1.3] - 2021-12-15
 - Upgraded check-log to v4.0.1
 - Upgrade mongo-libs to v4.2.1

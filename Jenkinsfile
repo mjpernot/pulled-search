@@ -9,22 +9,22 @@ pipeline {
         stage('Test') {
             steps {
                 dir ('lib') {
-                    git branch: "mod/293", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
+                    git branch: "mod/294", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
                 }
                 dir ('mongo_lib') {
-                    git branch: "mod/421", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/mongo-lib.git"
+                    git branch: "mod/422", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/mongo-lib.git"
                 }
                 dir ('mongo_lib/lib') {
-                    git branch: "mod/286", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
+                    git branch: "mod/294", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
                 }
                 dir ('rabbit_lib') {
-                    git branch: "mod/212", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/rabbitmq-lib.git"
+                    git branch: "mod/221", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/rabbitmq-lib.git"
                 }
                 dir ('checklog') {
-                    git branch: "mod/401", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/check-log.git"
+                    git branch: "mod/402", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/check-log.git"
                 }
                 dir ('checklog/lib') {
-                    git branch: "mod/292", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
+                    git branch: "mod/294", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
                 }
                 sh """
                 virtualenv test_env
@@ -33,24 +33,24 @@ pipeline {
                 pip2 install pika==1.2.0 --user
                 pip2 install psutil==5.4.3 --user
                 pip2 install pymongo==3.8.0 --user
-                ./test/unit/pulled_search/checks_dirs.py
-                ./test/unit/pulled_search/cleanup_files.py
-                ./test/unit/pulled_search/config_override.py
-                ./test/unit/pulled_search/create_json.py
-                ./test/unit/pulled_search/get_archive_files.py
-                ./test/unit/pulled_search/help_message.py
-                ./test/unit/pulled_search/insert_data.py
-                ./test/unit/pulled_search/main.py
-                ./test/unit/pulled_search/mvalidate_dirs.py
-                ./test/unit/pulled_search/non_processed.py
-                ./test/unit/pulled_search/process_docid.py
-                ./test/unit/pulled_search/process_files.py
-                ./test/unit/pulled_search/process_insert.py
-                ./test/unit/pulled_search/process_json.py
-                ./test/unit/pulled_search/process_list.py
-                ./test/unit/pulled_search/run_program.py
-                ./test/unit/pulled_search/validate_dirs.py
-                ./test/unit/pulled_search/zgrep_search.py
+                /usr/bin/python2 ./test/unit/pulled_search/checks_dirs.py
+                /usr/bin/python2 ./test/unit/pulled_search/cleanup_files.py
+                /usr/bin/python2 ./test/unit/pulled_search/config_override.py
+                /usr/bin/python2 ./test/unit/pulled_search/create_json.py
+                /usr/bin/python2 ./test/unit/pulled_search/get_archive_files.py
+                /usr/bin/python2 ./test/unit/pulled_search/help_message.py
+                /usr/bin/python2 ./test/unit/pulled_search/insert_data.py
+                /usr/bin/python2 ./test/unit/pulled_search/main.py
+                /usr/bin/python2 ./test/unit/pulled_search/mvalidate_dirs.py
+                /usr/bin/python2 ./test/unit/pulled_search/non_processed.py
+                /usr/bin/python2 ./test/unit/pulled_search/process_docid.py
+                /usr/bin/python2 ./test/unit/pulled_search/process_files.py
+                /usr/bin/python2 ./test/unit/pulled_search/process_insert.py
+                /usr/bin/python2 ./test/unit/pulled_search/process_json.py
+                /usr/bin/python2 ./test/unit/pulled_search/process_list.py
+                /usr/bin/python2 ./test/unit/pulled_search/run_program.py
+                /usr/bin/python2 ./test/unit/pulled_search/validate_dirs.py
+                /usr/bin/python2 ./test/unit/pulled_search/zgrep_search.py
                 deactivate
                 rm -rf test_env
                 """

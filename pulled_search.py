@@ -74,10 +74,9 @@
             outfile = "DIR_PATH/checklog.out"
             # Security enclave these files are being processed on.
             enclave = "ENCLAVE"
-            # Directory path to where error and non-processed files are saved
-            #   to.
-            archive_dir = "ARCHIVE_DIR_PATH"
             # Directory path to where archived files are saved to.
+            archive_dir = "ARCHIVE_DIR_PATH"
+            # Directory path to where error and non-processed files are saved.
             error_dir = "ERROR_DIR_PATH"
 
             # Pulled Search Process/RabbitMQ Configuration section.
