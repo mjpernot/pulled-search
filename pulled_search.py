@@ -224,10 +224,10 @@
 """
 
 # Libraries and Global Variables
+from __future__ import print_function
+from __future__ import absolute_import
 
 # Standard
-# For Python 2.6/2.7: Redirection of stdout in a print command.
-from __future__ import print_function
 import sys
 import os
 import socket
@@ -482,24 +482,24 @@ def process_json(args, cfg, log, log_json):
     """
 
     if cfg.to_addr and cfg.subj:
-        log.log_info("process_docid:  Emailing log entries...")
+        log.log_info("process_json:  Emailing log entries...")
         mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
         mail.add_2_msg(log_json)
         mail.send_mail()
 
     else:
-        log.log_info("process_docid:  Publishing log entries...")
+        log.log_info("process_json:  Publishing log entries...")
         status, err_msg = rabbitmq_class.pub_2_rmq(
             cfg, json.dumps(log_json))
 
         if status:
             log.log_info(
-                "process_docid:  Log entries published to RabbitMQ.")
+                "process_json:  Log entries published to RabbitMQ.")
 
         else:
             log.log_err(
-                "process_docid:  Error detected during publication.")
-            log.log_err("process_docid:  Message: %s" % (err_msg))
+                "process_json:  Error detected during publication.")
+            log.log_err("process_json:  Message: %s" % (err_msg))
             dtg = datetime.datetime.strftime(
                 datetime.datetime.now(), "%Y%m%d_%H%M%S")
             name = "NonPublished." + log_json["DocID"] \
