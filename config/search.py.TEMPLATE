@@ -10,10 +10,10 @@ log_file = "DIR_PATH/pulled_search.log"
 
 # Pulled Search Process Configuration section.
 # Update this section if using the -P option.
-# Directory where docid files to be processed are.
-doc_dir = "DOC_DIR_PATH"
+# Directory where Docid Pulled Html files are located at.
+doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
 # Regular expression for search for log file names.
-file_regex = "_docid.json"
+file_regex = "_IS_PULLED_"
 # Directory where log files to be searched are.
 log_dir = "LOG_DIR_PATH"
 # Type of log files to checked.

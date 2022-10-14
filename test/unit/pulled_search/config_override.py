@@ -91,7 +91,7 @@ class CfgTest(object):
 
         """
 
-        self.doc_dir = "/dir_path/doc_dir"
+        self.doc_dir = ["/dir_path/doc_dir"]
         self.monitor_dir = "/dir_path/monitor_dir"
 
 
@@ -130,9 +130,9 @@ class UnitTest(unittest.TestCase):
         self.args_array3 = {"-t": self.name, "-n": self.monitordir}
         self.args_array4 = {"-t": self.name, "-n": self.monitordir,
                             "-m": self.docdir}
-        self.results = "/dir_path/doc_dir"
+        self.results = ["/dir_path/doc_dir"]
         self.results2 = "/dir_path/monitor_dir"
-        self.results3 = self.docdir
+        self.results3 = [self.docdir]
         self.results4 = self.monitordir
 
     def test_all_changes(self):

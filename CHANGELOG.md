@@ -11,6 +11,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Upgraded check-log to v4.0.2
 
 ### Changed
+- Refactoring the input of the Docid files, will grab the Docid data from the Pulled html files directly.
 - Documentation updates.
 
 

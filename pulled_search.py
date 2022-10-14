@@ -641,15 +641,30 @@ def process_files(args, cfg, log):
 
     """
 
+    # Is mail going to be used anywhere in this option?
+    """
     mail = None
     subj = args.get_val("-s", def_val="") + "Non-processed files"
 
     if args.get_val("-t", def_val=False):
         mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
+    """
 
+    log.log_info("process_files:  Locating pulled files...")
+    docid_files = []
+
+    for docdir in cfg.doc_dir:
+        tmp_list = gen_libs.filename_search(
+            docdir, cfg.file_regex, add_path=True)
+        docid_files = list(set(docid_files + tmp_list))
+
+    # These lines being replaced with above code.
+    """
     log.log_info("process_files:  Processing files to search...")
     docid_files = gen_libs.filename_search(
         cfg.doc_dir, cfg.file_regex, add_path=True)
+    """
+
     remove_list = process_list(args, cfg, log, docid_files, "search")
     docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir, log)
     non_processed(docid_files, cfg.error_dir, log, mail)
@@ -698,10 +713,11 @@ def validate_dirs(cfg):
 
     msg_dict = dict()
 
-    status, msg = gen_libs.chk_crt_dir(cfg.doc_dir, write=True, no_print=True)
+    for entry in cfg.doc_dir:
+        status, msg = gen_libs.chk_crt_dir(entry, read=True, no_print=True)
 
-    if not status:
-        msg_dict[cfg.doc_dir] = msg
+        if not status:
+            msg_dict[entry] = msg
 
     status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
 
@@ -806,7 +822,7 @@ def config_override(args, cfg):
     """
 
     if args.get_val("-m", def_val=None):
-        cfg.doc_dir = args.get_val("-m")
+        cfg.doc_dir = [args.get_val("-m")]
 
     if args.get_val("-n", def_val=None):
         cfg.monitor_dir = args.get_val("-n")
@@ -863,7 +879,7 @@ def main():
         line arguments and values.
 
     Variables:
-        dir_chk_list -> contains options which will be directories
+        dir_perms_chk -> contains directories and their octal permissions
         func_dict -> dictionary of function calls for different options
         opt_con_req_dict -> contains options requiring other options
         opt_multi_list -> contains the options that will have multiple values
@@ -877,7 +893,7 @@ def main():
     """
 
     cmdline = gen_libs.get_inst(sys)
-    dir_perms_chk = {"-d": 5, "-m": 7, "-n": 7}
+    dir_perms_chk = {"-d": 5, "-m": 5, "-n": 7}
     func_dict = {"-P": process_files, "-I": insert_data}
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
