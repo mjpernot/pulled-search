@@ -642,13 +642,13 @@ def process_files(args, cfg, log):
     """
 
     # Is mail going to be used anywhere in this option?
-    """
+#    """
     mail = None
     subj = args.get_val("-s", def_val="") + "Non-processed files"
 
     if args.get_val("-t", def_val=False):
         mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
-    """
+#    """
 
     log.log_info("process_files:  Locating pulled files...")
     docid_files = []
