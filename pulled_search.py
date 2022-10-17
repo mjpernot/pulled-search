@@ -641,6 +641,8 @@ def process_files(args, cfg, log):
 
     """
 
+    done_list = list()
+
     # Is mail going to be used anywhere in this option?
 #    """
     mail = None
@@ -665,8 +667,19 @@ def process_files(args, cfg, log):
         cfg.doc_dir, cfg.file_regex, add_path=True)
     """
 
+    for fname in docid_files:
+        log.log_info("process_files:  Processing file: %s" % (fname))
+        status = process_docid(args, cfg, fname, log)
+
+        if status:
+            done_list.append(fname)
+        
+    # This line being replaced with above code.
+    """
     remove_list = process_list(args, cfg, log, docid_files, "search")
-    docid_files = cleanup_files(docid_files, remove_list, cfg.archive_dir, log)
+    """
+
+    docid_files = cleanup_files(docid_files, done_list, cfg.archive_dir, log)
     non_processed(docid_files, cfg.error_dir, log, mail)
 
 

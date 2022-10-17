@@ -138,7 +138,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -161,7 +161,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -184,7 +184,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -206,7 +206,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -230,7 +230,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -254,7 +254,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -276,7 +276,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -298,7 +298,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -322,7 +322,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_class.setup_mail",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_list", mock.Mock(return_value=[]))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.filename_search",
                 mock.Mock(return_value=[]))
     @mock.patch("pulled_search.gen_class.Logger")
