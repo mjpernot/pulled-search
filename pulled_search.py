@@ -642,7 +642,28 @@ def process_files(args, cfg, log):
     """
 
     done_list = list()
+    docid_files = []
+    log.log_info("process_files:  Locating pulled files...")
 
+    for docdir in cfg.doc_dir:
+        tmp_list = gen_libs.filename_search(
+            docdir, cfg.file_regex, add_path=True)
+        docid_files = list(set(docid_files + tmp_list))
+
+    # 1. Search for PULLED files from doc_dir directories (may contain dupes).
+    # 2. Remove dupes from docid_files based on filename (not path).
+    # 3. Load processed file into list.
+    # 4. Compare and remove previous processed files from docid_files.
+    # 5. Loop on the new file list and regex for security recall.
+    #   a. If security then
+    #       i. Create docid_dict from filename.
+    #       ii. Call process_docid (replace fname with docid_dict)
+    #       iii. If status then add to done_list
+    #       iv.  Else add to failed_list
+    #   b. Else add to done_list
+    # 6. Add done_list to list of files already processed this month.
+    # 7. Process failed list -> email?, file?
+    
     # Is mail going to be used anywhere in this option?
 #    """
     mail = None
@@ -652,32 +673,12 @@ def process_files(args, cfg, log):
         mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
 #    """
 
-    log.log_info("process_files:  Locating pulled files...")
-    docid_files = []
-
-    for docdir in cfg.doc_dir:
-        tmp_list = gen_libs.filename_search(
-            docdir, cfg.file_regex, add_path=True)
-        docid_files = list(set(docid_files + tmp_list))
-
     # These lines being replaced with above code.
     """
     log.log_info("process_files:  Processing files to search...")
     docid_files = gen_libs.filename_search(
         cfg.doc_dir, cfg.file_regex, add_path=True)
     """
-
-    # 1. Compare with list of files already processed this month.
-    # 2. Loop on the new file list and regex for security recall.
-    #   a. If security then
-    #       i. Create docid_dict from filename.
-    #       ii. Call process_docid (replace fname with docid_dict)
-    #       iii. If status then add to done_list
-    #       iv.  Else add to failed_list
-    #   b. Else add to done_list
-    # 3. Add done_list to list of files already processed this month.
-    # 4. Process failed list -> email?, file?
-    
 
     for fname in docid_files:
         log.log_info("process_files:  Processing file: %s" % (fname))
