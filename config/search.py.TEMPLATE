@@ -4,18 +4,24 @@
 
 # Pulled Search General Configuration section.
 # This section is for either the -P or -I option.
+#
 # Logger file for the storage of log entries.
 # File name including directory path.
 log_file = "DIR_PATH/pulled_search.log"
 
 # Pulled Search Process Configuration section.
 # Update this section if using the -P option.
+#
 # Directory where Docid Pulled Html files are located at.
+# NOTE: Do not include the YYYY/MM as part of the path as this will be added.
 doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
 # Directory where files with previous processed files are stored at.
 processed_dir = "BASE_PATH/processed"
+# File name for previous processed files.
+processed_file = "processed"
 # Regular expression for search for log file names.
 file_regex = "_IS_PULLED_"
+
 # Directory where log files to be searched are.
 log_dir = "LOG_DIR_PATH"
 # Type of log files to checked.

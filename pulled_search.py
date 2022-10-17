@@ -643,17 +643,57 @@ def process_files(args, cfg, log):
 
     done_list = list()
     docid_files = []
-    log.log_info("process_files:  Locating pulled files...")
+    log.log_info("process_files:  Locating pulled files.")
+
+    # 1. Search for PULLED files from doc_dir directories (may contain dupes).
+    # Search for pulled files with doc_dir directories in YYYY/MM
+    yearmon = datetime.date.strftime(datetime.datetime.now(), "%Y/%m")
+    yearmon2 = datetime.date.strftime(datetime.datetime.now(), "%Y%m")
 
     for docdir in cfg.doc_dir:
         tmp_list = gen_libs.filename_search(
-            docdir, cfg.file_regex, add_path=True)
-        docid_files = list(set(docid_files + tmp_list))
+            os.path.join(docdir, yearmon), cfg.file_regex, add_path=True)
+        docid_files.extend(tmp_list)
 
-    # 1. Search for PULLED files from doc_dir directories (may contain dupes).
+    # These lines being replaced with above code.
+    """
+    log.log_info("process_files:  Processing files to search...")
+    docid_files = gen_libs.filename_search(
+        cfg.doc_dir, cfg.file_regex, add_path=True)
+    """
+
     # 2. Remove dupes from docid_files based on filename (not path).
+    # Convert file list to dictionary and remove duplicates
+    log.log_info("process_files:  Removing duplicate files.")
+    file_dict = {}
+    for full_filename in docid_files:
+        file_name = os.path.basename(full_filename)
+
+        if file_name not in file_dict:
+            file_dict[file_name] = full_filename
+
     # 3. Load processed file into list.
+    # Load the previous processed docids from file
+# Am I setting the filename hardcoded or setting it in config file.
+    f_name = os.path.join(
+        cfg.processed_dir, cfg.processed_file + "." + yearmon2)
+
+    try:
+        with open(f_name) as fhdr:
+            f_previous = fhdr.readlines()
+            f_previous = [line.rstrip() for line in f_previous]
+
+    except IOError as msg:
+        if msg[1] == "No such file or directory":
+            f_previous = list()
+
     # 4. Compare and remove previous processed files from docid_files.
+    # Remove previous processed files from file_dict
+    for p_filename from f_previous:
+        if p_filename in file_dict:
+            file_dict.pop(p_filename)
+
+
     # 5. Loop on the new file list and regex for security recall.
     #   a. If security then
     #       i. Create docid_dict from filename.
@@ -673,12 +713,6 @@ def process_files(args, cfg, log):
         mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
 #    """
 
-    # These lines being replaced with above code.
-    """
-    log.log_info("process_files:  Processing files to search...")
-    docid_files = gen_libs.filename_search(
-        cfg.doc_dir, cfg.file_regex, add_path=True)
-    """
 
     for fname in docid_files:
         log.log_info("process_files:  Processing file: %s" % (fname))
