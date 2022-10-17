@@ -674,7 +674,6 @@ def process_files(args, cfg, log):
 
     # 3. Load processed file into list.
     # Load the previous processed docids from file
-# Am I setting the filename hardcoded or setting it in config file.
     f_name = os.path.join(
         cfg.processed_dir, cfg.processed_file + "." + yearmon2)
 
@@ -687,12 +686,11 @@ def process_files(args, cfg, log):
         if msg[1] == "No such file or directory":
             f_previous = list()
 
-    # 4. Compare and remove previous processed files from docid_files.
+    # 4. Compare & remove previous processed files from docid_files(file_dict).
     # Remove previous processed files from file_dict
     for p_filename from f_previous:
         if p_filename in file_dict:
             file_dict.pop(p_filename)
-
 
     # 5. Loop on the new file list and regex for security recall.
     #   a. If security then
