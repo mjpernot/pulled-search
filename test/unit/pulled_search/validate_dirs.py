@@ -59,6 +59,7 @@ class CfgTest(object):
         self.outfile = "/dir_path/outfile_dir/outfile"
         self.error_dir = "/dir_path/error_dir"
         self.archive_dir = "/dir_path/archive_dir"
+        self.processed_dir = "/dir_path/processed_dir"
 
 
 class UnitTest(unittest.TestCase):
@@ -106,6 +107,7 @@ class UnitTest(unittest.TestCase):
         self.results5 = {self.errdir: self.errval}
         self.results6 = {self.dockey: self.docval, self.errdir: self.errval}
         self.results7 = {"/dir_path/archive_dir": "Archive_dir failure"}
+        self.results8 = {"/dir_path/processed_dir": "Processed_dir failure"}
         self.chk = (True, None)
         self.chk2 = (False, self.docval)
         self.chk2a = (False, self.docval2)
@@ -113,6 +115,23 @@ class UnitTest(unittest.TestCase):
         self.chk4 = (False, "Outfile failure")
         self.chk5 = (False, self.errval)
         self.chk7 = (False, "Archive_dir failure")
+        self.chk8 = (False, "Processed_dir failure")
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
+    def test_no_failures(self, mock_chk):
+
+        """Function:  test_no_failures
+
+        Description:  Test with no failures on directory checks.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
+                                self.chk, self.chk8]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results8)
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_doc_dir_multiple_two_fail(self, mock_chk):
@@ -128,7 +147,7 @@ class UnitTest(unittest.TestCase):
         self.cfg.doc_dir.append(self.dockey2)
 
         mock_chk.side_effect = [self.chk2, self.chk2a, self.chk, self.chk,
-                                self.chk, self.chk]
+                                self.chk, self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2a)
 
@@ -146,7 +165,7 @@ class UnitTest(unittest.TestCase):
         self.cfg.doc_dir.append(self.dockey2)
 
         mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk,
-                                self.chk, self.chk]
+                                self.chk, self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2)
 
@@ -164,7 +183,7 @@ class UnitTest(unittest.TestCase):
         self.cfg.doc_dir.append("/dir_path/doc_dir2")
 
         mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
-                                self.chk, self.chk]
+                                self.chk, self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), {})
 
@@ -180,7 +199,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
-                                self.chk7]
+                                self.chk7, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results7)
 
@@ -196,7 +215,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk5,
-                                self.chk]
+                                self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results6)
 
@@ -212,7 +231,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk5,
-                                self.chk]
+                                self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results5)
 
@@ -228,7 +247,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_chk.side_effect = [self.chk, self.chk, self.chk4, self.chk,
-                                self.chk]
+                                self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results4)
 
@@ -244,7 +263,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_chk.side_effect = [self.chk, self.chk3, self.chk, self.chk,
-                                self.chk]
+                                self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results3)
 
@@ -260,7 +279,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk,
-                                self.chk]
+                                self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2)
 
@@ -276,7 +295,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
-                                self.chk]
+                                self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), {})
 

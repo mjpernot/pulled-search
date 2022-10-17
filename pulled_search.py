@@ -667,6 +667,18 @@ def process_files(args, cfg, log):
         cfg.doc_dir, cfg.file_regex, add_path=True)
     """
 
+    # 1. Compare with list of files already processed this month.
+    # 2. Loop on the new file list and regex for security recall.
+    #   a. If security then
+    #       i. Create docid_dict from filename.
+    #       ii. Call process_docid (replace fname with docid_dict)
+    #       iii. If status then add to done_list
+    #       iv.  Else add to failed_list
+    #   b. Else add to done_list
+    # 3. Add done_list to list of files already processed this month.
+    # 4. Process failed list -> email?, file?
+    
+
     for fname in docid_files:
         log.log_info("process_files:  Processing file: %s" % (fname))
         status = process_docid(args, cfg, fname, log)
@@ -726,17 +738,20 @@ def validate_dirs(cfg):
 
     msg_dict = dict()
 
+    # Directory where files with previous processed files are stored at
     for entry in cfg.doc_dir:
         status, msg = gen_libs.chk_crt_dir(entry, read=True, no_print=True)
 
         if not status:
             msg_dict[entry] = msg
 
+    # Directory where log files to be searched are
     status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
 
     if not status:
         msg_dict[cfg.log_dir] = msg
 
+    # Temporary file where check_log will write to
     basepath = gen_libs.get_base_dir(cfg.outfile)
     status, msg = gen_libs.chk_crt_dir(
         basepath, write=True, create=True, no_print=True)
@@ -744,17 +759,26 @@ def validate_dirs(cfg):
     if not status:
         msg_dict[basepath] = msg
 
+    # Directory path to where error and non-processed files are saved to
     status, msg = gen_libs.chk_crt_dir(
         cfg.error_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.error_dir] = msg
 
+    # Directory path to where archived files are saved to
     status, msg = gen_libs.chk_crt_dir(
         cfg.archive_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.archive_dir] = msg
+
+    # Directory where files with previous processed files are stored at
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.processed_dir, write=True, create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.processed_dir] = msg
 
     return msg_dict
 
