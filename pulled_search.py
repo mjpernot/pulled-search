@@ -748,12 +748,21 @@ def process_files(args, cfg, log):
                 fhdr.write(file_dict[item])
 
     # 7. Process failed list -> email?, file?
-    
-    mail = None
-    subj = args.get_val("-s", def_val="") + "Non-processed files"
+    if failed_dict:
+        log.log_info("process_files:  Processing failed files.")
+        failed_file =
+        str_failed_dict = 
 
-    if args.get_val("-t", def_val=False):
-        mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
+        with open(failed_file, "a") as fhdr:
+            fhdr.write(str_failed_dict)
+
+        # Send email if possible
+        if args.get_val("-t", def_val=False):
+            subj = args.get_val(
+                "-s", def_val="") + "Searched non-processed files"
+            mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
+            mail.add_2_msg(failed_dict)
+            mail.send_mail()
 
     # This line being replaced with above code.
     """
