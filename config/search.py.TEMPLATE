@@ -20,7 +20,7 @@ processed_dir = "BASE_PATH/processed"
 # File name for previous processed files.
 processed_file = "processed"
 # Regular expression for search for log file names.
-file_regex = "_IS_PULLED_"
+file_regex = "-PULLED-"
 
 # Directory where log files to be searched are.
 log_dir = "LOG_DIR_PATH"

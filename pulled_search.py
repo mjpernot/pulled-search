@@ -641,8 +641,7 @@ def process_files(args, cfg, log):
 
     """
 
-    done_list = list()
-    docid_files = []
+    docid_files = list()
     log.log_info("process_files:  Locating pulled files.")
 
     # 1. Search for PULLED files from doc_dir directories (may contain dupes).
@@ -674,11 +673,12 @@ def process_files(args, cfg, log):
 
     # 3. Load processed file into list.
     # Load the previous processed docids from file
-    f_name = os.path.join(
+    log.log_info("process_files:  Removing previous processed files.")
+    previous_fname = os.path.join(
         cfg.processed_dir, cfg.processed_file + "." + yearmon2)
 
     try:
-        with open(f_name) as fhdr:
+        with open(previous_fname) as fhdr:
             f_previous = fhdr.readlines()
             f_previous = [line.rstrip() for line in f_previous]
 
@@ -686,46 +686,79 @@ def process_files(args, cfg, log):
         if msg[1] == "No such file or directory":
             f_previous = list()
 
-    # 4. Compare & remove previous processed files from docid_files(file_dict).
+    # 4. Remove previous processed files from docid_files (file_dict).
     # Remove previous processed files from file_dict
     for p_filename from f_previous:
         if p_filename in file_dict:
             file_dict.pop(p_filename)
 
-    # 5. Loop on the new file list and regex for security recall.
-    #   a. If security then
+    # 5. Loop on the new file list (file_dict) and regex for security recall.
+    # Search for security violation entries
+    log.log_info("process_files:  Processing new files.")
+    pattern = "JAC.pull.subtype*SECURITY RECALL"
+    lines = list()
+    err_msg = dict()
+    docid_dict = dict()
+    failed_dict = dict()
+
+    for fname in file_dict:
+        try:
+            with open(file_dict[fname]) as fhdr:
+                lines = fhdr.readlines()
+                lines = [line.rstrip() for line in lines]
+
+        except IOError as msg:
+            failed_dict[fname] = msg[1]
+            lines = list()
+
+        log.log_info("process_files:  Searching for security recall in file.")
+        for line in lines:
+    #   a. If security recalled then
+            if re.search(pattern, line):
     #       i. Create docid_dict from filename.
+                docid_dict["command"] = line.split("-")[0]
+                docid_dict["pubdate"] = line.split("-")[4]
+                docid_dict["docid"] = re.split("-|\.", line)[7]
+                break
+
     #       ii. Call process_docid (replace fname with docid_dict)
-    #       iii. If status then add to done_list
-    #       iv.  Else add to failed_list
-    #   b. Else add to done_list
-    # 6. Add done_list to list of files already processed this month.
+        if docid_dict:
+            log.log_info("process_files:  Processing file: %s" % (fname))
+            status = process_docid(args, cfg, docid_dict, log)
+
+    #       iii. If not status then add to failed_list
+            if not status:
+                failed_dict[fname] = "Failed the process_docid process"
+
+        docid_dict = dict()
+        lines = list()
+
+    # This line being replaced with above code.
+    """
+    remove_list = process_list(args, cfg, log, docid_files, "search")
+    docid_files = cleanup_files(docid_files, done_list, cfg.archive_dir, log)
+    """
+
+    # 6. Add file_dict to list of files already processed this month.
+    if file_dict:
+        log.log_info("process_files:  Updating previous processed file.")
+
+        with open(previous_fname, "a") as fhdr:
+            for item in file_dict:
+                fhdr.write(file_dict[item])
+
     # 7. Process failed list -> email?, file?
     
-    # Is mail going to be used anywhere in this option?
-#    """
     mail = None
     subj = args.get_val("-s", def_val="") + "Non-processed files"
 
     if args.get_val("-t", def_val=False):
         mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
-#    """
 
-
-    for fname in docid_files:
-        log.log_info("process_files:  Processing file: %s" % (fname))
-        status = process_docid(args, cfg, fname, log)
-
-        if status:
-            done_list.append(fname)
-        
     # This line being replaced with above code.
     """
-    remove_list = process_list(args, cfg, log, docid_files, "search")
-    """
-
-    docid_files = cleanup_files(docid_files, done_list, cfg.archive_dir, log)
     non_processed(docid_files, cfg.error_dir, log, mail)
+    """
 
 
 def insert_data(args, cfg, log):
