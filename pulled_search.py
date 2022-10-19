@@ -1135,7 +1135,7 @@ def config_override(args, cfg):
 
     """
 
-    # Moved to process_files
+# Moved to process_files
     """
     if args.get_val("-m", def_val=None):
         cfg.doc_dir = [args.get_val("-m")]
