@@ -26,13 +26,13 @@ file_regex = "-PULLED-"
 log_dir = "LOG_DIR_PATH"
 # Type of log files to checked.
 log_type = "access_log"
+# Directory path to where archived log files are.
+archive_log_dir = "ARCHIVE_DIR_PATH"
 # Temporary file where check_log will write to.
 # File name including directory path.
 outfile = "DIR_PATH/checklog.out"
 # Security enclave these files are being processed on.
 enclave = "ENCLAVE"
-# Directory path to where archived files are saved to.
-archive_dir = "ARCHIVE_DIR_PATH"
 # Directory path to where error and non-processed files are saved to.
 error_dir = "ERROR_DIR_PATH"
 # Mapping of commands to keywords.

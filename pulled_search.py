@@ -391,7 +391,7 @@ def zgrep_search(file_list, keyword, outfile):
             proc1.wait()
 
 
-def process_docid(args, cfg, fname, log):
+def process_docid(args, cfg, docid_dict, log):
 
     """Function:  process_docid
 
@@ -400,15 +400,14 @@ def process_docid(args, cfg, fname, log):
     Arguments:
         (input) args -> ArgParser class instance
         (input) cfg -> Configuration setup
-        (input) fname -> Docid file name
+        (input) docid_dict -> Dictionary containing docid information
         (input) log -> Log class instance
         (output) status -> True|False - File has successfully processed
 
     """
 
     status = True
-    data_list = gen_libs.file_2_list(fname)
-    docid_dict = json.loads(gen_libs.list_2_str(data_list))
+    docid_dict = dict(docid_dict)
     cmd = docid_dict["command"].lower()
 
     # Check to see if the command is mapped to a different keyword file
@@ -419,8 +418,8 @@ def process_docid(args, cfg, fname, log):
 
     if args.get_val("-a", def_val=None):
         log.log_info("process_docid:  Searching for archive log files...")
-        log_files = get_archive_files(cfg.archive_dir, cmd,
-                                      docid_dict["pubdate"], cmd_regex)
+        log_files = get_archive_files(
+            cfg.archive_log_dir, cmd, docid_dict["pubdate"], cmd_regex)
 
     else:
         log.log_info("process_docid:  Searching for apache log files...")
@@ -807,10 +806,18 @@ def process_files(args, cfg, log):
     docid_files = list()
     yearmon = datetime.date.strftime(datetime.datetime.now(), "%Y/%m")
     yearmon2 = datetime.date.strftime(datetime.datetime.now(), "%Y%m")
+    search_dir = list()
 
-    for docdir in cfg.doc_dir:
+    if args.get_val("-m", def_val=None):
+        search_dir = [args.get_val("-m")]
+
+    else:
+        for dir_entry in cfg.doc_dir:
+            search_dir.append(os.path.join(dir_entry, yearmon))
+
+    for docdir in search_dir:
         tmp_list = gen_libs.filename_search(
-            os.path.join(docdir, yearmon), cfg.file_regex, add_path=True)
+            docdir, cfg.file_regex, add_path=True)
         docid_files.extend(tmp_list)
 
     # These lines being replaced with above code.
@@ -1008,7 +1015,7 @@ def validate_dirs(cfg):
 
     msg_dict = dict()
 
-    # Directory where files with previous processed files are stored at
+    # Directory where Docid Pulled Html files are located at
     for entry in cfg.doc_dir:
         status, msg = gen_libs.chk_crt_dir(entry, read=True, no_print=True)
 
@@ -1021,6 +1028,13 @@ def validate_dirs(cfg):
     if not status:
         msg_dict[cfg.log_dir] = msg
 
+    # Directory path to where archived log files to be searched are
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.archive_dir, read=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.archive_dir] = msg
+
     # Temporary file where check_log will write to
     basepath = gen_libs.get_base_dir(cfg.outfile)
     status, msg = gen_libs.chk_crt_dir(
@@ -1029,19 +1043,12 @@ def validate_dirs(cfg):
     if not status:
         msg_dict[basepath] = msg
 
-    # Directory path to where error and non-processed files are saved to
+    # Directory path to where error and failed files are saved to
     status, msg = gen_libs.chk_crt_dir(
         cfg.error_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.error_dir] = msg
-
-    # Directory path to where archived files are saved to
-    status, msg = gen_libs.chk_crt_dir(
-        cfg.archive_dir, write=True, create=True, no_print=True)
-
-    if not status:
-        msg_dict[cfg.archive_dir] = msg
 
     # Directory where files with previous processed files are stored at
     status, msg = gen_libs.chk_crt_dir(
@@ -1128,8 +1135,11 @@ def config_override(args, cfg):
 
     """
 
+    # Moved to process_files
+    """
     if args.get_val("-m", def_val=None):
         cfg.doc_dir = [args.get_val("-m")]
+    """
 
     if args.get_val("-n", def_val=None):
         cfg.monitor_dir = args.get_val("-n")
