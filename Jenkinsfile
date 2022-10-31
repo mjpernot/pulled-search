@@ -50,6 +50,7 @@ pipeline {
                 /usr/bin/python2 ./test/unit/pulled_search/process_json.py
                 /usr/bin/python2 ./test/unit/pulled_search/process_list.py
                 /usr/bin/python2 ./test/unit/pulled_search/run_program.py
+                /usr/bin/python2 ./test/unit/pulled_search/update_processed.py
                 /usr/bin/python2 ./test/unit/pulled_search/validate_dirs.py
                 /usr/bin/python2 ./test/unit/pulled_search/zgrep_search.py
                 deactivate

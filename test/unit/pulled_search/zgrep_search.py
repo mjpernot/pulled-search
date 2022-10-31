@@ -79,7 +79,7 @@ class UnitTest(unittest.TestCase):
     Methods:
         setUp
         test_file_option
-        taerDown
+        tearDown
 
     """
 
