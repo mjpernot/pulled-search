@@ -650,7 +650,7 @@ def load_processed(processed_fname):
             processed_files = [line.rstrip() for line in processed_files]
 
     except IOError as msg:
-        if msg[1] == "No such file or directory":
+        if msg.args[1] == "No such file or directory":
             processed_files = list()
 
     return processed_files
@@ -863,7 +863,7 @@ def process_files(args, cfg, log):
 
     # 4. Remove previous processed files from docid_files (file_dict).
     # Remove previous processed files from file_dict
-    for p_filename from processed_files:
+    for p_filename in processed_files:
         if p_filename in file_dict:
             file_dict.pop(p_filename)
 
