@@ -40,6 +40,7 @@ pipeline {
                 /usr/bin/python2 ./test/unit/pulled_search/get_archive_files.py
                 /usr/bin/python2 ./test/unit/pulled_search/help_message.py
                 /usr/bin/python2 ./test/unit/pulled_search/insert_data.py
+                /usr/bin/python2 ./test/unit/pulled_search/load_processed.py
                 /usr/bin/python2 ./test/unit/pulled_search/main.py
                 /usr/bin/python2 ./test/unit/pulled_search/mvalidate_dirs.py
                 /usr/bin/python2 ./test/unit/pulled_search/non_processed.py
