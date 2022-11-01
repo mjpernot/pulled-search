@@ -18,6 +18,7 @@ echo "Unit test:  pulled_search.py"
 /usr/bin/python ./test/unit/pulled_search/mvalidate_dirs.py
 /usr/bin/python ./test/unit/pulled_search/non_processed.py
 /usr/bin/python ./test/unit/pulled_search/process_docid.py
+/usr/bin/python ./test/unit/pulled_search/process_failed.py
 /usr/bin/python ./test/unit/pulled_search/process_files.py
 /usr/bin/python ./test/unit/pulled_search/process_insert.py
 /usr/bin/python ./test/unit/pulled_search/process_json.py
