@@ -702,17 +702,13 @@ def process_failed(args, cfg, log, failed_dict):
     failed_file = os.path.join(cfg.error_dir, "failed_process." + dtg) 
 
     with open(failed_file, "a") as fhdr:
-        for fkey in failed_dict:
-            fhdr.write(failed_dict[fkey])
+        fhdr.write(json.dumps(failed_dict, indent=4))
 
-    # Send email if possible
+    # Send email if set
     if args.get_val("-t", def_val=False):
-        subj = args.get_val("-s", def_val="") + "Process failed files"
+        subj = args.get_val("-s", def_val="") + " Process failed files"
         mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
-
-        for fkey in failed_dict:
-            mail.add_2_msg(failed_dict[fkey])
-
+        mail.add_2_msg(json.dumps(failed_dict, indent=4))
         mail.send_mail()
 
 
