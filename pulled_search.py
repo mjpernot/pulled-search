@@ -733,7 +733,7 @@ def recall_search(args, cfg, log, file_dict):
     # 5. Loop on the new file list (file_dict) and regex for security recall.
     # Search for security violation entries
     log.log_info("recall_search:  Processing new files.")
-    # Should pattern be placed into config file?
+# Should pattern be placed into config file?
     pattern = "JAC.pull.subtype.*.SECURITY RECALL"
     lines = list()
     err_msg = dict()
@@ -743,9 +743,9 @@ def recall_search(args, cfg, log, file_dict):
 
     for fname in file_dict:
         try:
-            with open(file_dict[fname]) as fhdr:
-                lines = fhdr.readlines()
-                lines = [line.rstrip() for line in lines]
+            with open(file_dict[fname], "r") as fhdr:
+                data = fhdr.readlines()
+                lines = [line.rstrip() for line in data]
 
         except IOError as msg:
             failed_dict[fname] = msg[1]
@@ -756,9 +756,9 @@ def recall_search(args, cfg, log, file_dict):
     #   a. If security recalled then
             if re.search(pattern, line):
     #       i. Create docid_dict from filename.
-                docid_dict["command"] = line.split("-")[0]
-                docid_dict["pubdate"] = line.split("-")[4]
-                docid_dict["docid"] = re.split("-|\.", line)[7]
+                docid_dict["command"] = fname.split("-")[0]
+                docid_dict["pubdate"] = fname.split("-")[4]
+                docid_dict["docid"] = re.split("-|\.", fname)[7]
                 break
 
     #       ii. Call process_docid (replace fname with docid_dict)
