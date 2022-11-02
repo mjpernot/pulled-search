@@ -238,6 +238,7 @@ import subprocess
 import json
 import platform
 import decimal
+import re
 
 # Local
 try:

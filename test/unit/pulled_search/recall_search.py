@@ -114,14 +114,145 @@ class UnitTest(unittest.TestCase):
 
         self.args = ArgParser()
         self.cfg = CfgTest()
-        self.fname = "CMD-LEV-PULLED-20221102-0000-GEN-LEV2-090109abcdef.html"
-        
+        self.fhtml = "CMD-LEV-PULLED-20221102-0000-GEN-LEV2-090109abcdef.html"
+        self.basepath = "test/unit/pulled_search/testfiles"
+        self.fname0 = os.path.join(self.basepath, "test_recall_search0.txt")
+        self.fname = os.path.join(self.basepath, "test_recall_search.txt")
+        self.fname2 = os.path.join(self.basepath, "test_recall_search2.txt")
+        self.fname3 = os.path.join(self.basepath, "test_recall_search3.txt")
+        self.fname4 = os.path.join(self.basepath, "test_recall_search4.txt")
         self.file_dict = {}
-        self.file_dict2 = {self.fname: }
-        self.file_dict3 = {self.fname: , self.fname: }
+        self.file_dict2 = {self.fhtml: self.fname2}
+        self.file_dict3 = {self.fhtml: self.fname2, self.fhtml: self.fname4}
+        self.file_dict4 = {self.fhtml: self.fname}
+        self.file_dict5 = {self.fhtml: self.fname0}
+        self.file_dict6 = {self.fhtml: self.fname3}
         self.results = {}
+        self.results2 = {self.fhtml: "No such file or directory"}
+        self.results3 = {self.fhtml: "Failed the process_docid process"}
 
-#    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_process_docid_passed(self, mock_log):
+
+        """Function:  test_process_docid_passed
+
+        Description:  Test with the process_docid passing.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.recall_search(
+                self.args, self.cfg, mock_log, self.file_dict6), self.results)
+
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_process_docid_failed(self, mock_log):
+
+        """Function:  test_process_docid_failed
+
+        Description:  Test with the process_docid failing.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.recall_search(
+                self.args, self.cfg, mock_log, self.file_dict6), self.results3)
+
+    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_pattern_found(self, mock_log):
+
+        """Function:  test_pattern_found
+
+        Description:  Test with pattern found.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.recall_search(
+                self.args, self.cfg, mock_log, self.file_dict6), self.results)
+
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_no_pattern(self, mock_log):
+
+        """Function:  test_no_pattern
+
+        Description:  Test with no pattern found.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.recall_search(
+                self.args, self.cfg, mock_log, self.file_dict2), self.results)
+
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_missing_file(self, mock_log):
+
+        """Function:  test_missing_file
+
+        Description:  Test with missing file.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.recall_search(
+                self.args, self.cfg, mock_log, self.file_dict5), self.results2)
+
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_empty_file(self, mock_log):
+
+        """Function:  test_empty_file
+
+        Description:  Test with empty file.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.recall_search(
+                self.args, self.cfg, mock_log, self.file_dict4), self.results)
+
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_multiple_file_dict(self, mock_log):
+
+        """Function:  test_multiple_file_dict
+
+        Description:  Test with multiple file in file_dict.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.recall_search(
+                self.args, self.cfg, mock_log, self.file_dict3), self.results)
+
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_single_file_dict(self, mock_log):
+
+        """Function:  test_single_file_dict
+
+        Description:  Test with single file in file_dict.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.recall_search(
+                self.args, self.cfg, mock_log, self.file_dict2), self.results)
 
     @mock.patch("pulled_search.gen_class.Logger")
     def test_empty_file_dict(self, mock_log):
