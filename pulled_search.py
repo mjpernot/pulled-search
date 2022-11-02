@@ -748,7 +748,7 @@ def recall_search(args, cfg, log, file_dict):
                 lines = [line.rstrip() for line in data]
 
         except IOError as msg:
-            failed_dict[fname] = msg[1]
+            failed_dict[fname] = msg.args[1]
             lines = list()
 
         log.log_info("recall_search:  Searching for security recall in file.")
@@ -869,7 +869,7 @@ def process_files(args, cfg, log):
     ########################################################################
     # 5. Loop on the new file list (file_dict) and regex for security recall.
     # Search for security violation entries
-    failed_dict = security_search(args, cfg, log, file_dict)
+    failed_dict = recall_search(args, cfg, log, file_dict)
 
     """
     log.log_info("process_files:  Processing new files.")
