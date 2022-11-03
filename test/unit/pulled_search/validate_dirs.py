@@ -16,11 +16,7 @@
 # Standard
 import sys
 import os
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
+import unittest
 
 # Third-party
 import mock
@@ -58,7 +54,7 @@ class CfgTest(object):
         self.log_dir = "/dir_path/log_dir"
         self.outfile = "/dir_path/outfile_dir/outfile"
         self.error_dir = "/dir_path/error_dir"
-        self.archive_dir = "/dir_path/archive_dir"
+        self.archive_log_dir = "/dir_path/archive_dir"
         self.processed_dir = "/dir_path/processed_dir"
 
 
@@ -70,16 +66,16 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_no_failures
         test_doc_dir_multiple_two_fail
         test_doc_dir_multiple_one_fail
         test_doc_dir_multiple
-        test_archive_dir_failure
+        test_archive_log_dir_failure
         test_multiple_failures
         test_error_dir_failure
         test_outfile_failure
         test_log_dir_failure
         test_doc_dir_failure
-        test_no_failures
 
     """
 
@@ -117,6 +113,7 @@ class UnitTest(unittest.TestCase):
         self.chk7 = (False, "Archive_dir failure")
         self.chk8 = (False, "Processed_dir failure")
 
+# STOPPED HERE - there are two of these same name tests (see bottom of file)
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_no_failures(self, mock_chk):
 
@@ -188,11 +185,11 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.validate_dirs(self.cfg), {})
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
-    def test_archive_dir_failure(self, mock_chk):
+    def test_archive_log_dir_failure(self, mock_chk):
 
-        """Function:  test_archive_dir_failure
+        """Function:  test_archive_log_dir_failure
 
-        Description:  Test with failure on archive_dir check.
+        Description:  Test with failure on archive_log_dir check.
 
         Arguments:
 

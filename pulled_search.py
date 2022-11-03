@@ -1027,10 +1027,10 @@ def validate_dirs(cfg):
 
     # Directory path to where archived log files to be searched are
     status, msg = gen_libs.chk_crt_dir(
-        cfg.archive_dir, read=True, no_print=True)
+        cfg.archive_log_dir, read=True, no_print=True)
 
     if not status:
-        msg_dict[cfg.archive_dir] = msg
+        msg_dict[cfg.archive_log_dir] = msg
 
     # Temporary file where check_log will write to
     basepath = gen_libs.get_base_dir(cfg.outfile)

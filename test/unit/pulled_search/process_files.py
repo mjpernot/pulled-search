@@ -131,7 +131,8 @@ class UnitTest(unittest.TestCase):
         setUp
         test_failed_dict
         test_update_process
-        test_processed_file_some
+        test_processed_file_dupes
+        test_processed_file_exist
         test_processed_file_none
         test_file_dict_dupes
         test_file_dict_no_dupes
@@ -156,10 +157,289 @@ class UnitTest(unittest.TestCase):
 
         self.args = ArgParser()
         self.cfg = CfgTest()
+        self.cfg2 = CfgTest2()
         self.args_array = {"-m": "/dir_path/doc_dir3"}
         self.docid_files = list()
+        self.docid_files2 = ["/path/file1.html"]
+        self.docid_files3 = ["/path/file1.html", "/path/file2.html"]
+        self.docid_files4 = ["/path/file1.html", "/path/file1.html"]
         self.processed_files = list()
+        self.processed_files2 = ["file2.html"]
         self.failed_dict = list()
+        self.failed_dict2 = {"file1.html": "/path/file1.html"}
+
+    @mock.patch("pulled_search.process_failed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_failed_dict(self, mock_log, mock_search, mock_load, mock_recall):
+
+        """Function:  test_failed_dict
+
+        Description:  Test with failed_dict with failed files.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files3
+        mock_load.return_value = self.processed_files2
+        mock_recall.return_value = self.failed_dict2
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_update_process(self, mock_log, mock_search, mock_load,
+                            mock_recall):
+
+        """Function:  test_update_process
+
+        Description:  Test with update_process called.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files3
+        mock_load.return_value = self.processed_files2
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_processed_file_dupes(self, mock_log, mock_search, mock_load,
+                                  mock_recall):
+
+        """Function:  test_processed_file_dupes
+
+        Description:  Test with dupe processed files.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files3
+        mock_load.return_value = self.processed_files2
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_processed_file_exist(self, mock_log, mock_search, mock_load,
+                                  mock_recall):
+
+        """Function:  test_processed_file_exist
+
+        Description:  Test with existing processed files.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files2
+        mock_load.return_value = self.processed_files2
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_processed_file_none(self, mock_log, mock_search, mock_load,
+                                 mock_recall):
+
+        """Function:  test_processed_file_none
+
+        Description:  Test with no processed files.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files3
+        mock_load.return_value = self.processed_files
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_file_dict_dupes(self, mock_log, mock_search, mock_load,
+                             mock_recall):
+
+        """Function:  test_file_dict_dupes
+
+        Description:  Test with docid_files with dupe files detected.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files4
+        mock_load.return_value = self.processed_files
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_file_dict_no_dupes(self, mock_log, mock_search, mock_load,
+                                mock_recall):
+
+        """Function:  test_file_dict_no_dupes
+
+        Description:  Test with docid_files with no dupe files detected.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files3
+        mock_load.return_value = self.processed_files
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_docid_files_multiple(self, mock_log, mock_search, mock_load,
+                                  mock_recall):
+
+        """Function:  test_docid_files_multiple
+
+        Description:  Test with docid_files with multiple files.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files3
+        mock_load.return_value = self.processed_files
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_docid_files_single(self, mock_log, mock_search, mock_load,
+                                mock_recall):
+
+        """Function:  test_docid_files_single
+
+        Description:  Test with docid_files with single file.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files2
+        mock_load.return_value = self.processed_files
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_docid_files_empty(self, mock_log, mock_search, mock_load,
+                               mock_recall):
+
+        """Function:  test_docid_files_empty
+
+        Description:  Test with docid_files being empty.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files
+        mock_load.return_value = self.processed_files
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_search_dir_multiple(self, mock_log, mock_search, mock_load,
+                                 mock_recall):
+
+        """Function:  test_search_dir_multiple
+
+        Description:  Test with multiple search directories.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files
+        mock_load.return_value = self.processed_files
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg2, mock_log))
+
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_search_dir_single(self, mock_log, mock_search, mock_load,
+                               mock_recall):
+
+        """Function:  test_search_dir_single
+
+        Description:  Test with single search directory.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files
+        mock_load.return_value = self.processed_files
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.load_processed")
@@ -180,226 +460,6 @@ class UnitTest(unittest.TestCase):
         mock_search.return_value = self.docid_files
         mock_load.return_value = self.processed_files
         mock_recall.return_value = self.failed_dict
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-
-
-
-
-##############################################################################
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_empty_docdir(self, mock_log):
-
-        """Function:  test_empty_docdir
-
-        Description:  Test with no doc directory.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = dict()
-        self.cfg.doc_dir = []
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_multiple_docdir(self, mock_log):
-
-        """Function:  test_multiple_docdir
-
-        Description:  Test with multiple doc directories.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = dict()
-        self.cfg.doc_dir.append("/dir_path/doc_dir2")
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_single_docdir(self, mock_log):
-
-        """Function:  test_single_docdir
-
-        Description:  Test with single doc directory.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = dict()
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_with_preamble(self, mock_log):
-
-        """Function:  test_with_preamble
-
-        Description:  Test with pre-amble subject.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array3
-
-        mock_log.return_value = True
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_with_no_mail(self, mock_log):
-
-        """Function:  test_with_no_mail
-
-        Description:  Test with no mail setup.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array2
-
-        mock_log.return_value = True
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_nonprocessed_files(self, mock_log):
-
-        """Function:  test_nonprocessed_files
-
-        Description:  Test with nonprocessed files.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = dict()
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_no_log_files(self, mock_log):
-
-        """Function:  test_no_log_files
-
-        Description:  Test with no log files detected.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = dict()
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_with_mail(self, mock_log):
-
-        """Function:  test_with_mail
-
-        Description:  Test with mail setup.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array
-
-        mock_log.return_value = True
-
-        self.assertFalse(
-            pulled_search.process_files(self.args, self.cfg, mock_log))
-
-    @unittest.skip("Skip")
-    @mock.patch("pulled_search.gen_class.setup_mail",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.cleanup_files", mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.process_docid", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.filename_search",
-                mock.Mock(return_value=[]))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_with_data(self, mock_log):
-
-        """Function:  test_with_data
-
-        Description:  Test with successful log file check.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = dict()
 
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
