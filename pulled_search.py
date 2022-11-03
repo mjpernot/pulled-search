@@ -982,6 +982,7 @@ def insert_data(args, cfg, log):
 
     """
 
+    remove_list = list()
     mail = None
     subj = args.get_val("-s", def_val="") + "Non-processed files"
 
@@ -991,7 +992,18 @@ def insert_data(args, cfg, log):
     log.log_info("insert_data:  Processing files to insert...")
     insert_list = gen_libs.filename_search(
         cfg.monitor_dir, cfg.mfile_regex, add_path=True)
-    remove_list = process_list(args, cfg, log, insert_list, "insert")
+
+    ########################################################################
+    for fname in insert_list:
+        log.log_info("insert_data:  Processing file: %s" % (fname))
+        status = process_insert(args, cfg, fname, log)
+
+        if status:
+            remove_list.append(fname)
+# This line being replaced with above code.
+#    remove_list = process_list(args, cfg, log, insert_list, "insert")
+    ########################################################################
+
     insert_list = cleanup_files(
         insert_list, remove_list, cfg.marchive_dir, log)
     non_processed(insert_list, cfg.merror_dir, log, mail)
