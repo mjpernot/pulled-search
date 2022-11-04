@@ -23,6 +23,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - validate_dirs: Added new directory check.
 - config_override: Removed check on the -m option.
 - process_docid: Removed code for setting up docid_dict, handled outside of function now. 
+- run_program: Added YYYYMMDD to the Logger file name for log file rotation.
 - Documentation updates.
 
 ### Removed

@@ -1133,6 +1133,8 @@ def run_program(args, func_dict):
     basepath = gen_libs.get_base_dir(cfg.log_file)
     status, err_msg = gen_libs.chk_crt_dir(
         basepath, write=True, create=True, no_print=True)
+    log_file = cfg.log_file + "." + datetime.datetime.strftime(
+        datetime.datetime.now(), "%Y%m%d")
 
     if status:
         log = gen_class.Logger(
