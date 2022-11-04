@@ -57,27 +57,36 @@
             # This section is for either the -P or -I option.
             # Logger file for the storage of log entries.
             # File name including directory path.
-            log_file = "DIR_PATH/pulled_search.log"
+            log_file = "BASE_PATH/log/pulled_search.log"
 
             # Pulled Search Process Configuration section.
             # Update this section if using the -P option.
             # Directory where docid files to be processed are.
-            doc_dir = "DOC_DIR_PATH"
+            doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
+            # Directory where files with previous processed files are stored at
+            processed_dir = "BASE_PATH/processed"
+            # File name for previous processed files.
+            processed_file = "processed"
             # Regular expression for search for log file names.
-            file_regex = "_docid.json"
-            # Directory where log files to be searched are.
+            file_regex = "-PULLED-"
+
+            # Directory where active log files to be searched are.
             log_dir = "LOG_DIR_PATH"
             # Type of log files to checked.
             log_type = "access_log"
+            # Directory where archived log files to be searched are.
+            archive_log_dir = "ARCHIVE_DIR_PATH"
             # Temporary file where check_log will write to.
             # File name including directory path.
-            outfile = "DIR_PATH/checklog.out"
+            outfile = "BASE_PATH/tmp/checklog.out"
             # Security enclave these files are being processed on.
             enclave = "ENCLAVE"
-            # Directory path to where archived files are saved to.
-            archive_dir = "ARCHIVE_DIR_PATH"
             # Directory path to where error and non-processed files are saved.
-            error_dir = "ERROR_DIR_PATH"
+            error_dir = "BASE_PATH/search_error"
+            # Mapping of commands to keywords.
+            # This is for the naming of the access logs which are not always
+            #   under the command name.
+            command = {"intelink": "eucom"}
 
             # Pulled Search Process/RabbitMQ Configuration section.
             # Update this section if using the -P option.
@@ -140,10 +149,10 @@
             mfile_regex = "_mongo.json"
             # Directory path to where Insert/Mongodb archived files are saved
             #   to.
-            marchive_dir = "ARCHIVE_DIR_PATH"
+            marchive_dir = "BASE_PATH/archive"
             # Directory path to where Insert/Mongodb error and non-processed
             #   files are saved to.
-            merror_dir = "ERROR_DIR_PATH"
+            merror_dir = "BASE_PATH/mongo_error"
             # Name of Mongo configuration file.  (Do not include the ".py"
             #   in the name.)
             # No not change unless changing the name of the external Mongo
