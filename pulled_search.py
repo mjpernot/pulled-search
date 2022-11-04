@@ -1138,7 +1138,7 @@ def run_program(args, func_dict):
 
     if status:
         log = gen_class.Logger(
-            cfg.log_file, cfg.log_file, "INFO",
+            log_file, log_file, "INFO",
             "%(asctime)s %(levelname)s %(message)s", "%Y-%m-%dT%H:%M:%SZ")
         log.log_info("Program initialization...")
         cfg = config_override(args, cfg)
