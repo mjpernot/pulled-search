@@ -982,11 +982,11 @@ def insert_data(args, cfg, log):
 
     """
 
-    remove_list = list()
+    processed_list = list()
     mail = None
-    subj = args.get_val("-s", def_val="") + "Non-processed files"
 
     if args.get_val("-t", def_val=False):
+        subj = args.get_val("-s", def_val="") + "Non-processed files"
         mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
 
     log.log_info("insert_data:  Processing files to insert...")
@@ -999,14 +999,15 @@ def insert_data(args, cfg, log):
         status = process_insert(args, cfg, fname, log)
 
         if status:
-            remove_list.append(fname)
+            processed_list.append(fname)
 # This line being replaced with above code.
-#    remove_list = process_list(args, cfg, log, insert_list, "insert")
+#    processed_list = process_list(args, cfg, log, insert_list, "insert")
     ########################################################################
 
-    insert_list = cleanup_files(
-        insert_list, remove_list, cfg.marchive_dir, log)
-    non_processed(insert_list, cfg.merror_dir, log, mail)
+    if insert_list:
+        nonproc_list = cleanup_files(
+            insert_list, processed_list, cfg.marchive_dir, log)
+        non_processed(nonproc_list, cfg.merror_dir, log, mail)
 
 
 def validate_dirs(cfg):
