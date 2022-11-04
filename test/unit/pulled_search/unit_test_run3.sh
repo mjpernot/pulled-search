@@ -22,7 +22,6 @@ echo "Unit test:  pulled_search.py"
 /usr/bin/python3 ./test/unit/pulled_search/process_files.py
 /usr/bin/python3 ./test/unit/pulled_search/process_insert.py
 /usr/bin/python3 ./test/unit/pulled_search/process_json.py
-/usr/bin/python3 ./test/unit/pulled_search/process_list.py
 /usr/bin/python3 ./test/unit/pulled_search/recall_search.py
 /usr/bin/python3 ./test/unit/pulled_search/run_program.py
 /usr/bin/python3 ./test/unit/pulled_search/update_processed.py

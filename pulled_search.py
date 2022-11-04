@@ -555,49 +555,6 @@ def process_insert(args, cfg, fname, log):
     return status
 
 
-def process_list(args, cfg, log, file_list, action):
-
-    """Function:  process_list
-
-    Description:  Processes the docid files.
-
-    Arguments:
-        (input) args -> ArgParser class instance
-        (input) cfg -> Configuration setup
-        (input) log -> Log class instance
-        (input) file_list -> List of files to be processed
-        (input) action -> Type of processing to complete
-            "search" => Execute a pulled search on the file
-            "insert" => Insert data file into database
-        (output) done_list -> List of files successfully processed
-
-    """
-
-    done_list = list()
-    file_list = list(file_list)
-
-    for fname in file_list:
-        log.log_info("process_list:  Processing file: %s" % (fname))
-
-        if action == "search":
-            log.log_info("process_list:  Action: search")
-            status = process_docid(args, cfg, fname, log)
-
-        elif action == "insert":
-            log.log_info("process_list:  Action: insert")
-            status = process_insert(args, cfg, fname, log)
-
-        else:
-            log.log_warn("process_list:  Incorrect or no action detected: %s"
-                         % (action))
-            status = False
-
-        if status:
-            done_list.append(fname)
-
-    return done_list
-
-
 def cleanup_files(docid_files, processed_list, dest_dir, log):
 
     """Function:  cleanup_files

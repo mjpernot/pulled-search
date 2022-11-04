@@ -25,6 +25,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - process_docid: Removed code for setting up docid_dict, handled outside of function now. 
 - Documentation updates.
 
+### Removed
+- process_list
+
 
 ## [0.1.3] - 2021-12-15
 - Upgraded check-log to v4.0.1

@@ -37,7 +37,7 @@ enclave = "ENCLAVE"
 error_dir = "ERROR_DIR_PATH"
 # Mapping of commands to keywords.
 # This is for the naming of the access logs which are not always under the command name.
-command = {"eucom": "intelink"}
+command = {"intelink": "eucom"}
 
 
 # Pulled Search Process/RabbitMQ Configuration section.
