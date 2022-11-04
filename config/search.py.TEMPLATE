@@ -7,7 +7,7 @@
 #
 # Logger file for the storage of log entries.
 # File name including directory path.
-log_file = "DIR_PATH/pulled_search.log"
+log_file = "BASE_PATH/log/pulled_search.log"
 
 # Pulled Search Process Configuration section.
 # Update this section if using the -P option.
@@ -22,19 +22,19 @@ processed_file = "processed"
 # Regular expression for search for log file names.
 file_regex = "-PULLED-"
 
-# Directory where log files to be searched are.
+# Directory where active log files to be searched are.
 log_dir = "LOG_DIR_PATH"
 # Type of log files to checked.
 log_type = "access_log"
-# Directory path to where archived log files are.
+# Directory where archived log files to be searched are.
 archive_log_dir = "ARCHIVE_DIR_PATH"
 # Temporary file where check_log will write to.
 # File name including directory path.
-outfile = "DIR_PATH/checklog.out"
+outfile = "BASE_PATH/tmp/checklog.out"
 # Security enclave these files are being processed on.
 enclave = "ENCLAVE"
 # Directory path to where error and non-processed files are saved to.
-error_dir = "ERROR_DIR_PATH"
+error_dir = "BASE_PATH/search_error"
 # Mapping of commands to keywords.
 # This is for the naming of the access logs which are not always under the command name.
 command = {"intelink": "eucom"}
@@ -95,9 +95,9 @@ monitor_dir = "MONITOR_DIR_PATH"
 # Regular expression for search for Insert/Mongodb file names.
 mfile_regex = "_mongo.json"
 # Directory path to where Insert/Mongodb archived files are saved to.
-marchive_dir = "ARCHIVE_DIR_PATH"
+marchive_dir = "BASE_PATH/archive"
 # Directory path to where Insert/Mongodb error and non-processed files are saved to.
-merror_dir = "ERROR_DIR_PATH"
+merror_dir = "BASE_PATH/mongo_error"
 # Name of Mongo configuration file.  (Do not include the ".py" in the name.)
 # No not change unless changing the name of the external Mongo config file.
 mconfig = "mongo"
