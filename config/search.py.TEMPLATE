@@ -21,6 +21,8 @@ processed_dir = "BASE_PATH/processed"
 processed_file = "processed"
 # Regular expression for search for log file names.
 file_regex = "-PULLED-"
+# Regular expression for search for recalled products.
+pattern = "JAC.pull.subtype.*.SECURITY RECALL"
 
 # Directory where active log files to be searched are.
 log_dir = "LOG_DIR_PATH"

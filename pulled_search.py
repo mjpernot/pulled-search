@@ -394,9 +394,8 @@ def zgrep_search(file_list, keyword, outfile):
 
     for fname in file_list:
 
+        # Search for keyword and write to file.
         with open(outfile, "ab") as fout:
-
-            # Search for keyword and write to file.
             proc1 = subp.Popen([cmd, keyword, fname], stdout=fout)
             proc1.wait()
 
@@ -701,7 +700,7 @@ def recall_search(args, cfg, log, file_dict):
     # Search for security violation entries
     log.log_info("recall_search:  Processing new files.")
 # Should pattern be placed into config file?
-    pattern = "JAC.pull.subtype.*.SECURITY RECALL"
+#    pattern = "JAC.pull.subtype.*.SECURITY RECALL"
     lines = list()
     err_msg = dict()
     docid_dict = dict()
@@ -721,7 +720,7 @@ def recall_search(args, cfg, log, file_dict):
         log.log_info("recall_search:  Searching for security recall in file.")
         for line in lines:
     #   a. If security recalled then
-            if re.search(pattern, line):
+            if re.search(cfg.pattern, line):
     #       i. Create docid_dict from filename.
                 docid_dict["command"] = fname.split("-")[0]
                 docid_dict["pubdate"] = fname.split("-")[4]
