@@ -638,7 +638,8 @@ def update_processed(log, processed_fname, file_dict):
     # Part of number 6 will be it's own function.
     # update_processed(log, processed_fname, file_dict)
     # 6. Add file_dict to list of files already processed this month.
-    log.log_info("update_processed:  Updating processed file.")
+    log.log_info("update_processed:  Updating processed file: %s"
+                 % (processed_fname))
     file_dict = dict(file_dict)
 
     with open(processed_fname, "a") as fhdr:
@@ -698,7 +699,7 @@ def recall_search(args, cfg, log, file_dict):
     #   Out: failed_dict
     # 5. Loop on the new file list (file_dict) and regex for security recall.
     # Search for security violation entries
-    log.log_info("recall_search:  Processing new files.")
+    log.log_info("recall_search:  Processing new pulled files.")
 # Should pattern be placed into config file?
 #    pattern = "JAC.pull.subtype.*.SECURITY RECALL"
     lines = list()
@@ -708,6 +709,7 @@ def recall_search(args, cfg, log, file_dict):
     file_dict = dict(file_dict)
 
     for fname in file_dict:
+        log.log_info("recall_search:  Searching: %s" % (fname))
         try:
             with open(file_dict[fname], "r") as fhdr:
                 data = fhdr.readlines()
@@ -735,6 +737,8 @@ def recall_search(args, cfg, log, file_dict):
 
     #       iii. If not status then add to failed_list
             if not status:
+                log.log_err("%s: Failed the process_docid process."
+                            % (docid_dict))
                 failed_dict[fname] = "Failed the process_docid process"
 
 #        docid_dict = dict() # Not required here, see above.
@@ -778,6 +782,7 @@ def process_files(args, cfg, log):
             search_dir.append(os.path.join(dir_entry, yearmon))
 
     for docdir in search_dir:
+        log.log_info("process_files:  Searching: %s" % (docdir))
         tmp_list = gen_libs.filename_search(
             docdir, cfg.file_regex, add_path=True)
         docid_files.extend(tmp_list)
@@ -791,7 +796,7 @@ def process_files(args, cfg, log):
 
     # 2. Remove dupes from docid_files based on filename (not path).
     # Convert file list to dictionary and remove duplicates
-    log.log_info("process_files:  Removing duplicate files.")
+    log.log_info("process_files:  Removing duplicate pulled files.")
     file_dict = {}
 
     for full_filename in docid_files:
@@ -1148,7 +1153,7 @@ def run_program(args, func_dict):
         log = gen_class.Logger(
             log_file, log_file, "INFO",
             "%(asctime)s %(levelname)s %(message)s", "%Y-%m-%dT%H:%M:%SZ")
-        log.log_info("Program initialization...")
+        log.log_info("Program initialization.")
         cfg = config_override(args, cfg)
         msg_dict = checks_dirs(args, cfg)
 
