@@ -297,21 +297,23 @@ def non_processed(docid_files, error_dir, log, mail=None):
 
     """
 
+    log.log_info("non_processed:  Post-process of files.")
     docid_files = list(docid_files)
 
     if docid_files:
         log.log_info("non_processed:  Non-processed files detected.")
 
         for fname in docid_files:
-            log.log_info("non_processed:  Moving file: %s" % (fname))
-            dtg = datetime.datetime.strftime(datetime.datetime.now(),
-                                             "%Y%m%d_%H%M%S")
+            log.log_info("non_processed:  File: %s moved to %s"
+                         % (fname, error_dir))
+            dtg = datetime.datetime.strftime(
+                datetime.datetime.now(), "%Y%m%d_%H%M%S")
             new_fname = os.path.basename(fname)
-            gen_libs.mv_file2(fname, error_dir,
-                              new_fname=new_fname + "." + dtg)
+            gen_libs.mv_file2(
+                fname, error_dir, new_fname=new_fname + "." + dtg)
 
         if mail:
-            log.log_info("non_processed:  Sending email...")
+            log.log_info("non_processed:  Send email of non-processed file.")
             mail.add_2_msg(docid_files)
             mail.send_mail()
 
@@ -553,6 +555,7 @@ def process_insert(args, cfg, fname, log):
     """
 
     log.log_info("process_insert:  Converting data to JSON.")
+    status = True
     data_list = gen_libs.file_2_list(fname)
     insert_dict = json.loads(gen_libs.list_2_str(data_list))
 
@@ -568,7 +571,6 @@ def process_insert(args, cfg, fname, log):
 
         else:
             log.log_info("process_insert:  Mongo database insertion.")
-            status = True
 
     else:
         log.log_err("process_insert: Data failed to convert to JSON.")
@@ -593,6 +595,7 @@ def cleanup_files(docid_files, processed_list, dest_dir, log):
 
     """
 
+    log.log_info("cleanup_files:  Post-cleanup of files.")
     docid_files = list(docid_files)
     processed_list = list(processed_list)
 
@@ -971,6 +974,7 @@ def insert_data(args, cfg, log):
 
     """
 
+    log.log_info("insert_data:  Processing files to insert.")
     processed_list = list()
     mail = None
 
@@ -978,7 +982,7 @@ def insert_data(args, cfg, log):
         subj = args.get_val("-s", def_val="") + "Non-processed files"
         mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
 
-    log.log_info("insert_data:  Processing files to insert...")
+    log.log_info("insert_data:  Searching for new files.")
     insert_list = gen_libs.filename_search(
         cfg.monitor_dir, cfg.mfile_regex, add_path=True)
 
@@ -994,6 +998,7 @@ def insert_data(args, cfg, log):
     ########################################################################
 
     if insert_list:
+        log.log_info("insert_data:  Post-processing of files.")
         nonproc_list = cleanup_files(
             insert_list, processed_list, cfg.marchive_dir, log)
         non_processed(nonproc_list, cfg.merror_dir, log, mail)
