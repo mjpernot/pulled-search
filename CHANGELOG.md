@@ -11,6 +11,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Upgraded rabbitmq-lib to v2.2.1
 - Upgraded check-log to v4.0.2
 
+### Fixed
+- process_docid: Status was not being set correctly.
+
 ### Added
 - load_processed: Read in the previous processed file names.
 - update_processed: Update the processed file with new file entries.
@@ -18,6 +21,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - recall_search: Search for security recalled products in the pulled files and process those files.
 
 ### Changed
+- process_json: Added status return on the publishing of data to RabbitMQ.
 - insert_data: Added code to create the remove file list.
 - process_files: Refactored the function and broke out code into individual functions.
 - validate_dirs: Added new directory check.

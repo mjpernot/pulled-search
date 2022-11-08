@@ -417,6 +417,7 @@ def process_docid(args, cfg, docid_dict, log):
 
     status = True
     docid_dict = dict(docid_dict)
+    log.log_info("process_docid:  Processing docid: %s" % (docid_dict))
     cmd = docid_dict["command"].lower()
 
     # Check to see if the command is mapped to a different keyword file
@@ -426,12 +427,14 @@ def process_docid(args, cfg, docid_dict, log):
     cmd_regex = cmd + ".*" + cfg.log_type
 
     if args.get_val("-a", def_val=None):
-        log.log_info("process_docid:  Searching for archive log files...")
+        log.log_info("process_docid:  Searching archive directory: %s"
+                     % (cfg.archive_log_dir))
         log_files = get_archive_files(
             cfg.archive_log_dir, cmd, docid_dict["pubdate"], cmd_regex)
 
     else:
-        log.log_info("process_docid:  Searching for apache log files...")
+        log.log_info("process_docid:  Searching apache log directory: %s"
+                     % (cfg.log_dir))
         log_files = gen_libs.filename_search(cfg.log_dir, cmd_regex,
                                              add_path=True)
 
@@ -444,25 +447,26 @@ def process_docid(args, cfg, docid_dict, log):
 
     # Must use zgrep searching in pre-7 Centos systems.
     if args.get_val("-z", def_val=False) or (is_centos and is_pre_7):
-        log.log_info("process_docid:  Running zgrep search...")
+        log.log_info("process_docid:  Running zgrep search.")
         zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
 
     else:
         # Create argument list for check_log program.
+        log.log_info("process_docid:  Running check_log search.")
         cmdline = [
             "check_log.py", "-g", "w", "-f", log_files, "-S",
             [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
         chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
         chk_args = gen_class.ArgParser(
             cmdline, opt_val=chk_opt_val, do_parse=True)
-        log.log_info("process_docid:  Running check_log search...")
         check_log.run_program(chk_args)
 
     if not gen_libs.is_empty_file(cfg.outfile):
         log.log_info("process_docid:  Log entries detected.")
         file_log = gen_libs.file_2_list(cfg.outfile)
+        log.log_info("process_docid:  Creating JSON document.")
         log_json = create_json(cfg, docid_dict, file_log)
-        process_json(args, cfg, log, log_json)
+        status = process_json(args, cfg, log, log_json)
 
     else:
         log.log_info("process_docid:  No log entries detected.")
@@ -486,23 +490,27 @@ def process_json(args, cfg, log, log_json):
         (input) cfg -> Configuration setup
         (input) log -> Log class instance
         (input) log_json -> JSON log document
+        (output) status -> True|False - Successful publishing or emailing
 
     """
 
+    log.log_info("process_json:  Processing JSON document.")
+    status = True
+
     if cfg.to_addr and cfg.subj:
-        log.log_info("process_json:  Emailing log entries...")
+        log.log_info("process_json:  Emailing JSON log entries to: %s"
+                     % (cfg.to_addr))
         mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
         mail.add_2_msg(log_json)
         mail.send_mail()
 
     else:
-        log.log_info("process_json:  Publishing log entries...")
+        log.log_info("process_json:  Publishing log entries to RabbitMQ.")
         status, err_msg = rabbitmq_class.pub_2_rmq(
             cfg, json.dumps(log_json))
 
         if status:
-            log.log_info(
-                "process_json:  Log entries published to RabbitMQ.")
+            log.log_info("process_json:  Log entries published to RabbitMQ.")
 
         else:
             log.log_err(
@@ -513,14 +521,20 @@ def process_json(args, cfg, log, log_json):
             name = "NonPublished." + log_json["DocID"] \
                 + log_json["ServerName"] + "." + dtg
             fname = os.path.join(cfg.error_dir, name)
+            log.log_err("process_json:  Writing JSON document to file: %s"
+                        % (fname))
             gen_libs.write_file(fname, mode="w", data=log_json)
-            subj = args.get_val("-s", def_val="") + "Error: NonPublished"
 
             if args.get_val("-t", def_val=False):
+                log.log_info("process_json:  Email error to: %s"
+                             % (args.get_val("-t")))
+                subj = args.get_val("-s", def_val="") + "Error: NonPublished"
                 mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
                 mail.add_2_msg("Unable to publish message to RabbitMQ")
                 mail.add_2_msg("File: " + fname)
                 mail.send_mail()
+
+    return status
 
 
 def process_insert(args, cfg, fname, log):
@@ -700,7 +714,7 @@ def recall_search(args, cfg, log, file_dict):
     # 5. Loop on the new file list (file_dict) and regex for security recall.
     # Search for security violation entries
     log.log_info("recall_search:  Processing new pulled files.")
-# Should pattern be placed into config file?
+# Should pattern be placed into config file? Yes, Done.
 #    pattern = "JAC.pull.subtype.*.SECURITY RECALL"
     lines = list()
     err_msg = dict()
@@ -709,17 +723,20 @@ def recall_search(args, cfg, log, file_dict):
     file_dict = dict(file_dict)
 
     for fname in file_dict:
-        log.log_info("recall_search:  Searching: %s" % (fname))
+        log.log_info("recall_search:  Searching file: %s" % (fname))
         try:
             with open(file_dict[fname], "r") as fhdr:
                 data = fhdr.readlines()
                 lines = [line.rstrip() for line in data]
 
         except IOError as msg:
+            log.log_err("recall_search: Failed to open file!")
             failed_dict[fname] = msg.args[1]
             lines = list()
 
-        log.log_info("recall_search:  Searching for security recall in file.")
+        if lines:
+            log.log_info("recall_search:  Searching for security recall.")
+
         for line in lines:
     #   a. If security recalled then
             if re.search(cfg.pattern, line):
@@ -731,15 +748,17 @@ def recall_search(args, cfg, log, file_dict):
 
     #       ii. Call process_docid (replace fname with docid_dict)
         if docid_dict:
-            log.log_info("recall_search:  Processing file: %s" % (fname))
+            log.log_info("recall_search:  Security recalled product found: %s"
+                         % (docid_dict))
             status = process_docid(args, cfg, docid_dict, log)
-            docid_dict = dict()
 
     #       iii. If not status then add to failed_list
             if not status:
                 log.log_err("%s: Failed the process_docid process."
                             % (docid_dict))
                 failed_dict[fname] = "Failed the process_docid process"
+
+            docid_dict = dict()
 
 #        docid_dict = dict() # Not required here, see above.
 #        lines = list() # Do not think I need this line.
@@ -775,14 +794,14 @@ def process_files(args, cfg, log):
     search_dir = list()
 
     if args.get_val("-m", def_val=None):
-        search_dir = [args.get_val("-m")]
+        search_dir.append(args.get_val("-m"))
 
     else:
         for dir_entry in cfg.doc_dir:
             search_dir.append(os.path.join(dir_entry, yearmon))
 
     for docdir in search_dir:
-        log.log_info("process_files:  Searching: %s" % (docdir))
+        log.log_info("process_files:  Searching directory: %s" % (docdir))
         tmp_list = gen_libs.filename_search(
             docdir, cfg.file_regex, add_path=True)
         docid_files.extend(tmp_list)

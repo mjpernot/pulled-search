@@ -16,11 +16,7 @@
 # Standard
 import sys
 import os
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
+import unittest
 
 # Third-party
 import mock
@@ -226,7 +222,7 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
         mock_mail.return_value = self.mail
 
-        self.assertFalse(
+        self.assertTrue(
             pulled_search.process_json(
                 self.args, self.cfg2, mock_log, self.log_json))
 
@@ -247,7 +243,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
 
-        self.assertFalse(
+        self.assertTrue(
             pulled_search.process_json(
                 self.args, self.cfg, mock_log, self.log_json))
 

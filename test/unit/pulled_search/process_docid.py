@@ -103,6 +103,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_process_json_failed
         test_for_command
         test_z_option
         test_pre_centos_7
@@ -130,7 +131,6 @@ class UnitTest(unittest.TestCase):
         self.args_array2 = {"-a": True}
         self.args_array3 = {"-z": True}
         self.file_log = ["Line1", "Line2", "Line3"]
-#        self.fname = "/dir_path/092438k234_docid.json"
         self.docid_dict = {"docid": "weotiuer", "command": "COMMAND",
                            "pubdate": "20200102-101134"}
         self.docid_dict2 = {"docid": "weotiuer", "command": "intelink",
@@ -146,8 +146,42 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json",
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(False)))
+    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_process_json_failed(self, mock_log, mock_list, mock_match,
+                                 mock_arg):
+
+        """Function:  test_process_json_failed
+
+        Description:  Test with process_json failing to process.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array
+
+        mock_log.return_value = True
+        mock_list.return_value = self.file_log
+        mock_match.return_value = self.log_files
+        mock_arg.return_value = self.chk_args
+
+        self.assertFalse(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
+
+    @mock.patch("pulled_search.platform.linux_distribution",
+                mock.Mock(return_value=('Centos', '7.5')))
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -174,15 +208,14 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
         mock_arg.return_value = self.chk_args
 
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict2, mock_log), True)
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict2, mock_log))
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.zgrep_search",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json",
-                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -207,15 +240,14 @@ class UnitTest(unittest.TestCase):
         mock_list.return_value = self.file_log
         mock_match.return_value = self.log_files
 
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log), True)
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '6.10')))
     @mock.patch("pulled_search.zgrep_search",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json",
-                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -240,15 +272,14 @@ class UnitTest(unittest.TestCase):
         mock_list.return_value = self.file_log
         mock_match.return_value = self.log_files
 
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log), True)
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json",
-                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -275,15 +306,14 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
         mock_arg.return_value = self.chk_args
 
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log), True)
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json",
-                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -310,15 +340,14 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
         mock_arg.return_value = self.chk_args
 
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log), True)
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json",
-                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(False, "Error Message")))
@@ -345,8 +374,8 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
         mock_arg.return_value = self.chk_args
 
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log), True)
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
@@ -377,15 +406,14 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
         mock_arg.return_value = self.chk_args
 
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log), True)
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
 
     @mock.patch("pulled_search.platform.linux_distribution",
                 mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json",
-                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
@@ -412,8 +440,8 @@ class UnitTest(unittest.TestCase):
         mock_match.return_value = self.log_files
         mock_arg.return_value = self.chk_args
 
-        self.assertEqual(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log), True)
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
 
 
 if __name__ == "__main__":
