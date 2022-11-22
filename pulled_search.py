@@ -661,7 +661,7 @@ def update_processed(log, processed_fname, file_dict):
 
     with open(processed_fname, "a") as fhdr:
         for item in file_dict:
-            fhdr.write(file_dict[item] + "\n")
+            fhdr.write(item + "\n")
 
 
 def process_failed(args, cfg, log, failed_dict):
