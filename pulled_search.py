@@ -630,7 +630,8 @@ def load_processed(processed_fname):
     try:
         with open(processed_fname) as fhdr:
             processed_files = fhdr.readlines()
-            processed_files = [line.rstrip() for line in processed_files]
+            processed_files = [
+                os.path.basename(line).rstrip() for line in processed_files]
 
     except IOError as msg:
         if msg.args[1] == "No such file or directory":
@@ -661,7 +662,7 @@ def update_processed(log, processed_fname, file_dict):
 
     with open(processed_fname, "a") as fhdr:
         for item in file_dict:
-            fhdr.write(item + "\n")
+            fhdr.write(file_dict[item] + "\n")
 
 
 def process_failed(args, cfg, log, failed_dict):
