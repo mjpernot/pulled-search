@@ -76,6 +76,7 @@ class CfgTest(object):
         """
 
         self.doc_dir = ["/dir_path/doc_dir"]
+        self.pattern = "JAC.pull.subtype.*.SECURITY RECALL"
 
 
 class UnitTest(unittest.TestCase):

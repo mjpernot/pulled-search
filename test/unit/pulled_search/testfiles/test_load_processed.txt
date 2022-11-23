@@ -1,2 +1,2 @@
-filename1
-filename2
+/path/filename1
+/path/filename2
