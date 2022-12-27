@@ -242,8 +242,6 @@ import os
 import socket
 import datetime
 import subprocess
-
-# Third-party
 import json
 import platform
 import decimal

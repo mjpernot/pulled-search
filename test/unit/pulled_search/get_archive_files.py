@@ -18,8 +18,6 @@ import sys
 import os
 import datetime
 import unittest
-
-# Third-party
 import mock
 
 # Local
