@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Classification (U)
 
 """Program:  run_program.py
@@ -17,13 +16,7 @@
 # Standard
 import sys
 import os
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
-
-# Third-party
+import unittest
 import mock
 
 # Local
@@ -101,7 +94,7 @@ class ArgParser(object):
 
         """
 
-        return self.args_array.keys()
+        return list(self.args_array.keys())
 
 
 class LoggerTest(object):
@@ -206,7 +199,7 @@ class UnitTest(unittest.TestCase):
         self.args = ArgParser()
         self.cfg = CfgTest()
         self.log = LoggerTest()
-        self.func_dict = {"-P": process_files}
+        self.func_list = {"-P": process_files}
         self.dircfg = "/dir/config"
         self.args_array = {"-c": "configfile", "-d": self.dircfg}
         self.args_array2 = {"-c": "configfile", "-d": self.dircfg, "-P": True}
@@ -234,7 +227,7 @@ class UnitTest(unittest.TestCase):
         mock_cfg.return_value = self.cfg
         mock_override.return_value = self.cfg
 
-        self.assertFalse(pulled_search.run_program(self.args, self.func_dict))
+        self.assertFalse(pulled_search.run_program(self.args, self.func_list))
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
                 mock.Mock(return_value=(False, "Error Message")))
@@ -257,7 +250,7 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             self.assertFalse(
-                pulled_search.run_program(self.args, self.func_dict))
+                pulled_search.run_program(self.args, self.func_list))
 
     @mock.patch("pulled_search.checks_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir",
@@ -281,7 +274,7 @@ class UnitTest(unittest.TestCase):
         mock_cfg.return_value = self.cfg
         mock_override.return_value = self.cfg
 
-        self.assertFalse(pulled_search.run_program(self.args, self.func_dict))
+        self.assertFalse(pulled_search.run_program(self.args, self.func_list))
 
 
 if __name__ == "__main__":
