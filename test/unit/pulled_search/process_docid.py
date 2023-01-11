@@ -132,7 +132,7 @@ class UnitTest(unittest.TestCase):
         self.docid_dict = {"docid": "weotiuer", "command": "COMMAND",
                            "pubdate": "20200102-101134"}
         self.docid_dict2 = {"docid": "weotiuer", "command": "intelink",
-                           "pubdate": "20200102-101134"}
+                            "pubdate": "20200102-101134"}
         self.log_json = {
             "docID": "weotiuer", "command": "COMMAND",
             "pubDate": "20200102-101134", "securityEnclave": "ENCLAVE",
