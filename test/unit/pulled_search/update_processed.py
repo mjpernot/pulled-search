@@ -81,11 +81,13 @@ class UnitTest(unittest.TestCase):
         self.fname = os.path.join(self.basepath2, self.basefile)
         self.fname2 = os.path.join(
             self.basepath2, "test_update_processed2.txt")
-        self.file_dict = {"file1": "/path/file1"}
-        self.file_dict2 = {"file1": "/path/file1", "file2": "/path/file2"}
-        self.results = ["/path/file1"]
-        self.results2 = ["/path/file1", "/path/file2"]
-        self.results3 = ["/path/file1", "/path/file2"]
+        f_name = "/path/file1"
+        f_name2 = "/path/file2"
+        self.file_dict = {"file1": f_name}
+        self.file_dict2 = {"file1": f_name, "file2": f_name2}
+        self.results = [f_name]
+        self.results2 = [f_name, f_name2]
+        self.results3 = [f_name, f_name2]
 
     @mock.patch("pulled_search.gen_class.Logger")
     def test_add_no_names(self, mock_log):

@@ -110,6 +110,7 @@ class UnitTest(unittest.TestCase):
         self.args = ArgParser()
         self.cfg = CfgTest()
         self.fhtml = "CMD-LEV-PULLED-20221102-0000-GEN-LEV2-090109abcdef.html"
+        self.fhtml2 = "CMD-LEV-PULLED-20230102-0000-GEN-LEV-090109fedcba.html"
         self.basepath = "test/unit/pulled_search/testfiles"
         self.fname0 = os.path.join(self.basepath, "test_recall_search0.txt")
         self.fname = os.path.join(self.basepath, "test_recall_search.txt")
@@ -118,7 +119,7 @@ class UnitTest(unittest.TestCase):
         self.fname4 = os.path.join(self.basepath, "test_recall_search4.txt")
         self.file_dict = {}
         self.file_dict2 = {self.fhtml: self.fname2}
-        self.file_dict3 = {self.fhtml: self.fname2, self.fhtml: self.fname4}
+        self.file_dict3 = {self.fhtml: self.fname2, self.fhtml2: self.fname4}
         self.file_dict4 = {self.fhtml: self.fname}
         self.file_dict5 = {self.fhtml: self.fname0}
         self.file_dict6 = {self.fhtml: self.fname3}
