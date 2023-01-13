@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Classification (U)
 
 """Program:  config_override.py
@@ -17,13 +16,7 @@
 # Standard
 import sys
 import os
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
-
-# Third-party
+import unittest
 
 # Local
 sys.path.append(os.getcwd())
@@ -92,7 +85,7 @@ class CfgTest(object):
 
         """
 
-        self.doc_dir = "/dir_path/doc_dir"
+        self.doc_dir = ["/dir_path/doc_dir"]
         self.monitor_dir = "/dir_path/monitor_dir"
 
 
@@ -104,9 +97,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
-        test_all_changes
         test_monitordir_change
-        test_docdir_change
         test_no_changes
 
     """
@@ -124,33 +115,11 @@ class UnitTest(unittest.TestCase):
         self.args = ArgParser()
         self.cfg = CfgTest()
         self.name = "name@domain"
-        self.docdir = "/new_path/doc_dir"
         self.monitordir = "/new_path/monitor_dir"
         self.args_array = {"-t": self.name}
-        self.args_array2 = {"-t": self.name, "-m": self.docdir}
         self.args_array3 = {"-t": self.name, "-n": self.monitordir}
-        self.args_array4 = {"-t": self.name, "-n": self.monitordir,
-                            "-m": self.docdir}
-        self.results = "/dir_path/doc_dir"
         self.results2 = "/dir_path/monitor_dir"
-        self.results3 = self.docdir
         self.results4 = self.monitordir
-
-    def test_all_changes(self):
-
-        """Function:  test_all_changes
-
-        Description:  Test with changes to both configuration settings.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array4
-        cfg = pulled_search.config_override(self.args, self.cfg)
-
-        self.assertEqual(
-            (cfg.doc_dir, cfg.monitor_dir), (self.results3, self.results4))
 
     def test_monitordir_change(self):
 
@@ -165,24 +134,7 @@ class UnitTest(unittest.TestCase):
         self.args.args_array = self.args_array3
         cfg = pulled_search.config_override(self.args, self.cfg)
 
-        self.assertEqual(
-            (cfg.doc_dir, cfg.monitor_dir), (self.results, self.results4))
-
-    def test_docdir_change(self):
-
-        """Function:  test_docdir_change
-
-        Description:  Test with doc_dir change to configuration settings.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array2
-        cfg = pulled_search.config_override(self.args, self.cfg)
-
-        self.assertEqual(
-            (cfg.doc_dir, cfg.monitor_dir), (self.results3, self.results2))
+        self.assertEqual(cfg.monitor_dir, self.results4)
 
     def test_no_changes(self):
 
@@ -196,8 +148,7 @@ class UnitTest(unittest.TestCase):
 
         self.args.args_array = self.args_array
         cfg = pulled_search.config_override(self.args, self.cfg)
-        self.assertEqual(
-            (cfg.doc_dir, cfg.monitor_dir), (self.results, self.results2))
+        self.assertEqual(cfg.monitor_dir, self.results2)
 
 
 if __name__ == "__main__":
