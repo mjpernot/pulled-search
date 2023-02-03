@@ -5,6 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.5] - 2023-02-03
 ### Fixed
+- process_docid: Linux version incorrectly being converted to an integer.
 - recall_search: Pubdate being captured incorrectly from filename string.
 
 

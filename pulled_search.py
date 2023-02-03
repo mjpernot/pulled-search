@@ -442,8 +442,7 @@ def process_docid(args, cfg, docid_dict, log):
     is_centos = \
         True if "centos" in platform.linux_distribution()[0].lower() else False
     is_pre_7 = \
-        decimal.Decimal(platform.linux_distribution()[1]) < \
-        decimal.Decimal('7.0')
+        int(platform.linux_distribution()[1].split(".")[0]) < 7
 
     # Must use zgrep searching in pre-7 Centos systems.
     if args.get_val("-z", def_val=False) or (is_centos and is_pre_7):
