@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.5] - 2023-02-03
+
+
 ## [0.1.4] - 2022-10-13
 - Refactoring the input of the Docid files, will grab the Docid data from the Pulled html files directly.
 - Updated to work in Python 3 too
