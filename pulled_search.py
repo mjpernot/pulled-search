@@ -724,7 +724,7 @@ def recall_search(args, cfg, log, file_dict):
         for line in lines:
             if re.search(cfg.pattern, line):
                 docid_dict["command"] = fname.split("-")[0]
-                docid_dict["pubdate"] = fname.split("-")[4]
+                docid_dict["pubdate"] = fname.split("-")[3]
                 docid_dict["docid"] = re.split(r"-|\.", fname)[7]
                 break
 

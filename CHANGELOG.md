@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.5] - 2023-02-03
+### Fixed
+- recall_search: Pubdate being captured incorrectly from filename string.
 
 
 ## [0.1.4] - 2022-10-13
