@@ -101,5 +101,5 @@ marchive_dir = "BASE_PATH/archive"
 # Directory path to where Insert/Mongodb error and non-processed files are saved to.
 merror_dir = "BASE_PATH/mongo_error"
 # Name of Mongo configuration file.  (Do not include the ".py" in the name.)
-# No not change unless changing the name of the external Mongo config file.
+# Do not change unless changing the name of the external Mongo config file.
 mconfig = "mongo"

@@ -24,6 +24,7 @@
         -d dir_path => Directory path for option '-c'.  Required argument.
 
         -P => Process Doc ID files send to RabbitMQ.
+            -i => Insert the log entries directly to Mongodb.
             -m dir_path => Directory to monitor for doc ID files.
             -a => This is an archive log search.
             -z => Use the zgrep option instead of check_log to check GZipped
@@ -39,15 +40,21 @@
         -v => Display version of this program.
         -h => Help and usage message.
 
+        WARNING 1:  -a option must be used for archive log searching otherwise
+            the incorrect servername will be set in the JSON document.
+
         NOTE 1:  -v or -h overrides the other options.
-        NOTE 2:  -s requires -t option to be included.
-        NOTE 3:  -P and -I are XOR options.
-        NOTE 4:  -m and -n options will override the configuration settings.
+        NOTE 2:  -t option is for reporting any errors detected.
+        NOTE 3:  -s requires -t option to be included.
+        NOTE 4:  -P and -I are XOR options.
+        NOTE 5:  -m and -n options will override the configuration settings.
             The -m option is mapped to the doc_dir configuration entry, and
             the -n option is mapped to the monitor_dir configuration entry.
-        NOTE 5:  The log files can be normal flat files or compressed files
+        NOTE 6:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
+        NOTE 7: -i option overrides sending the JSON document via email or
+            sending it to RabbitMQ directly.
 
     Configuration files:
         Configuration file (config/search.py.TEMPLATE).  Below is the
@@ -155,7 +162,7 @@
             merror_dir = "BASE_PATH/mongo_error"
             # Name of Mongo configuration file.  (Do not include the ".py"
             #   in the name.)
-            # No not change unless changing the name of the external Mongo
+            # Do not change unless changing the name of the external Mongo
             #   config file.
             mconfig = "mongo"
 
@@ -441,15 +448,17 @@ def process_docid(args, cfg, docid_dict, log):
     # Determine if running on a pre-7 CentOS system.
     is_centos = \
         True if "centos" in platform.linux_distribution()[0].lower() else False
-    is_pre_7 = \
-        int(platform.linux_distribution()[1].split(".")[0]) < 7
+    is_pre_7 = int(platform.linux_distribution()[1].split(".")[0]) < 7
 
     # Must use zgrep searching in pre-7 Centos systems.
+### Check to see if servers are still here.
     if args.get_val("-z", def_val=False) or (is_centos and is_pre_7):
         log.log_info("process_docid:  Running zgrep search.")
         zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
 
     else:
+        
+### mail_rmq - Begin ###
         # Create argument list for check_log program.
         log.log_info("process_docid:  Running check_log search.")
         cmdline = [
@@ -474,6 +483,7 @@ def process_docid(args, cfg, docid_dict, log):
 
     if err_flag:
         log.log_warn("process_docid:  %s" % (err_msg))
+### mail_rmq - End ###
 
     return status
 
