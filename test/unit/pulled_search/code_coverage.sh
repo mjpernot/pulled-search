@@ -28,7 +28,6 @@ coverage run -a --source=pulled_search test/unit/pulled_search/recall_search.py
 coverage run -a --source=pulled_search test/unit/pulled_search/run_program.py
 coverage run -a --source=pulled_search test/unit/pulled_search/update_processed.py
 coverage run -a --source=pulled_search test/unit/pulled_search/validate_dirs.py
-coverage run -a --source=pulled_search test/unit/pulled_search/zgrep_search.py
 
 echo ""
 echo "Producing code coverage report"

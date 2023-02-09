@@ -5,8 +5,14 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.5] - 2023-02-03
 ### Fixed
-- process_docid: Linux version incorrectly being converted to an integer.
 - recall_search: Pubdate being captured incorrectly from filename string.
+
+### Changed
+- process_docid: Removed the check for Centos 6 usage and calling zgrep_search.
+
+### Removed
+- Removed -z option.
+- zgrep_search
 
 
 ## [0.1.4] - 2022-10-13

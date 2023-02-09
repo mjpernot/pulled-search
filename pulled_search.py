@@ -13,7 +13,7 @@
 
     Usage:
         pulled_search.py -c file -d path
-            {-P [-m path] [-a] [-z] |
+            {-P [-m path] [-a] [-i] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -27,8 +27,6 @@
             -i => Insert the log entries directly to Mongodb.
             -m dir_path => Directory to monitor for doc ID files.
             -a => This is an archive log search.
-            -z => Use the zgrep option instead of check_log to check GZipped
-                files.
 
         -I => Insert Pulled Search files into Mongodb.
             -n dir_path => Directory to monitor for pulled search files.
@@ -53,8 +51,8 @@
         NOTE 6:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
-        NOTE 7: -i option overrides sending the JSON document via email or
-            sending it to RabbitMQ directly.
+        NOTE 7: -i option overrides sending the JSON document to RabbitMQ
+            directly or via email.
 
     Configuration files:
         Configuration file (config/search.py.TEMPLATE).  Below is the
@@ -380,33 +378,6 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
     return log_files
 
 
-def zgrep_search(file_list, keyword, outfile):
-
-    """Function:  zgrep_search
-
-    Description:  Zgrep compressed files for keyword and write to file.
-
-    NOTE:  This is for use on Centos 2.6.X systems and earlier.
-
-    Arguments:
-        (input) file_list -> List of files to search
-        (input) keyword -> Value to search for
-        (input) outfile -> File to write the results to
-
-    """
-
-    subp = gen_libs.get_inst(subprocess)
-    file_list = list(file_list)
-    cmd = "zgrep"
-
-    for fname in file_list:
-
-        # Search for keyword and write to file.
-        with open(outfile, "ab") as fout:
-            proc1 = subp.Popen([cmd, keyword, fname], stdout=fout)
-            proc1.wait()
-
-
 def process_docid(args, cfg, docid_dict, log):
 
     """Function:  process_docid
@@ -445,21 +416,48 @@ def process_docid(args, cfg, docid_dict, log):
         log_files = gen_libs.filename_search(cfg.log_dir, cmd_regex,
                                              add_path=True)
 
-    # Determine if running on a pre-7 CentOS system.
-    is_centos = \
-        True if "centos" in platform.linux_distribution()[0].lower() else False
-    is_pre_7 = int(platform.linux_distribution()[1].split(".")[0]) < 7
+### Need to attach the server name to the log entries from the file it came from
+### or from the server it came from if doing a current search.
+    # If mongo
+    if args.arg_exist("-i"):
+### mongo() - Begin ###
+        for fname on log_files:
+### Duplicate code 1 - Begin ###
+### call_checklog() - Begin ###
+            log.log_info("process_docid:  Running check_log search.")
+            cmdline = [
+                "check_log.py", "-g", "w", "-f", fname, "-S",
+                [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
+            chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
+            chk_args = gen_class.ArgParser(
+                cmdline, opt_val=chk_opt_val, do_parse=True)
+            check_log.run_program(chk_args)
+### call_checklog() - End ###
+### Duplicate code 1 - End ###
 
-    # Must use zgrep searching in pre-7 Centos systems.
-### Check to see if servers are still here.
-    if args.get_val("-z", def_val=False) or (is_centos and is_pre_7):
-        log.log_info("process_docid:  Running zgrep search.")
-        zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
+            if not gen_libs.is_empty_file(cfg.outfile):
+                log.log_info("process_docid:  Log entries detected.")
+                lines = gen_libs.file_2_list(cfg.outfile)
+
+                for line in lines:
+                    log.log_info("process_docid:  Creating JSON document.")
+                    log_json = create_json(cfg, docid_dict, line)
+                    status = process_json(args, cfg, log, log_json)
+
+            else:
+                log.log_info("process_docid:  No log entries detected.")
+
+            err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
+
+            if err_flag:
+                log.log_warn("process_docid:  %s" % (err_msg))
+### mongo - End ###
 
     else:
-        
-### mail_rmq - Begin ###
+### mail_rmq() - Begin ###
         # Create argument list for check_log program.
+### Duplicate code 1 - Begin ###
+### call_checklog() - Begin ###
         log.log_info("process_docid:  Running check_log search.")
         cmdline = [
             "check_log.py", "-g", "w", "-f", log_files, "-S",
@@ -468,21 +466,23 @@ def process_docid(args, cfg, docid_dict, log):
         chk_args = gen_class.ArgParser(
             cmdline, opt_val=chk_opt_val, do_parse=True)
         check_log.run_program(chk_args)
+### call_checklog() - End ###
+### Duplicate code 1 - End ###
 
-    if not gen_libs.is_empty_file(cfg.outfile):
-        log.log_info("process_docid:  Log entries detected.")
-        file_log = gen_libs.file_2_list(cfg.outfile)
-        log.log_info("process_docid:  Creating JSON document.")
-        log_json = create_json(cfg, docid_dict, file_log)
-        status = process_json(args, cfg, log, log_json)
+        if not gen_libs.is_empty_file(cfg.outfile):
+            log.log_info("process_docid:  Log entries detected.")
+            file_log = gen_libs.file_2_list(cfg.outfile)
+            log.log_info("process_docid:  Creating JSON document.")
+            log_json = create_json(cfg, docid_dict, file_log)
+            status = process_json(args, cfg, log, log_json)
 
-    else:
-        log.log_info("process_docid:  No log entries detected.")
+        else:
+            log.log_info("process_docid:  No log entries detected.")
 
-    err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
+        err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
-    if err_flag:
-        log.log_warn("process_docid:  %s" % (err_msg))
+        if err_flag:
+            log.log_warn("process_docid:  %s" % (err_msg))
 ### mail_rmq - End ###
 
     return status
@@ -506,7 +506,12 @@ def process_json(args, cfg, log, log_json):
     log.log_info("process_json:  Processing JSON document.")
     status = True
 
-    if cfg.to_addr and cfg.subj:
+    if args.arg_exist("-i"):
+        log.log_info("process_json:  Inserting JSON log entry into Mongo")
+# Set up for mongo
+# Insert into mongo
+
+    elif cfg.to_addr and cfg.subj:
         log.log_info("process_json:  Emailing JSON log entries to: %s"
                      % (cfg.to_addr))
         mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)

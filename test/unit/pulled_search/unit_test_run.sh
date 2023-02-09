@@ -26,4 +26,3 @@ echo "Unit test:  pulled_search.py"
 /usr/bin/python ./test/unit/pulled_search/run_program.py
 /usr/bin/python ./test/unit/pulled_search/update_processed.py
 /usr/bin/python ./test/unit/pulled_search/validate_dirs.py
-/usr/bin/python ./test/unit/pulled_search/zgrep_search.py
