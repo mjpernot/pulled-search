@@ -321,32 +321,30 @@ def non_processed(docid_files, error_dir, log, mail=None):
             mail.send_mail()
 
 
-def create_json(cfg, docid_dict, file_log):
-
-    """Function:  create_json
-
-    Description:  Create the JSON from the docid file and log entries.
-
-    Arguments:
-        (input) cfg -> Configuration setup
-        (input) docid_dict -> Dictionary of docid file
-        (input) file_log -> List of log file entries
-        (output) log_json -> Dictionary of docid file and log entries
-
-    """
-
-    docid_dict = dict(docid_dict)
-    file_log = list(file_log)
-    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
-    log_json = {"DocID": docid_dict["docid"],
-                "Command": docid_dict["command"],
-                "PubDate": docid_dict["pubdate"],
-                "SecurityEnclave": cfg.enclave,
-                "AsOf": dtg,
-                "ServerName": socket.gethostname(),
-                "LogEntries": file_log}
-
-    return log_json
+#def create_json(cfg, docid_dict):
+#
+#    """Function:  create_json
+#
+#    Description:  Create the JSON from the docid file and log entries.
+#
+#    Arguments:
+#        (input) cfg -> Configuration setup
+#        (input) docid_dict -> Dictionary of docid file
+#        (output) log_json -> Dictionary of docid file
+#
+#    """
+#
+#    docid_dict = dict(docid_dict)
+#    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
+#    log_json = {"DocID": docid_dict["docid"],
+#                "Command": docid_dict["command"],
+#                "PubDate": docid_dict["pubdate"],
+#                "SecurityEnclave": cfg.enclave,
+#                "AsOf": dtg,
+#                "ServerName": socket.gethostname(),
+#                "LogEntries": file_log}
+#
+#    return log_json
 
 
 def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
@@ -404,7 +402,7 @@ def process_docid(args, cfg, docid_dict, log):
 
     cmd_regex = cmd + ".*" + cfg.log_type
 
-    if args.get_val("-a", def_val=None):
+    if args.arg_exist("-a"):
         log.log_info("process_docid:  Searching archive directory: %s"
                      % (cfg.archive_log_dir))
         log_files = get_archive_files(
@@ -413,77 +411,59 @@ def process_docid(args, cfg, docid_dict, log):
     else:
         log.log_info("process_docid:  Searching apache log directory: %s"
                      % (cfg.log_dir))
-        log_files = gen_libs.filename_search(cfg.log_dir, cmd_regex,
-                                             add_path=True)
+        log_files = gen_libs.filename_search(
+            cfg.log_dir, cmd_regex, add_path=True)
 
-### Need to attach the server name to the log entries from the file it came from
-### or from the server it came from if doing a current search.
-    # If mongo
-    if args.arg_exist("-i"):
-### mongo() - Begin ###
-        for fname on log_files:
-### Duplicate code 1 - Begin ###
-### call_checklog() - Begin ###
-            log.log_info("process_docid:  Running check_log search.")
-            cmdline = [
-                "check_log.py", "-g", "w", "-f", fname, "-S",
-                [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
-            chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
-            chk_args = gen_class.ArgParser(
-                cmdline, opt_val=chk_opt_val, do_parse=True)
-            check_log.run_program(chk_args)
-### call_checklog() - End ###
-### Duplicate code 1 - End ###
+    dtg = datetime.datetime.strftime(
+        datetime.datetime.now(), "%Y-%m-%dT%H:%M:%SZ")
+    log_json = {"docid": docid_dict["docid"], "command": docid_dict["command"],
+                "pubDate": docid_dict["pubdate"], "network": cfg.enclave,
+                "asOf": dtg, "servers": dict()}
+    log.log_info("process_docid:  Running check_log search.")
 
-            if not gen_libs.is_empty_file(cfg.outfile):
-                log.log_info("process_docid:  Log entries detected.")
-                lines = gen_libs.file_2_list(cfg.outfile)
+    for fname in log_files:
 
-                for line in lines:
-                    log.log_info("process_docid:  Creating JSON document.")
-                    log_json = create_json(cfg, docid_dict, line)
-                    status = process_json(args, cfg, log, log_json)
+        if args.arg_exist("-a"):
+            data = fname.split(".")
+            server = data[-2] if data[-1] == "gz" else data[-1]
 
-            else:
-                log.log_info("process_docid:  No log entries detected.")
+        else:
+            server = socket.gethostname()
 
-            err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
-
-            if err_flag:
-                log.log_warn("process_docid:  %s" % (err_msg))
-### mongo - End ###
-
-    else:
-### mail_rmq() - Begin ###
-        # Create argument list for check_log program.
-### Duplicate code 1 - Begin ###
-### call_checklog() - Begin ###
-        log.log_info("process_docid:  Running check_log search.")
+### check_log_search(args, cfg, log_json, fname, docid_dict) - Begin ###
         cmdline = [
-            "check_log.py", "-g", "w", "-f", log_files, "-S",
+            "check_log.py", "-g", "w", "-f", fname, "-S",
             [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
         chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
         chk_args = gen_class.ArgParser(
             cmdline, opt_val=chk_opt_val, do_parse=True)
         check_log.run_program(chk_args)
-### call_checklog() - End ###
-### Duplicate code 1 - End ###
 
         if not gen_libs.is_empty_file(cfg.outfile):
-            log.log_info("process_docid:  Log entries detected.")
+            log.log_info(
+                "process_docid:  Log entries detected in: %s." % (fname))
             file_log = gen_libs.file_2_list(cfg.outfile)
-            log.log_info("process_docid:  Creating JSON document.")
-            log_json = create_json(cfg, docid_dict, file_log)
-            status = process_json(args, cfg, log, log_json)
 
-        else:
-            log.log_info("process_docid:  No log entries detected.")
+#            if args.arg_exist("-a"):
+#                data = fname.split(".")
+#                server = data[-2] if data[-1] == "gz" else data[-1]
+#
+#            else:
+#                server = socket.gethostname()
+
+            if server in log_json["servers"]:
+                log_json["servers"][server] += file_log
+
+            else:
+                log_json["servers"][server] = file_log
 
         err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
         if err_flag:
             log.log_warn("process_docid:  %s" % (err_msg))
-### mail_rmq - End ###
+### check_log_search - End ###
+
+    status = process_json(args, cfg, log, log_json)
 
     return status
 
@@ -509,7 +489,11 @@ def process_json(args, cfg, log, log_json):
     if args.arg_exist("-i"):
         log.log_info("process_json:  Inserting JSON log entry into Mongo")
 # Set up for mongo
-# Insert into mongo
+# Loop on servers in JSON doc:
+    # Loop on log entries:
+        # Parse log entry
+        # Create json document for insertion
+        # Insert into mongo
 
     elif cfg.to_addr and cfg.subj:
         log.log_info("process_json:  Emailing JSON log entries to: %s"

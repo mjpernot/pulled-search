@@ -13,6 +13,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Removed
 - Removed -z option.
 - zgrep_search
+- create_json
 
 
 ## [0.1.4] - 2022-10-13
