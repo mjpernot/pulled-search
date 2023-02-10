@@ -7,6 +7,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Fixed
 - recall_search: Pubdate being captured incorrectly from filename string.
 
+### Added
+- parse_data: Parse data prior to inserting in Mongo database.
+
 ### Changed
 - process_docid: Removed the check for Centos 6 usage and calling zgrep_search.
 

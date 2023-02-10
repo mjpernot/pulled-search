@@ -468,6 +468,42 @@ def process_docid(args, cfg, docid_dict, log):
     return status
 
 
+def parse_data(args, cfg, log, log_json):
+
+    """Function:  parse_data
+
+    Description:  Parse data prior to inserting into Mongo database.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) log_json -> JSON log document
+        (output) status -> True|False - Successful insertion into Mongo
+
+    """
+
+    log.log_info("parse_data:  Start parsing JSON document.")
+    status = True
+
+STOPPED HERE
+    first_stage = dict()
+    first_stage["command"] = log_json["command"]
+    first_stage["docid"] = log_json["docid"]
+    first_stage["network"] = log_json["network"]
+    first_stage["pubDate"] = log_json["pubDate"]
+    first_stage["asOf"] = log_json["asOf"]
+
+    second_stage = dict(first_stage)
+    for svr in log_json["servers"]:
+        second_stage["server"] = svr
+        third_stage = dict(second_stage)
+        for line in log_json["servers"][svr]:
+            third_stage["entry"] = line
+            third_stage = dict(second_stage)
+        second_stage = dict(first_stage)
+
+
 def process_json(args, cfg, log, log_json):
 
     """Function:  process_json
@@ -479,7 +515,7 @@ def process_json(args, cfg, log, log_json):
         (input) cfg -> Configuration setup
         (input) log -> Log class instance
         (input) log_json -> JSON log document
-        (output) status -> True|False - Successful publishing or emailing
+        (output) status -> True|False - Successful processing
 
     """
 
@@ -487,13 +523,8 @@ def process_json(args, cfg, log, log_json):
     status = True
 
     if args.arg_exist("-i"):
-        log.log_info("process_json:  Inserting JSON log entry into Mongo")
-# Set up for mongo
-# Loop on servers in JSON doc:
-    # Loop on log entries:
-        # Parse log entry
-        # Create json document for insertion
-        # Insert into mongo
+        log.log_info("process_json:  Inserting JSON log entries into Mongo")
+        status = parse_data(args, cfg, log, log_json)
 
     elif cfg.to_addr and cfg.subj:
         log.log_info("process_json:  Emailing JSON log entries to: %s"
