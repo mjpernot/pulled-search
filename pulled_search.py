@@ -486,21 +486,27 @@ def parse_data(args, cfg, log, log_json):
     log.log_info("parse_data:  Start parsing JSON document.")
     status = True
 
-STOPPED HERE
+    # Create base JSON template
     first_stage = dict()
     first_stage["command"] = log_json["command"]
     first_stage["docid"] = log_json["docid"]
     first_stage["network"] = log_json["network"]
     first_stage["pubDate"] = log_json["pubDate"]
     first_stage["asOf"] = log_json["asOf"]
-
     second_stage = dict(first_stage)
+
+    # Add server to base template
     for svr in log_json["servers"]:
         second_stage["server"] = svr
         third_stage = dict(second_stage)
+
+        # Loop on log entries for server 
         for line in log_json["servers"][svr]:
             third_stage["entry"] = line
+            
+### Code here - Parse log entry and insert into Mongo
             third_stage = dict(second_stage)
+
         second_stage = dict(first_stage)
 
 
