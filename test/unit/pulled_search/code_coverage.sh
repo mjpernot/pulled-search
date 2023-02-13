@@ -11,7 +11,6 @@ echo "Running unit test modules in conjunction with coverage"
 coverage run -a --source=pulled_search test/unit/pulled_search/checks_dirs.py
 coverage run -a --source=pulled_search test/unit/pulled_search/cleanup_files.py
 coverage run -a --source=pulled_search test/unit/pulled_search/config_override.py
-coverage run -a --source=pulled_search test/unit/pulled_search/create_json.py
 coverage run -a --source=pulled_search test/unit/pulled_search/get_archive_files.py
 coverage run -a --source=pulled_search test/unit/pulled_search/help_message.py
 coverage run -a --source=pulled_search test/unit/pulled_search/insert_data.py

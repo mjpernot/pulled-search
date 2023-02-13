@@ -36,7 +36,6 @@ pipeline {
                 /usr/bin/python2 ./test/unit/pulled_search/checks_dirs.py
                 /usr/bin/python2 ./test/unit/pulled_search/cleanup_files.py
                 /usr/bin/python2 ./test/unit/pulled_search/config_override.py
-                /usr/bin/python2 ./test/unit/pulled_search/create_json.py
                 /usr/bin/python2 ./test/unit/pulled_search/get_archive_files.py
                 /usr/bin/python2 ./test/unit/pulled_search/help_message.py
                 /usr/bin/python2 ./test/unit/pulled_search/insert_data.py

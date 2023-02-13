@@ -321,32 +321,6 @@ def non_processed(docid_files, error_dir, log, mail=None):
             mail.send_mail()
 
 
-#def create_json(cfg, docid_dict):
-#
-#    """Function:  create_json
-#
-#    Description:  Create the JSON from the docid file and log entries.
-#
-#    Arguments:
-#        (input) cfg -> Configuration setup
-#        (input) docid_dict -> Dictionary of docid file
-#        (output) log_json -> Dictionary of docid file
-#
-#    """
-#
-#    docid_dict = dict(docid_dict)
-#    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
-#    log_json = {"DocID": docid_dict["docid"],
-#                "Command": docid_dict["command"],
-#                "PubDate": docid_dict["pubdate"],
-#                "SecurityEnclave": cfg.enclave,
-#                "AsOf": dtg,
-#                "ServerName": socket.gethostname(),
-#                "LogEntries": file_log}
-#
-#    return log_json
-
-
 def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
 
     """Function:  get_archive_files
@@ -430,7 +404,6 @@ def process_docid(args, cfg, docid_dict, log):
         else:
             server = socket.gethostname()
 
-### check_log_search(args, cfg, log_json, fname, docid_dict) - Begin ###
         cmdline = [
             "check_log.py", "-g", "w", "-f", fname, "-S",
             [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
@@ -444,13 +417,6 @@ def process_docid(args, cfg, docid_dict, log):
                 "process_docid:  Log entries detected in: %s." % (fname))
             file_log = gen_libs.file_2_list(cfg.outfile)
 
-#            if args.arg_exist("-a"):
-#                data = fname.split(".")
-#                server = data[-2] if data[-1] == "gz" else data[-1]
-#
-#            else:
-#                server = socket.gethostname()
-
             if server in log_json["servers"]:
                 log_json["servers"][server] += file_log
 
@@ -461,7 +427,6 @@ def process_docid(args, cfg, docid_dict, log):
 
         if err_flag:
             log.log_warn("process_docid:  %s" % (err_msg))
-### check_log_search - End ###
 
     status = process_json(args, cfg, log, log_json)
 
@@ -505,13 +470,25 @@ def parse_data(args, cfg, log, log_json):
             third_stage["entry"] = line
             parsed_line = re.match(cfg.regex, line)
 
+            # Parse the log entry into individual entries
             if parsed_line:
                 parsed_line = parsed_line.groupdict()
                 third_stage["logTime"] = parsed_line["log_time"]
                 third_stage["clientIP"] = parsed_line["ip"]
                 third_stage["userID"] = parsed_line["userid"]
                 third_stage["requestMethod"] = parsed_line["request_method"]
-                # Insert into Mongo here
+                log.log_info("parse_data:  Inserting data into Mongo.")
+                mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
+                mongo_stat = mongo_libs.ins_doc(
+                    mcfg, mcfg.dbs, mcfg.tbl, third_stage)
+
+                if not mongo_stat[0]:
+                    log.log_err("parse_data:  Insertion into Mongo failed.")
+                    log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
+                    status = False
+
+                else:
+                    log.log_info("parse_data:  Mongo insertion completed.")
 
             else:
                 log.log_err("parse_data:  Unable to parse log entry for: %s."
@@ -520,6 +497,8 @@ def parse_data(args, cfg, log, log_json):
             third_stage = dict(second_stage)
 
         second_stage = dict(first_stage)
+
+    return status
 
 
 def process_json(args, cfg, log, log_json):
