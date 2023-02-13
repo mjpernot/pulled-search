@@ -503,8 +503,20 @@ def parse_data(args, cfg, log, log_json):
         # Loop on log entries for server 
         for line in log_json["servers"][svr]:
             third_stage["entry"] = line
-            
-### Code here - Parse log entry and insert into Mongo
+            parsed_line = re.match(cfg.regex, line)
+
+            if parsed_line:
+                parsed_line = parsed_line.groupdict()
+                third_stage["logTime"] = parsed_line["log_time"]
+                third_stage["clientIP"] = parsed_line["ip"]
+                third_stage["userID"] = parsed_line["userid"]
+                third_stage["requestMethod"] = parsed_line["request_method"]
+                # Insert into Mongo here
+
+            else:
+                log.log_err("parse_data:  Unable to parse log entry for: %s."
+                            % (third_stage["docid"]))
+
             third_stage = dict(second_stage)
 
         second_stage = dict(first_stage)
