@@ -390,8 +390,10 @@ def process_docid(args, cfg, docid_dict, log):
 
     dtg = datetime.datetime.strftime(
         datetime.datetime.now(), "%Y-%m-%dT%H:%M:%SZ")
-    log_json = {"docid": docid_dict["docid"], "command": docid_dict["command"],
-                "pubDate": docid_dict["pubdate"], "network": cfg.enclave,
+    log_json = {"docid": docid_dict["docid"],
+                "command": docid_dict["command"],
+                "pubDate": docid_dict["pubdate"],
+                "network": cfg.enclave,
                 "asOf": dtg, "servers": dict()}
     log.log_info("process_docid:  Running check_log search.")
 
@@ -429,6 +431,23 @@ def process_docid(args, cfg, docid_dict, log):
             log.log_warn("process_docid:  %s" % (err_msg))
 
     status = process_json(args, cfg, log, log_json)
+
+    return status
+
+
+def insert_mongo(args, cfg, log, data):
+    status = True
+    log.log_info("insert_mongo:  Inserting data into Mongo.")
+    mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
+    mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, data)
+
+    if not mongo_stat[0]:
+        log.log_err("insert_mongo:  Insertion into Mongo failed.")
+        log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
+        status = False
+
+    else:
+        log.log_info("insert_mongo:  Mongo insertion completed.")
 
     return status
 
@@ -474,25 +493,15 @@ def parse_data(args, cfg, log, log_json):
             if parsed_line:
                 parsed_line = parsed_line.groupdict()
                 third_stage["logTime"] = parsed_line["log_time"]
-                third_stage["clientIP"] = parsed_line["ip"]
                 third_stage["userID"] = parsed_line["userid"]
                 third_stage["requestMethod"] = parsed_line["request_method"]
-                log.log_info("parse_data:  Inserting data into Mongo.")
-                mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
-                mongo_stat = mongo_libs.ins_doc(
-                    mcfg, mcfg.dbs, mcfg.tbl, third_stage)
-
-                if not mongo_stat[0]:
-                    log.log_err("parse_data:  Insertion into Mongo failed.")
-                    log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
-                    status = False
-
-                else:
-                    log.log_info("parse_data:  Mongo insertion completed.")
+                status = insert_mongo(args, cfg, log, data)
 
             else:
                 log.log_err("parse_data:  Unable to parse log entry for: %s."
                             % (third_stage["docid"]))
+                log.log_warn("parse_data: Insert into Mongo without parsing.")
+                status = insert_mongo(args, cfg, log, data)
 
             third_stage = dict(second_stage)
 
@@ -544,8 +553,7 @@ def process_json(args, cfg, log, log_json):
             log.log_err("process_json:  Message: %s" % (err_msg))
             dtg = datetime.datetime.strftime(
                 datetime.datetime.now(), "%Y%m%d_%H%M%S")
-            name = "NonPublished." + log_json["DocID"] \
-                + log_json["ServerName"] + "." + dtg
+            name = "NonPublished." + log_json["docid"] + "." + dtg
             fname = os.path.join(cfg.error_dir, name)
             log.log_err("process_json:  Writing JSON document to file: %s"
                         % (fname))

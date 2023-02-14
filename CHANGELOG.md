@@ -9,6 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ### Added
 - parse_data: Parse data prior to inserting in Mongo database.
+- insert_mongo: Insert data document into Mongo.
 
 ### Changed
 - process_docid: Removed the check for Centos 6 usage and calling zgrep_search.

@@ -88,6 +88,7 @@ class ArgParser(object):
     Methods:
         __init__
         get_val
+        arg_exist
 
     """
 
@@ -115,6 +116,18 @@ class ArgParser(object):
         """
 
         return self.args_array.get(skey, def_val)
+
+    def arg_exist(self, arg):
+
+        """Method:  arg_exist
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_exist.
+
+        Arguments:
+
+        """
+
+        return True if arg in self.args_array else False
 
 
 class CfgTest2(object):
@@ -177,6 +190,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_mongo_failed
+        test_mongo
         test_email_json
         test_rabbitmq_pass
         test_rabbitmq_failed
@@ -199,11 +214,54 @@ class UnitTest(unittest.TestCase):
         self.cfg2 = CfgTest2()
         self.mail = Mail()
         self.args_array = {"-t": "EmailAddr"}
+        self.args_array2 = {"-i": True}
         self.log_json = {
-            "DocID": "weotiuer", "Command": "COMMAND",
-            "PubDate": "20200102-101134", "SecurityEnclave": "ENCLAVE",
-            "AsOf": "20200306 084503", "ServerName": "SERVERNAME",
-            "LogEntries": ["line1", "line2", "line3"]}
+            "docid": "09109uosdhf",
+            "command": "COMMAND",
+            "pubDate": "20200102-101134",
+            "network": "ENCLAVE",
+            "asOf": "20200306 084503",
+            "servers": {"server_name": ["line1", "line2", "line3"]}}
+
+    @mock.patch("pulled_search.parse_data", mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_mongo_failed(self, mock_log):
+
+        """Function:  test_mongo_failed
+
+        Description:  Test with sending document to Mongo, but fails.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array2
+
+        mock_log.return_value = True
+
+        self.assertFalse(
+            pulled_search.process_json(
+                self.args, self.cfg2, mock_log, self.log_json))
+
+    @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_mongo(self, mock_log):
+
+        """Function:  test_mongo
+
+        Description:  Test with sending document to Mongo.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array2
+
+        mock_log.return_value = True
+
+        self.assertTrue(
+            pulled_search.process_json(
+                self.args, self.cfg2, mock_log, self.log_json))
 
     @mock.patch("pulled_search.gen_class.setup_mail")
     @mock.patch("pulled_search.gen_class.Logger")
