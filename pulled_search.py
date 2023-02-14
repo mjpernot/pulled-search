@@ -436,6 +436,20 @@ def process_docid(args, cfg, docid_dict, log):
 
 
 def insert_mongo(args, cfg, log, data):
+
+    """Function:  insert_mongo
+
+    Description:  Insert JSON document into Mongo database.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) log_json -> JSON log document
+        (output) status -> True|False - Successful insertion into Mongo
+
+    """
+
     status = True
     log.log_info("insert_mongo:  Inserting data into Mongo.")
     mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
@@ -492,16 +506,17 @@ def parse_data(args, cfg, log, log_json):
             # Parse the log entry into individual entries
             if parsed_line:
                 parsed_line = parsed_line.groupdict()
-                third_stage["logTime"] = parsed_line["log_time"]
+                third_stage["logTime"] = parsed_line["date"]
                 third_stage["userID"] = parsed_line["userid"]
                 third_stage["requestMethod"] = parsed_line["request_method"]
-                status = insert_mongo(args, cfg, log, data)
+                third_stage["requestStatus"] = parsed_line["status"]
+                status = insert_mongo(args, cfg, log, third_stage)
 
             else:
                 log.log_err("parse_data:  Unable to parse log entry for: %s."
                             % (third_stage["docid"]))
                 log.log_warn("parse_data: Insert into Mongo without parsing.")
-                status = insert_mongo(args, cfg, log, data)
+                status = insert_mongo(args, cfg, log, third_stage)
 
             third_stage = dict(second_stage)
 
