@@ -128,6 +128,101 @@ class UnitTest(unittest.TestCase):
             "network": "ENCLAVE",
             "asOf": "2020-03-06T08:45:03Z",
             "servers": {"server_name": [self.entry1]}}
+        self.log_json2 = {
+            "docid": "09109uosdhf",
+            "command": "COMMAND",
+            "pubDate": "20200102-101134",
+            "network": "ENCLAVE",
+            "asOf": "2020-03-06T08:45:03Z",
+            "servers": {"server_name": [self.entry1, self.entry1]}}
+        self.log_json3 = {
+            "docid": "09109uosdhf",
+            "command": "COMMAND",
+            "pubDate": "20200102-101134",
+            "network": "ENCLAVE",
+            "asOf": "2020-03-06T08:45:03Z",
+            "servers": {"server_name": [self.entry1],
+                        "server_name2": [self.entry1]}}
+        self.log_json4 = {
+            "docid": "09109uosdhf",
+            "command": "COMMAND",
+            "pubDate": "20200102-101134",
+            "network": "ENCLAVE",
+            "asOf": "2020-03-06T08:45:03Z",
+            "servers": {"server_name": [self.entry2]}}
+
+    @mock.patch("pulled_search.re.match", mock.Mock(return_value=None))
+    @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_parsing_failed(self, mock_log):
+
+        """Function:  test_parsing_failed
+
+        Description:  Test with a parsing error.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertTrue(
+            pulled_search.parse_data(
+                self.args, self.cfg, mock_log, self.log_json))
+
+    @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_partial_log_entry(self, mock_log):
+
+        """Function:  test_partial_log_entry
+
+        Description:  Test with a partial log entry.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertTrue(
+            pulled_search.parse_data(
+                self.args, self.cfg, mock_log, self.log_json4))
+
+    @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_multiple_servers(self, mock_log):
+
+        """Function:  test_multiple_servers
+
+        Description:  Test with multiple servers.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertTrue(
+            pulled_search.parse_data(
+                self.args, self.cfg, mock_log, self.log_json3))
+
+    @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_single_svr_multiple_entries(self, mock_log):
+
+        """Function:  test_single_svr_multiple_entries
+
+        Description:  Test with single server with a multiple entries.
+
+        Arguments:
+
+        """
+
+        mock_log.return_value = True
+
+        self.assertTrue(
+            pulled_search.parse_data(
+                self.args, self.cfg, mock_log, self.log_json2))
 
     @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
