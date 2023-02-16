@@ -246,10 +246,7 @@ import sys
 import os
 import socket
 import datetime
-import subprocess
 import json
-import platform
-import decimal
 import re
 
 # Local
@@ -498,7 +495,7 @@ def parse_data(args, cfg, log, log_json):
         second_stage["server"] = svr
         third_stage = dict(second_stage)
 
-        # Loop on log entries for server 
+        # Loop on log entries for server
         for line in log_json["servers"][svr]:
             third_stage["entry"] = line
             parsed_line = re.match(cfg.regex, line)
