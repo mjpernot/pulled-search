@@ -448,7 +448,6 @@ def insert_mongo(args, cfg, log, data):
     """
 
     status = True
-    log.log_info("insert_mongo:  Inserting data into Mongo.")
     mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
     mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, data)
 
@@ -456,9 +455,6 @@ def insert_mongo(args, cfg, log, data):
         log.log_err("insert_mongo:  Insertion into Mongo failed.")
         log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
         status = False
-
-    else:
-        log.log_info("insert_mongo:  Mongo insertion completed.")
 
     return status
 
