@@ -479,7 +479,7 @@ def parse_data(args, cfg, log, log_json):
     """
 
     log.log_info("parse_data:  Start parsing JSON document.")
-    status = True
+    # Regular expression to parse access log entries
     sect1 = r"(?P<ip>.*?) (?P<remote_log_name>.*?) (?P<userid>.*?) "
     sect2 = r"\[(?P<date>.*?)(?= ) (?P<timezone>.*?)\] "
     sect3 = r"\"(?P<request_method>.*?) (?P<path>.*?)"
@@ -487,6 +487,7 @@ def parse_data(args, cfg, log, log_json):
     sect5 = r"(?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<user_agent>.*?)"
     sect6 = r"\"\s*(?P<end_of_line>.+)?$"
     regex = sect1 + sect2 + sect3 + sect4 + sect5 + sect6
+    status = True
     first_stage = dict()
     first_stage["command"] = log_json["command"]
     first_stage["docid"] = log_json["docid"]
