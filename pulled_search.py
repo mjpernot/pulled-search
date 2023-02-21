@@ -407,8 +407,9 @@ def process_docid(args, cfg, docid_dict, log):
             "check_log.py", "-g", "w", "-f", fname, "-S",
             [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
         chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
+        multi_val = ["-f"]
         chk_args = gen_class.ArgParser(
-            cmdline, opt_val=chk_opt_val, do_parse=True)
+            cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
 
         if not gen_libs.is_empty_file(cfg.outfile):
