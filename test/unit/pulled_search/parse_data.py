@@ -73,14 +73,7 @@ class CfgTest(object):
 
         """
 
-        sect1 = r"(?P<ip>.*?) (?P<remote_log_name>.*?) (?P<userid>.*?) "
-        sect2 = r"\[(?P<date>.*?)(?= ) (?P<timezone>.*?)\] "
-        sect3 = r"\"(?P<request_method>.*?) (?P<path>.*?)"
-        sect4 = r"(?P<request_version> HTTP/.*)?\" (?P<status>.*?) "
-        sect5 = r"(?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<user_agent>.*?)"
-        sect6 = r"\"\s*(?P<end_of_line>.+)?$"
-
-        self.regex = sect1 + sect2 + sect3 + sect4 + sect5 + sect6
+        self.mongo = None
 
 
 class UnitTest(unittest.TestCase):

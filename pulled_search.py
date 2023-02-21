@@ -407,8 +407,9 @@ def process_docid(args, cfg, docid_dict, log):
             "check_log.py", "-g", "w", "-f", fname, "-S",
             [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
         chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
+        multi_val = ["-f"]
         chk_args = gen_class.ArgParser(
-            cmdline, opt_val=chk_opt_val, do_parse=True)
+            cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
 
         if not gen_libs.is_empty_file(cfg.outfile):
@@ -448,7 +449,6 @@ def insert_mongo(args, cfg, log, data):
     """
 
     status = True
-    log.log_info("insert_mongo:  Inserting data into Mongo.")
     mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
     mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, data)
 
@@ -456,9 +456,6 @@ def insert_mongo(args, cfg, log, data):
         log.log_err("insert_mongo:  Insertion into Mongo failed.")
         log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
         status = False
-
-    else:
-        log.log_info("insert_mongo:  Mongo insertion completed.")
 
     return status
 
@@ -479,9 +476,15 @@ def parse_data(args, cfg, log, log_json):
     """
 
     log.log_info("parse_data:  Start parsing JSON document.")
+    # Regular expression to parse access log entries
+    sect1 = r"(?P<ip>.*?) (?P<remote_log_name>.*?) (?P<userid>.*?) "
+    sect2 = r"\[(?P<date>.*?)(?= ) (?P<timezone>.*?)\] "
+    sect3 = r"\"(?P<request_method>.*?) (?P<path>.*?)"
+    sect4 = r"(?P<request_version> HTTP/.*)?\" (?P<status>.*?) "
+    sect5 = r"(?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<user_agent>.*?)"
+    sect6 = r"\"\s*(?P<end_of_line>.+)?$"
+    regex = sect1 + sect2 + sect3 + sect4 + sect5 + sect6
     status = True
-
-    # Create base JSON template
     first_stage = dict()
     first_stage["command"] = log_json["command"]
     first_stage["docid"] = log_json["docid"]
@@ -489,18 +492,19 @@ def parse_data(args, cfg, log, log_json):
     first_stage["pubDate"] = log_json["pubDate"]
     first_stage["asOf"] = log_json["asOf"]
     second_stage = dict(first_stage)
+    log.log_info("parse_data:  Parsing docid: %s" % (first_stage["docid"]))
 
-    # Add server to base template
+    # Loop on servers
     for svr in log_json["servers"]:
         second_stage["server"] = svr
         third_stage = dict(second_stage)
 
-        # Loop on log entries for server
+        # Loop on log entries for each server
         for line in log_json["servers"][svr]:
             third_stage["entry"] = line
-            parsed_line = re.match(cfg.regex, line)
+            parsed_line = re.match(regex, line)
 
-            # Parse the log entry into individual entries
+            # Parse the log entry
             if parsed_line:
                 parsed_line = parsed_line.groupdict()
                 third_stage["logTime"] = parsed_line["date"]
@@ -510,8 +514,8 @@ def parse_data(args, cfg, log, log_json):
                 status = insert_mongo(args, cfg, log, third_stage)
 
             else:
-                log.log_err("parse_data:  Unable to parse log entry for: %s."
-                            % (third_stage["docid"]))
+                log.log_err("parse_data:  Unable to parse log entry: %s."
+                            % (third_stage))
                 log.log_warn("parse_data: Insert into Mongo without parsing.")
                 status = insert_mongo(args, cfg, log, third_stage)
 
