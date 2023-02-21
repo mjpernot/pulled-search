@@ -35,7 +35,7 @@ class ArgParser(object):
 
     Methods:
         __init__
-        get_val
+        arg_exist
 
     """
 
@@ -52,17 +52,17 @@ class ArgParser(object):
         self.cmdline = None
         self.args_array = dict()
 
-    def get_val(self, skey, def_val=None):
+    def arg_exist(self, arg):
 
-        """Method:  get_val
+        """Method:  arg_exist
 
-        Description:  Method stub holder for gen_class.ArgParser.get_val.
+        Description:  Method stub holder for gen_class.ArgParser.arg_exist.
 
         Arguments:
 
         """
 
-        return self.args_array.get(skey, def_val)
+        return True if arg in self.args_array else False
 
 
 class CfgTest(object):
@@ -91,6 +91,7 @@ class CfgTest(object):
         self.outfile = "/dir/path/outfile"
         self.archive_log_dir = "/dir/archive_dir"
         self.command = {"intelink": "eucom"}
+        self.enclave = "ENCLAVE"
 
 
 class UnitTest(unittest.TestCase):
@@ -101,14 +102,14 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_archive_multiple_servers
+        test_archive_non_gz
+        test_archive_option
         test_process_json_failed
         test_for_command
-        test_z_option
-        test_pre_centos_7
-        test_exception_cmd
         test_rm_file_failed
         test_file_empty
-        test_with_data
+        test_current_data
 
     """
 
@@ -127,25 +128,123 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.args_array = {}
         self.args_array2 = {"-a": True}
-        self.args_array3 = {"-z": True}
         self.file_log = ["Line1", "Line2", "Line3"]
-        self.docid_dict = {"docid": "weotiuer", "command": "COMMAND",
+        self.docid_dict = {"docid": "09109uosdhf", "command": "COMMAND",
                            "pubdate": "20200102-101134"}
-        self.docid_dict2 = {"docid": "weotiuer", "command": "intelink",
+        self.docid_dict2 = {"docid": "09109uosdhf", "command": "intelink",
                             "pubdate": "20200102-101134"}
         self.log_json = {
-            "docID": "weotiuer", "command": "COMMAND",
-            "pubDate": "20200102-101134", "securityEnclave": "ENCLAVE",
-            "asOf": "20200306 084503", "serverName": "SERVERNAME",
-            "logEntries": ["line1", "line2", "line3"]}
-        self.log_files = ["/path/logfile1", "/path/logfile2"]
+            "docid": "09109uosdhf",
+            "command": "COMMAND",
+            "pubDate": "20200102-101134",
+            "network": "ENCLAVE",
+            "asOf": "20230306 084503",
+            "servers": {"server_name": ["line1", "line2", "line3"]}}
+        self.log_files = ["/path/logs/access.log1", "/path/logs/access.log2"]
+        self.log_files2 = ["/path/logs/access.log1.servername.gz",
+                           "/path/logs/access.log2.servername.gz"]
+        self.log_files3 = ["/path/logs/access.log1.servername",
+                           "/path/logs/access.log2.servername"]
+        self.log_files4 = ["/path/logs/access.log1.servername.gz",
+                           "/path/logs/access.log2.servername2.gz"]
 
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
+    @mock.patch("pulled_search.get_archive_files")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_archive_multiple_servers(self, mock_log, mock_list, mock_match,
+                                      mock_arg):
+
+        """Function:  test_archive_multiple_servers
+
+        Description:  Test with archive option with multiple server names.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array2
+
+        mock_log.return_value = True
+        mock_list.return_value = self.file_log
+        mock_match.return_value = self.log_files4
+        mock_arg.return_value = self.chk_args
+
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
+
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
+    @mock.patch("pulled_search.get_archive_files")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_archive_non_gz(self, mock_log, mock_list, mock_match, mock_arg):
+
+        """Function:  test_archive_non_gz
+
+        Description:  Test with archive option with non-gunzipped files.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array2
+
+        mock_log.return_value = True
+        mock_list.return_value = self.file_log
+        mock_match.return_value = self.log_files3
+        mock_arg.return_value = self.chk_args
+
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
+
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.rm_file",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
+    @mock.patch("pulled_search.get_archive_files")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_archive_option(self, mock_log, mock_list, mock_match, mock_arg):
+
+        """Function:  test_archive_option
+
+        Description:  Test with archive option set.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array2
+
+        mock_log.return_value = True
+        mock_list.return_value = self.file_log
+        mock_match.return_value = self.log_files2
+        mock_arg.return_value = self.chk_args
+
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
+
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(False)))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
@@ -175,12 +274,9 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
@@ -209,144 +305,9 @@ class UnitTest(unittest.TestCase):
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict2, mock_log))
 
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
-    @mock.patch("pulled_search.zgrep_search",
-                mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.rm_file",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_libs.filename_search")
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_z_option(self, mock_log, mock_list, mock_match):
-
-        """Function:  test_z_option
-
-        Description:  Test with the -z option.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array3
-
-        mock_log.return_value = True
-        mock_list.return_value = self.file_log
-        mock_match.return_value = self.log_files
-
-        self.assertTrue(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log))
-
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '6.10')))
-    @mock.patch("pulled_search.zgrep_search",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.rm_file",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_libs.filename_search")
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_pre_centos_7(self, mock_log, mock_list, mock_match):
-
-        """Function:  test_pre_centos_7
-
-        Description:  Test with pre-CentOS 7 OS.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array
-
-        mock_log.return_value = True
-        mock_list.return_value = self.file_log
-        mock_match.return_value = self.log_files
-
-        self.assertTrue(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log))
-
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.rm_file",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_class.ArgParser")
-    @mock.patch("pulled_search.get_archive_files")
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_archive_option(self, mock_log, mock_list, mock_match, mock_arg):
-
-        """Function:  test_archive_option
-
-        Description:  Test with archive option set.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array2
-
-        mock_log.return_value = True
-        mock_list.return_value = self.file_log
-        mock_match.return_value = self.log_files
-        mock_arg.return_value = self.chk_args
-
-        self.assertTrue(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log))
-
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
-    @mock.patch("pulled_search.check_log.run_program",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.rm_file",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_class.ArgParser")
-    @mock.patch("pulled_search.gen_libs.filename_search")
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_exception_cmd(self, mock_log, mock_list, mock_match, mock_arg):
-
-        """Function:  test_exception_cmd
-
-        Description:  Test with exception command passed.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = self.args_array
-
-        mock_log.return_value = True
-        mock_list.return_value = self.file_log
-        mock_match.return_value = self.log_files
-        mock_arg.return_value = self.chk_args
-
-        self.assertTrue(pulled_search.process_docid(
-            self.args, self.cfg, self.docid_dict, mock_log))
-
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
-    @mock.patch("pulled_search.check_log.run_program",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(False, "Error Message")))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
@@ -375,8 +336,7 @@ class UnitTest(unittest.TestCase):
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
@@ -385,9 +345,8 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.ArgParser")
     @mock.patch("pulled_search.gen_libs.filename_search")
-    @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_file_empty(self, mock_log, mock_list, mock_match, mock_arg):
+    def test_file_empty(self, mock_log, mock_match, mock_arg):
 
         """Function:  test_file_empty
 
@@ -400,19 +359,15 @@ class UnitTest(unittest.TestCase):
         self.args.args_array = self.args_array
 
         mock_log.return_value = True
-        mock_list.return_value = self.file_log
         mock_match.return_value = self.log_files
         mock_arg.return_value = self.chk_args
 
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
-    @mock.patch("pulled_search.platform.linux_distribution",
-                mock.Mock(return_value=('Centos', '7.5')))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
-    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
-    @mock.patch("pulled_search.create_json", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
@@ -421,11 +376,11 @@ class UnitTest(unittest.TestCase):
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.file_2_list")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_with_data(self, mock_log, mock_list, mock_match, mock_arg):
+    def test_current_data(self, mock_log, mock_list, mock_match, mock_arg):
 
-        """Function:  test_with_data
+        """Function:  test_current_data
 
-        Description:  Test with successful log file check.
+        Description:  Test with on server with active log files.
 
         Arguments:
 
