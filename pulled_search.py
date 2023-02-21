@@ -13,7 +13,7 @@
 
     Usage:
         pulled_search.py -c file -d path
-            {-P [-m path] [-a] [-z] |
+            {-P [-m path] [-a] [-i] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -24,10 +24,9 @@
         -d dir_path => Directory path for option '-c'.  Required argument.
 
         -P => Process Doc ID files send to RabbitMQ.
+            -i => Insert the log entries directly to Mongodb.
             -m dir_path => Directory to monitor for doc ID files.
             -a => This is an archive log search.
-            -z => Use the zgrep option instead of check_log to check GZipped
-                files.
 
         -I => Insert Pulled Search files into Mongodb.
             -n dir_path => Directory to monitor for pulled search files.
@@ -39,15 +38,21 @@
         -v => Display version of this program.
         -h => Help and usage message.
 
+        WARNING 1:  -a option must be used for archive log searching otherwise
+            the incorrect servername will be set in the JSON document.
+
         NOTE 1:  -v or -h overrides the other options.
-        NOTE 2:  -s requires -t option to be included.
-        NOTE 3:  -P and -I are XOR options.
-        NOTE 4:  -m and -n options will override the configuration settings.
+        NOTE 2:  -t option is for reporting any errors detected.
+        NOTE 3:  -s requires -t option to be included.
+        NOTE 4:  -P and -I are XOR options.
+        NOTE 5:  -m and -n options will override the configuration settings.
             The -m option is mapped to the doc_dir configuration entry, and
             the -n option is mapped to the monitor_dir configuration entry.
-        NOTE 5:  The log files can be normal flat files or compressed files
+        NOTE 6:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
+        NOTE 7: -i option overrides sending the JSON document to RabbitMQ
+            directly or via email.
 
     Configuration files:
         Configuration file (config/search.py.TEMPLATE).  Below is the
@@ -155,7 +160,7 @@
             merror_dir = "BASE_PATH/mongo_error"
             # Name of Mongo configuration file.  (Do not include the ".py"
             #   in the name.)
-            # No not change unless changing the name of the external Mongo
+            # Do not change unless changing the name of the external Mongo
             #   config file.
             mconfig = "mongo"
 
@@ -241,10 +246,7 @@ import sys
 import os
 import socket
 import datetime
-import subprocess
 import json
-import platform
-import decimal
 import re
 
 # Local
@@ -316,34 +318,6 @@ def non_processed(docid_files, error_dir, log, mail=None):
             mail.send_mail()
 
 
-def create_json(cfg, docid_dict, file_log):
-
-    """Function:  create_json
-
-    Description:  Create the JSON from the docid file and log entries.
-
-    Arguments:
-        (input) cfg -> Configuration setup
-        (input) docid_dict -> Dictionary of docid file
-        (input) file_log -> List of log file entries
-        (output) log_json -> Dictionary of docid file and log entries
-
-    """
-
-    docid_dict = dict(docid_dict)
-    file_log = list(file_log)
-    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d %H%M%S")
-    log_json = {"DocID": docid_dict["docid"],
-                "Command": docid_dict["command"],
-                "PubDate": docid_dict["pubdate"],
-                "SecurityEnclave": cfg.enclave,
-                "AsOf": dtg,
-                "ServerName": socket.gethostname(),
-                "LogEntries": file_log}
-
-    return log_json
-
-
 def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
 
     """Function:  get_archive_files
@@ -373,33 +347,6 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
     return log_files
 
 
-def zgrep_search(file_list, keyword, outfile):
-
-    """Function:  zgrep_search
-
-    Description:  Zgrep compressed files for keyword and write to file.
-
-    NOTE:  This is for use on Centos 2.6.X systems and earlier.
-
-    Arguments:
-        (input) file_list -> List of files to search
-        (input) keyword -> Value to search for
-        (input) outfile -> File to write the results to
-
-    """
-
-    subp = gen_libs.get_inst(subprocess)
-    file_list = list(file_list)
-    cmd = "zgrep"
-
-    for fname in file_list:
-
-        # Search for keyword and write to file.
-        with open(outfile, "ab") as fout:
-            proc1 = subp.Popen([cmd, keyword, fname], stdout=fout)
-            proc1.wait()
-
-
 def process_docid(args, cfg, docid_dict, log):
 
     """Function:  process_docid
@@ -419,6 +366,7 @@ def process_docid(args, cfg, docid_dict, log):
     docid_dict = dict(docid_dict)
     log.log_info("process_docid:  Processing docid: %s" % (docid_dict))
     cmd = docid_dict["command"].lower()
+    server = socket.gethostname()
 
     # Check to see if the command is mapped to a different keyword file
     if cmd in cfg.command:
@@ -426,7 +374,7 @@ def process_docid(args, cfg, docid_dict, log):
 
     cmd_regex = cmd + ".*" + cfg.log_type
 
-    if args.get_val("-a", def_val=None):
+    if args.arg_exist("-a"):
         log.log_info("process_docid:  Searching archive directory: %s"
                      % (cfg.archive_log_dir))
         log_files = get_archive_files(
@@ -435,46 +383,141 @@ def process_docid(args, cfg, docid_dict, log):
     else:
         log.log_info("process_docid:  Searching apache log directory: %s"
                      % (cfg.log_dir))
-        log_files = gen_libs.filename_search(cfg.log_dir, cmd_regex,
-                                             add_path=True)
+        log_files = gen_libs.filename_search(
+            cfg.log_dir, cmd_regex, add_path=True)
 
-    # Determine if running on a pre-7 CentOS system.
-    is_centos = \
-        True if "centos" in platform.linux_distribution()[0].lower() else False
-    is_pre_7 = \
-        decimal.Decimal(platform.linux_distribution()[1]) < \
-        decimal.Decimal('7.0')
+    dtg = datetime.datetime.strftime(
+        datetime.datetime.now(), "%Y-%m-%dT%H:%M:%SZ")
+    log_json = {"docid": docid_dict["docid"],
+                "command": docid_dict["command"],
+                "pubDate": docid_dict["pubdate"],
+                "network": cfg.enclave,
+                "asOf": dtg, "servers": dict()}
+    log.log_info("process_docid:  Running check_log search.")
 
-    # Must use zgrep searching in pre-7 Centos systems.
-    if args.get_val("-z", def_val=False) or (is_centos and is_pre_7):
-        log.log_info("process_docid:  Running zgrep search.")
-        zgrep_search(log_files, docid_dict["docid"], cfg.outfile)
+    for fname in log_files:
 
-    else:
-        # Create argument list for check_log program.
-        log.log_info("process_docid:  Running check_log search.")
+        if args.arg_exist("-a"):
+            data = fname.split(".")
+            server = data[-2] if data[-1] == "gz" else data[-1]
+
         cmdline = [
-            "check_log.py", "-g", "w", "-f", log_files, "-S",
+            "check_log.py", "-g", "w", "-f", fname, "-S",
             [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
         chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
+        multi_val = ["-f"]
         chk_args = gen_class.ArgParser(
-            cmdline, opt_val=chk_opt_val, do_parse=True)
+            cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
 
-    if not gen_libs.is_empty_file(cfg.outfile):
-        log.log_info("process_docid:  Log entries detected.")
-        file_log = gen_libs.file_2_list(cfg.outfile)
-        log.log_info("process_docid:  Creating JSON document.")
-        log_json = create_json(cfg, docid_dict, file_log)
-        status = process_json(args, cfg, log, log_json)
+        if not gen_libs.is_empty_file(cfg.outfile):
+            log.log_info(
+                "process_docid:  Log entries detected in: %s." % (fname))
+            file_log = gen_libs.file_2_list(cfg.outfile)
 
-    else:
-        log.log_info("process_docid:  No log entries detected.")
+            log_json["servers"][server] = \
+                log_json["servers"][server] + file_log \
+                if server in log_json["servers"] else file_log
 
-    err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
+        err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
-    if err_flag:
-        log.log_warn("process_docid:  %s" % (err_msg))
+        if err_flag:
+            log.log_warn("process_docid:  %s" % (err_msg))
+
+    status = process_json(args, cfg, log, log_json)
+
+    return status
+
+
+def insert_mongo(args, cfg, log, data):
+
+    """Function:  insert_mongo
+
+    Description:  Insert JSON document into Mongo database.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) log_json -> JSON log document
+        (output) status -> True|False - Successful insertion into Mongo
+
+    """
+
+    status = True
+    mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
+    mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, data)
+
+    if not mongo_stat[0]:
+        log.log_err("insert_mongo:  Insertion into Mongo failed.")
+        log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
+        status = False
+
+    return status
+
+
+def parse_data(args, cfg, log, log_json):
+
+    """Function:  parse_data
+
+    Description:  Parse data prior to inserting into Mongo database.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) log_json -> JSON log document
+        (output) status -> True|False - Successful insertion into Mongo
+
+    """
+
+    log.log_info("parse_data:  Start parsing JSON document.")
+    # Regular expression to parse access log entries
+    sect1 = r"(?P<ip>.*?) (?P<remote_log_name>.*?) (?P<userid>.*?) "
+    sect2 = r"\[(?P<date>.*?)(?= ) (?P<timezone>.*?)\] "
+    sect3 = r"\"(?P<request_method>.*?) (?P<path>.*?)"
+    sect4 = r"(?P<request_version> HTTP/.*)?\" (?P<status>.*?) "
+    sect5 = r"(?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<user_agent>.*?)"
+    sect6 = r"\"\s*(?P<end_of_line>.+)?$"
+    regex = sect1 + sect2 + sect3 + sect4 + sect5 + sect6
+    status = True
+    first_stage = dict()
+    first_stage["command"] = log_json["command"]
+    first_stage["docid"] = log_json["docid"]
+    first_stage["network"] = log_json["network"]
+    first_stage["pubDate"] = log_json["pubDate"]
+    first_stage["asOf"] = log_json["asOf"]
+    second_stage = dict(first_stage)
+    log.log_info("parse_data:  Parsing docid: %s" % (first_stage["docid"]))
+
+    # Loop on servers
+    for svr in log_json["servers"]:
+        second_stage["server"] = svr
+        third_stage = dict(second_stage)
+
+        # Loop on log entries for each server
+        for line in log_json["servers"][svr]:
+            third_stage["entry"] = line
+            parsed_line = re.match(regex, line)
+
+            # Parse the log entry
+            if parsed_line:
+                parsed_line = parsed_line.groupdict()
+                third_stage["logTime"] = parsed_line["date"]
+                third_stage["userID"] = parsed_line["userid"]
+                third_stage["requestMethod"] = parsed_line["request_method"]
+                third_stage["requestStatus"] = parsed_line["status"]
+                status = insert_mongo(args, cfg, log, third_stage)
+
+            else:
+                log.log_err("parse_data:  Unable to parse log entry: %s."
+                            % (third_stage))
+                log.log_warn("parse_data: Insert into Mongo without parsing.")
+                status = insert_mongo(args, cfg, log, third_stage)
+
+            third_stage = dict(second_stage)
+
+        second_stage = dict(first_stage)
 
     return status
 
@@ -490,14 +533,18 @@ def process_json(args, cfg, log, log_json):
         (input) cfg -> Configuration setup
         (input) log -> Log class instance
         (input) log_json -> JSON log document
-        (output) status -> True|False - Successful publishing or emailing
+        (output) status -> True|False - Successful processing
 
     """
 
     log.log_info("process_json:  Processing JSON document.")
     status = True
 
-    if cfg.to_addr and cfg.subj:
+    if args.arg_exist("-i"):
+        log.log_info("process_json:  Inserting JSON log entries into Mongo")
+        status = parse_data(args, cfg, log, log_json)
+
+    elif cfg.to_addr and cfg.subj:
         log.log_info("process_json:  Emailing JSON log entries to: %s"
                      % (cfg.to_addr))
         mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
@@ -518,8 +565,7 @@ def process_json(args, cfg, log, log_json):
             log.log_err("process_json:  Message: %s" % (err_msg))
             dtg = datetime.datetime.strftime(
                 datetime.datetime.now(), "%Y%m%d_%H%M%S")
-            name = "NonPublished." + log_json["DocID"] \
-                + log_json["ServerName"] + "." + dtg
+            name = "NonPublished." + log_json["docid"] + "." + dtg
             fname = os.path.join(cfg.error_dir, name)
             log.log_err("process_json:  Writing JSON document to file: %s"
                         % (fname))
@@ -724,7 +770,7 @@ def recall_search(args, cfg, log, file_dict):
         for line in lines:
             if re.search(cfg.pattern, line):
                 docid_dict["command"] = fname.split("-")[0]
-                docid_dict["pubdate"] = fname.split("-")[4]
+                docid_dict["pubdate"] = fname.split("-")[3]
                 docid_dict["docid"] = re.split(r"-|\.", fname)[7]
                 break
 

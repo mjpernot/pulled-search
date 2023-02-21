@@ -3,6 +3,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.5] - 2023-02-03
+- Allow searches to insert into the Mongo database directly.
+- Each log entry detected will be its own document within the Mongo database, but will still be grouped into a list for emails and RabbitMQ usage.
+- Parse the log entry into subsections if possible.
+- Removed support for Centos 6 servers and below.
+
+### Fixed
+- recall_search: Pubdate being captured incorrectly from filename string.
+
+### Added
+- parse_data: Parse data prior to inserting in Mongo database.
+- insert_mongo: Insert data document into Mongo.
+
+### Changed
+- process_docid: Removed the check for Centos 6 usage and calling zgrep_search.
+
+### Removed
+- Removed -z option.
+- zgrep_search
+- create_json
+
+
 ## [0.1.4] - 2022-10-13
 - Refactoring the input of the Docid files, will grab the Docid data from the Pulled html files directly.
 - Updated to work in Python 3 too
