@@ -109,6 +109,7 @@ class UnitTest(unittest.TestCase):
         line3 = ' - - [08/Jan/2020:21:39:03 +0000] "GET / HTTP/1.1" 200 6169 '
         line4 = '"-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
         line5 = '(KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"'
+        dtg = "2020-03-06T08:45:03Z"
 
         self.args = ArgParser()
         self.cfg = CfgTest()
@@ -119,21 +120,21 @@ class UnitTest(unittest.TestCase):
             "command": "COMMAND",
             "pubDate": "20200102-101134",
             "network": "ENCLAVE",
-            "asOf": "2020-03-06T08:45:03Z",
+            "asOf": dtg,
             "servers": {"server_name": [self.entry1]}}
         self.log_json2 = {
             "docid": "09109uosdhf",
             "command": "COMMAND",
             "pubDate": "20200102-101134",
             "network": "ENCLAVE",
-            "asOf": "2020-03-06T08:45:03Z",
+            "asOf": dtg,
             "servers": {"server_name": [self.entry1, self.entry1]}}
         self.log_json3 = {
             "docid": "09109uosdhf",
             "command": "COMMAND",
             "pubDate": "20200102-101134",
             "network": "ENCLAVE",
-            "asOf": "2020-03-06T08:45:03Z",
+            "asOf": dtg,
             "servers": {"server_name": [self.entry1],
                         "server_name2": [self.entry1]}}
         self.log_json4 = {
@@ -141,7 +142,7 @@ class UnitTest(unittest.TestCase):
             "command": "COMMAND",
             "pubDate": "20200102-101134",
             "network": "ENCLAVE",
-            "asOf": "2020-03-06T08:45:03Z",
+            "asOf": dtg,
             "servers": {"server_name": [self.entry2]}}
 
     @mock.patch("pulled_search.re.match", mock.Mock(return_value=None))

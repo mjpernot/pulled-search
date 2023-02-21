@@ -366,6 +366,7 @@ def process_docid(args, cfg, docid_dict, log):
     docid_dict = dict(docid_dict)
     log.log_info("process_docid:  Processing docid: %s" % (docid_dict))
     cmd = docid_dict["command"].lower()
+    server = socket.gethostname()
 
     # Check to see if the command is mapped to a different keyword file
     if cmd in cfg.command:
@@ -400,9 +401,6 @@ def process_docid(args, cfg, docid_dict, log):
             data = fname.split(".")
             server = data[-2] if data[-1] == "gz" else data[-1]
 
-        else:
-            server = socket.gethostname()
-
         cmdline = [
             "check_log.py", "-g", "w", "-f", fname, "-S",
             [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
@@ -417,11 +415,9 @@ def process_docid(args, cfg, docid_dict, log):
                 "process_docid:  Log entries detected in: %s." % (fname))
             file_log = gen_libs.file_2_list(cfg.outfile)
 
-            if server in log_json["servers"]:
-                log_json["servers"][server] += file_log
-
-            else:
-                log_json["servers"][server] = file_log
+            log_json["servers"][server] = \
+                log_json["servers"][server] + file_log \
+                if server in log_json["servers"] else file_log
 
         err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
 
