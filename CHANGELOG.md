@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.5] - 2023-02-03
+- Allow searches to insert into the Mongo database directly.
+- Each log entry detected will be its own document within the Mongo database, but will still be grouped into a list for emails and RabbitMQ usage.
+- Parse the log entry into subsections if possible.
+- Removed support for Centos 6 servers and below.
+
 ### Fixed
 - recall_search: Pubdate being captured incorrectly from filename string.
 
