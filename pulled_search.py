@@ -473,12 +473,12 @@ def parse_data(args, cfg, log, log_json):
 
     log.log_info("parse_data:  Start parsing JSON document.")
     # Regular expression to parse access log entries
-    sect1 = r"(?P<ip>.*?) (?P<remote_log_name>.*?) (?P<userid>.*?) "
+    sect1 = r"(?P<ip>.*?) (?P<proxy>.*?) (?P<userid>.*?) "
     sect2 = r"\[(?P<date>.*?)(?= ) (?P<timezone>.*?)\] "
-    sect3 = r"\"(?P<request_method>.*?) (?P<path>.*?)"
-    sect4 = r"(?P<request_version> HTTP/.*)?\" (?P<status>.*?) "
-    sect5 = r"(?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<user_agent>.*?)"
-    sect6 = r"\"\s*(?P<end_of_line>.+)?$"
+    sect3 = r"(?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) "
+    sect4 = r"\"(?P<verb>.*?) HTTP/(?P<httpver>.*?)\" (?P<status>.*?) "
+    sect5 = r"(?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<useragent>.*?)\" "
+    sect6 = r"(?P<url>.*?)?$"
     regex = sect1 + sect2 + sect3 + sect4 + sect5 + sect6
     status = True
     first_stage = dict()
@@ -505,8 +505,9 @@ def parse_data(args, cfg, log, log_json):
                 parsed_line = parsed_line.groupdict()
                 third_stage["logTime"] = parsed_line["date"]
                 third_stage["userID"] = parsed_line["userid"]
-                third_stage["requestMethod"] = parsed_line["request_method"]
+                third_stage["verb"] = parsed_line["verb"]
                 third_stage["requestStatus"] = parsed_line["status"]
+                third_stage["url"] = "https://" + parsed_line["url"]
                 status = insert_mongo(args, cfg, log, third_stage)
 
             else:

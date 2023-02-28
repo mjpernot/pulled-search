@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.6] - 2023-02-27
+### Changed
+- parse_data: Refactored the regular expression to match Highpoint access logs format.
 
 
 ## [0.1.5] - 2023-02-03

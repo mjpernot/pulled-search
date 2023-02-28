@@ -103,7 +103,16 @@ class UnitTest(unittest.TestCase):
         """
 
         ip1 = "1.1."
-        ip2 = "1.1"
+        ip2 = "1.1 "
+        proxy = "- "
+        user = "CN=First Last M username,OU=People,OU=N,OU=DoD,O=U.S. Gov,C=US"
+        dtg2 = " [31/Jan/2023:00:00:33 +0000] "
+        reqid = "Y9hakjsdhfkjsfhksdfkhsddf 0/826818 "
+        verb = '"GET /ddd/products?quey_here&callback=jQuerylfjksfh HTTP/1.1" '
+        stats = "200 18331 "
+        ref = '"https://hp.on.ic.gov/transform/20220805-1436-GEN-010109.html" '
+        agt = '"Moz/5.0 Win NT 10; Win64; AWK/5.6 (KHTML Geck)Chr/1.0 Saf/5.6"'
+        url = " hp.on.ic.gov/proxy/dio/source/ProductPage?docid=010109efgh"
         line1 = ' - - [11/Nov/2016:00:00:11 +0100] "GET /icc/ HTTP/1.1" 302 '
         line2 = '- "-" "XXX XXX XXX" - 2981 '
         line3 = ' - - [08/Jan/2020:21:39:03 +0000] "GET / HTTP/1.1" 200 6169 '
@@ -113,7 +122,8 @@ class UnitTest(unittest.TestCase):
 
         self.args = ArgParser()
         self.cfg = CfgTest()
-        self.entry1 = ip1 + ip2 + line1 + line2 + ip1 + ip2
+        self.entry1 = ip1 + ip2 + proxy + user + dtg2 + reqid + verb + stats \
+                      + ref + agt + url
         self.entry2 = ip1 + ip2 + line3 + line4 + line5
         self.log_json = {
             "docid": "09109uosdhf",
