@@ -74,6 +74,15 @@ class CfgTest(object):
         """
 
         self.mongo = None
+        # Regular expression to parse access log entries
+        sect1 = r"(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>.*?) "
+        sect2 = r"\[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] "
+        sect3 = r"(?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) "
+        sect4 = r"\"(?P<verb>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) "
+        sect5 = r"(?P<length>.*?) \"(?P<referrer>.*?)\" "
+        sect6 = r"\"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
+        self.regex = sect1 + sect2 + sect3 + sect4 + sect5 + sect6
+        self.allowable = ["userid", "logTime", "verb", "status", "url"]
 
 
 class UnitTest(unittest.TestCase):

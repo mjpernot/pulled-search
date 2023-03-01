@@ -85,18 +85,21 @@ Make the appropriate changes to the environment.
   * Make the appropriate changes to General setup section.
   * This section is for either the -P or -I option.
     - log_file = "DIR_PATH/pulled_search.log"
-    - admin_email = "USERNAME@EMAIL_DOMAIN"
 
   * Make the appropriate changes to Process/Search setup section.
   * Update this section if using the -P option.
     - doc_dir = "DOC_DIR_PATH"
-    - file_regex = "\_docid.json"
+    - processed_dir = "BASE_PATH/processed"
+    - processed_file = "processed"
+    - file_regex = "-PULLED-"
+    - pattern = "JAC.pull.subtype.*.SECURITY RECALL"
     - log_dir = "LOG_DIR_PATH"
     - log_type = "access_log"
-    - outfile = "DIR_PATH/checklog.out"
+    - archive_log_dir = "ARCHIVE_DIR_PATH"
+    - outfile = "BASE_PATH/tmp/checklog.out"
     - enclave = "ENCLAVE"
-    - error_dir = "ERROR_DIR_PATH"
-    - archive_dir = "ARCHIVE_DIR_PATH"
+    - error_dir = "BASE_PATH/search_error"
+    - command = {"intelink": "eucom"}
 
   * Make the appropriate changes to RabbitMQ section.
   * Update this section if using the -P option.
@@ -109,13 +112,26 @@ Make the appropriate changes to the environment.
     - queue = "QUEUENAME"
     - r_key = "ROUTING_KEY"
     - exchange_name = "EXCHANGE_NAME"
+  * Do not change this section unless you have knowledge with RabbitMQ.
+    - port = 5672
+    - exchange_type = "direct"
+    - x_durable = True
+    - q_durable = True
+    - auto_delete = False
 
   * Make the appropriate changes to Insert setup section.
   * Update this section if using the -I option.
     - monitor_dir = "MONITOR_DIR_PATH"
     - mfile_regex = "_mongo.json"
-    - marchive_dir = "ARCHIVE_DIR_PATH"
-    - merror_dir = "ERROR_DIR_PATH"
+    - marchive_dir = "BASE_PATH/archive
+    - merror_dir = "BASE_PATH/mongo_error"
+  * Do not change this section unless the Mongo configuration file is changed.
+    - mconfig = "mongo"
+
+  * Log parsing section.
+  * Warning: Do not modify this section unless you know regular expressions.
+    - regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>.*?) \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
+    - allowable = ["userid", "logTime", "verb", "status", "url"]
 
 ```
 cd config
@@ -137,8 +153,6 @@ Create Mongodb configuration file.  Make the appropriate change to the environme
     - auth = True
     - auth_db = "admin"
     - auth_mech = "SCRAM-SHA-1"
-    - use_arg = True
-    - use_uri = False
 
   * Notes for auth_mech configuration entry:
     - NOTE 1:  SCRAM-SHA-256 only works for Mongodb 4.0 and better.

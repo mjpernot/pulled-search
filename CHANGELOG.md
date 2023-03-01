@@ -5,7 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.6] - 2023-02-27
 ### Changed
-- parse_data: Refactored the regular expression to match Highpoint access logs format.
+- parse_data: Refactored the regular expression to match Highpoint access logs format and moved into the config file.  Also added ability to determine which tags to add to the final document from the parsed log entry.
 
 
 ## [0.1.5] - 2023-02-03
