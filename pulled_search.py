@@ -429,28 +429,31 @@ def process_docid(args, cfg, docid_dict, log):
             data = fname.split(".")
             server = data[-2] if data[-1] == "gz" else data[-1]
 
+        ofile = cfg.outfile + datetime.datetime.strftime(
+            datetime.datetime.now(), "%Y%m%d%H%M%S")
         cmdline = [
             "check_log.py", "-g", "w", "-f", fname, "-S",
-            [docid_dict["docid"]], "-k", "or", "-o", cfg.outfile, "-z"]
+            [docid_dict["docid"]], "-k", "or", "-o", ofile, "-z"]
         chk_opt_val = ["-g", "-f", "-S", "-k", "-o"]
         multi_val = ["-f"]
         chk_args = gen_class.ArgParser(
             cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
 
-        if not gen_libs.is_empty_file(cfg.outfile):
+        if not gen_libs.is_empty_file(ofile):
             log.log_info(
                 "process_docid:  Log entries detected in: %s." % (fname))
-            file_log = gen_libs.file_2_list(cfg.outfile)
+            file_log = gen_libs.file_2_list(ofile)
 
             log_json["servers"][server] = \
                 log_json["servers"][server] + file_log \
                 if server in log_json["servers"] else file_log
 
-        err_flag, err_msg = gen_libs.rm_file(cfg.outfile)
+        if os.path.exists(ofile):
+            err_flag, err_msg = gen_libs.rm_file(ofile)
 
-        if err_flag:
-            log.log_warn("process_docid:  %s" % (err_msg))
+            if err_flag:
+                log.log_warn("process_docid:  %s" % (err_msg))
 
     status = process_json(args, cfg, log, log_json)
 
@@ -818,8 +821,13 @@ def recall_search(args, cfg, log, file_dict):
         for line in lines:
             if re.search(cfg.pattern, line):
                 docid_dict["command"] = fname.split("-")[0]
-                docid_dict["pubdate"] = fname.split("-")[3]
-                docid_dict["docid"] = re.split(r"-|\.", fname)[7]
+#                docid_dict["pubdate"] = fname.split("-")[3]
+                docid_dict["pubdate"] = re.split(
+                    r"-|\.", fname)[re.split(
+                        r"-|\.", fname).index('PULLED') + 1]
+#                docid_dict["docid"] = re.split(r"-|\.", fname)[7]
+                docid_dict["docid"] = re.split(
+                    r"-|\.", fname)[re.split(r"-|\.", fname).index('html') - 1]
                 break
 
         if docid_dict:
