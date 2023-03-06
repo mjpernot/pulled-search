@@ -506,21 +506,6 @@ def parse_data(args, cfg, log, log_json):
     """
 
     log.log_info("parse_data:  Start parsing JSON document.")
-
-### Into config file
-#####################################################################
-    """
-    # Regular expression to parse access log entries
-    sect1 = r"(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>.*?) "
-    sect2 = r"\[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] "
-    sect3 = r"(?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) "
-    sect4 = r"\"(?P<verb>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) "
-    sect5 = r"(?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" "
-    sect6 = r"(?P<url>.*?)?$"
-    regex = sect1 + sect2 + sect3 + sect4 + sect5 + sect6
-    allowable = ["userid", "logTime", "verb", "status", "url"]
-    """
-#####################################################################
     status = True
     first_stage = dict()
     first_stage["command"] = log_json["command"]
@@ -552,16 +537,6 @@ def parse_data(args, cfg, log, log_json):
 
                     elif entry in cfg.allowable:
                         third_stage[entry] = parsed_line[entry]
-
-#                third_stage["logTime"] = parsed_line["date"]
-#                third_stage["userID"] = parsed_line["userid"]
-#                third_stage["verb"] = parsed_line["verb"]
-#                third_stage["requestStatus"] = parsed_line["status"]
-#                third_stage["url"] = "https://" + parsed_line["url"]
-#                print(third_stage)
-#                print(gen_libs.print_dict(third_stage, json_fmt=True))
-
-#                status = insert_mongo(args, cfg, log, third_stage)
 
             else:
                 log.log_err("parse_data:  Unable to parse log entry: %s."
@@ -824,11 +799,9 @@ def recall_search(args, cfg, log, file_dict):
         for line in lines:
             if re.search(cfg.pattern, line):
                 docid_dict["command"] = fname.split("-")[0]
-#                docid_dict["pubdate"] = fname.split("-")[3]
                 docid_dict["pubdate"] = re.split(
                     r"-|\.", fname)[re.split(
                         r"-|\.", fname).index('PULLED') + 1]
-#                docid_dict["docid"] = re.split(r"-|\.", fname)[7]
                 docid_dict["docid"] = re.split(
                     r"-|\.", fname)[re.split(r"-|\.", fname).index('html') - 1]
                 break
