@@ -102,6 +102,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_outfile_not_exist
         test_archive_multiple_servers
         test_archive_non_gz
         test_archive_option
@@ -148,6 +149,39 @@ class UnitTest(unittest.TestCase):
         self.log_files4 = ["/path/logs/access.log1.servername.gz",
                            "/path/logs/access.log2.servername2.gz"]
 
+    @mock.patch("pulled_search.os.path.exists",
+                mock.Mock(return_value=(False)))
+    @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
+    @mock.patch("pulled_search.check_log.run_program",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("pulled_search.gen_class.ArgParser")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_libs.file_2_list")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_outfile_not_exist(self, mock_log, mock_list, mock_match,
+                               mock_arg):
+
+        """Function:  test_outfile_not_exist
+
+        Description:  Test with no outfile existing.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array
+
+        mock_log.return_value = True
+        mock_list.return_value = self.file_log
+        mock_match.return_value = self.log_files
+        mock_arg.return_value = self.chk_args
+
+        self.assertTrue(pulled_search.process_docid(
+            self.args, self.cfg, self.docid_dict, mock_log))
+
+    @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -180,6 +214,7 @@ class UnitTest(unittest.TestCase):
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
+    @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -211,6 +246,7 @@ class UnitTest(unittest.TestCase):
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
+    @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -242,6 +278,7 @@ class UnitTest(unittest.TestCase):
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
+    @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(False)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -274,6 +311,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
+    @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -305,6 +343,7 @@ class UnitTest(unittest.TestCase):
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict2, mock_log))
 
+    @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -336,6 +375,7 @@ class UnitTest(unittest.TestCase):
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
+    @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
@@ -365,6 +405,7 @@ class UnitTest(unittest.TestCase):
         self.assertTrue(pulled_search.process_docid(
             self.args, self.cfg, self.docid_dict, mock_log))
 
+    @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.process_json", mock.Mock(return_value=(True)))
     @mock.patch("pulled_search.check_log.run_program",
                 mock.Mock(return_value=True))
