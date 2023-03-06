@@ -5,6 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.6] - 2023-02-27
 ### Fixed
+- validate_dirs: Active log directory config entry is not checked if searching archive logs.
 - process_docid: If check_log does not produce an out file.
 - recall_search: Fixed pulling the date time group and docid from the filename.
 

@@ -24,12 +24,14 @@ file_regex = "-PULLED-"
 # Regular expression for search for recalled products.
 pattern = "JAC.pull.subtype.*.SECURITY RECALL"
 
+# Enter the archive_log_dir if using the -a option otherwise enter the log_dir.
 # Directory where active log files to be searched are.
 log_dir = "LOG_DIR_PATH"
-# Type of log files to checked.
-log_type = "access_log"
 # Directory where archived log files to be searched are.
 archive_log_dir = "ARCHIVE_DIR_PATH"
+
+# Type of log files to checked.
+log_type = "access_log"
 # Temporary file where check_log will write to.
 # File name including directory path.
 outfile = "BASE_PATH/tmp/checklog.out"

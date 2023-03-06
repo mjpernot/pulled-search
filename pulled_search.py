@@ -81,12 +81,15 @@
         # Regular expression for search for recalled products.
         pattern = "JAC.pull.subtype.*.SECURITY RECALL"
 
+        # Enter the archive_log_dir if using the -a option otherwise enter the
+        #   log_dir.
         # Directory where active log files to be searched are.
         log_dir = "LOG_DIR_PATH"
-        # Type of log files to checked.
-        log_type = "access_log"
         # Directory where archived log files to be searched are.
         archive_log_dir = "ARCHIVE_DIR_PATH"
+
+        # Type of log files to checked.
+        log_type = "access_log"
         # Temporary file where check_log will write to.
         # File name including directory path.
         outfile = "BASE_PATH/tmp/checklog.out"
@@ -943,7 +946,7 @@ def insert_data(args, cfg, log):
         non_processed(nonproc_list, cfg.merror_dir, log, mail)
 
 
-def validate_dirs(cfg):
+def validate_dirs(cfg, args):
 
     """Function:  validate_dirs
 
@@ -952,6 +955,7 @@ def validate_dirs(cfg):
 
     Arguments:
         (input) cfg -> Configuration setup
+        (input) args -> ArgParser class instance
         (output) msg_dict -> Dictionary of any error messages detected
 
     """
@@ -965,18 +969,21 @@ def validate_dirs(cfg):
         if not status:
             msg_dict[entry] = msg
 
-    # Directory where log files to be searched are
-    status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
+    if args.get_val("-a", def_val=None):
+        # Directory path to where archived log files to be searched are
+        status, msg = gen_libs.chk_crt_dir(
+            cfg.archive_log_dir, read=True, no_print=True)
 
-    if not status:
-        msg_dict[cfg.log_dir] = msg
+        if not status:
+            msg_dict[cfg.archive_log_dir] = msg
 
-    # Directory path to where archived log files to be searched are
-    status, msg = gen_libs.chk_crt_dir(
-        cfg.archive_log_dir, read=True, no_print=True)
+    else:
+        # Directory where active log files to be searched are
+        status, msg = gen_libs.chk_crt_dir(
+            cfg.log_dir, read=True, no_print=True)
 
-    if not status:
-        msg_dict[cfg.archive_log_dir] = msg
+        if not status:
+            msg_dict[cfg.log_dir] = msg
 
     # Temporary file where check_log will write to
     basepath = gen_libs.get_base_dir(cfg.outfile)
@@ -1056,7 +1063,7 @@ def checks_dirs(args, cfg):
     msg_dict = dict()
 
     if args.get_val("-P", def_val=None):
-        msg_dict = validate_dirs(cfg)
+        msg_dict = validate_dirs(cfg, args)
 
     elif args.get_val("-I", def_val=None):
         msg_dict = mvalidate_dirs(cfg)
