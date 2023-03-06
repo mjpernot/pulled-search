@@ -1,3 +1,7 @@
+# Mongo DB Configuration file
+# Classification (U)
+# Unclassified until filled.
+
 # Pulled Search Insert/Mongo DB Configuration section.
 # Update this file if using the -I option.
 user = "USER"

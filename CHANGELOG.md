@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.6] - 2023-02-27
+### Fixed
+- validate_dirs: Active log directory config entry is not checked if searching archive logs.
+- process_docid: If check_log does not produce an out file.
+- recall_search: Fixed pulling the date time group and docid from the filename.
+
+### Changed
+- process_docid: Set the out file for check_log to be a unique file name.
+- parse_data: Refactored the regular expression to match Highpoint access logs format and moved into the config file.  Also added ability to determine which tags to add to the final document from the parsed log entry.
+
+
 ## [0.1.5] - 2023-02-03
 - Allow searches to insert into the Mongo database directly.
 - Each log entry detected will be its own document within the Mongo database, but will still be grouped into a list for emails and RabbitMQ usage.
