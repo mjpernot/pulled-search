@@ -122,7 +122,7 @@ Make the appropriate changes to the environment.
 
   * Log parsing section.
   * Warning: Do not modify this section unless you know regular expressions.
-    - regex = "(?P\<ip\>.\*?) (?P<proxyid>.*?) (?P<userid>.*?) \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
+    - regex = "(?P\<ip\>.\*?) (?P\<proxyid\>.\*?) (?P\<userid\>.\*?) \[(?P\<logTime\>.\*?)(?= ) (?P\<timeZone\>.\*?)\] (?P\<requestid\>.\*?) (?P\<secs\>.\*?)/(?P\<msecs\>.\*?) \"(?P\<verb\>.\*?) HTTP/(?P\<httpVer\>.\*?)\" (?P\<status\>.\*?) (?P\<length\>.\*?) \"(?P\<referrer\>.\*?)\" \"(?P\<userAgent\>.\*?)\" (?P\<url\>.\*?)?$"
     - allowable = ["userid", "logTime", "verb", "status", "url"]
 
 ```
