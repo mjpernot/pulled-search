@@ -24,12 +24,14 @@ file_regex = "-PULLED-"
 # Regular expression for search for recalled products.
 pattern = "JAC.pull.subtype.*.SECURITY RECALL"
 
+# Enter the archive_log_dir if using the -a option otherwise enter the log_dir.
 # Directory where active log files to be searched are.
 log_dir = "LOG_DIR_PATH"
-# Type of log files to checked.
-log_type = "access_log"
 # Directory where archived log files to be searched are.
 archive_log_dir = "ARCHIVE_DIR_PATH"
+
+# Type of log files to checked.
+log_type = "access_log"
 # Temporary file where check_log will write to.
 # File name including directory path.
 outfile = "BASE_PATH/tmp/checklog.out"
@@ -103,3 +105,11 @@ merror_dir = "BASE_PATH/mongo_error"
 # Name of Mongo configuration file.  (Do not include the ".py" in the name.)
 # Do not change unless changing the name of the external Mongo config file.
 mconfig = "mongo"
+
+# Log parsing section.
+# Warning: Do not modify this section unless you know regular expressions.
+# NOTE: These name tags are reserved and cannot be used: ["command", "docid", "network", "pubDate", "asOf"]
+regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>.*?) \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
+# These are the entries that will be parsed from the log entry and placed into the document.
+# Note: Name tags must match between regex and allowable and are case-sensitive.
+allowable = ["userid", "logTime", "verb", "status", "url"]
