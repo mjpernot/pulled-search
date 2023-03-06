@@ -122,8 +122,6 @@ class UnitTest(unittest.TestCase):
         ref = '"https://hp.on.ic.gov/transform/20220805-1436-GEN-010109.html" '
         agt = '"Moz/5.0 Win NT 10; Win64; AWK/5.6 (KHTML Geck)Chr/1.0 Saf/5.6"'
         url = " hp.on.ic.gov/proxy/dio/source/ProductPage?docid=010109efgh"
-        line1 = ' - - [11/Nov/2016:00:00:11 +0100] "GET /icc/ HTTP/1.1" 302 '
-        line2 = '- "-" "XXX XXX XXX" - 2981 '
         line3 = ' - - [08/Jan/2020:21:39:03 +0000] "GET / HTTP/1.1" 200 6169 '
         line4 = '"-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
         line5 = '(KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"'
