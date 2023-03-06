@@ -84,7 +84,7 @@ Make the appropriate changes to the environment.
     - processed_dir = "BASE_PATH/processed"
     - processed_file = "processed"
     - file_regex = "-PULLED-"
-    - pattern = "JAC.pull.subtype.*.SECURITY RECALL"
+    - pattern = "JAC.pull.subtype.\*.SECURITY RECALL"
     - log_dir = "LOG_DIR_PATH"
     - archive_log_dir = "ARCHIVE_DIR_PATH"
     - log_type = "access_log"
@@ -114,7 +114,7 @@ Make the appropriate changes to the environment.
   * Make the appropriate changes to Insert setup section.
   * Update this section if using the -I option.
     - monitor_dir = "MONITOR_DIR_PATH"
-    - mfile_regex = "_mongo.json"
+    - mfile_regex = "\_mongo.json"
     - marchive_dir = "BASE_PATH/archive
     - merror_dir = "BASE_PATH/mongo_error"
   * Do not change this section unless the Mongo configuration file is changed.
@@ -122,7 +122,7 @@ Make the appropriate changes to the environment.
 
   * Log parsing section.
   * Warning: Do not modify this section unless you know regular expressions.
-    - regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>.*?) \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
+    - regex = "(?P<ip>.\*?) (?P<proxyid>.*?) (?P<userid>.*?) \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
     - allowable = ["userid", "logTime", "verb", "status", "url"]
 
 ```
