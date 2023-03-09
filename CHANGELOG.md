@@ -7,6 +7,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Fixed
 - parse_data: Moved insert into mongo to the correct location and return the correct status code.
 
+### Changed
+- config/search.py.TEMPLATE: Updated the regular expression to break verb into verb and verbUrl.
 
 ## [0.1.6] - 2023-02-27
 ### Fixed
