@@ -5,6 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.7] - 2023-03-09
 ### Fixed
+- process_docid: Added check in to see if check_log outfile exists.
 - parse_data: Moved insert into mongo to the correct location and return the correct status code.
 
 ### Changed

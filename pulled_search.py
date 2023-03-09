@@ -443,7 +443,7 @@ def process_docid(args, cfg, docid_dict, log):
             cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
 
-        if not gen_libs.is_empty_file(ofile):
+        if os.path.exists(ofile) and not gen_libs.is_empty_file(ofile):
             log.log_info(
                 "process_docid:  Log entries detected in: %s." % (fname))
             file_log = gen_libs.file_2_list(ofile)
