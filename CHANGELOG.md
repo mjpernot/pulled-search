@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.7] - 2023-03-09
+### Fixed
+- parse_data: Moved insert into mongo to the correct location and return the correct status code.
 
 
 ## [0.1.6] - 2023-02-27

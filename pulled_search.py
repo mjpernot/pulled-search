@@ -542,8 +542,8 @@ def parse_data(args, cfg, log, log_json):
                 log.log_err("parse_data:  Unable to parse log entry: %s."
                             % (third_stage))
                 log.log_warn("parse_data: Insert into Mongo without parsing.")
-                status = insert_mongo(args, cfg, log, third_stage)
 
+            status = status & insert_mongo(args, cfg, log, third_stage)
             third_stage = dict(second_stage)
 
         second_stage = dict(first_stage)
@@ -812,7 +812,7 @@ def recall_search(args, cfg, log, file_dict):
             status = process_docid(args, cfg, docid_dict, log)
 
             if not status:
-                log.log_err("%s: Failed the process_docid process."
+                log.log_err("One or more errors detected for docid: %s"
                             % (docid_dict))
                 failed_dict[fname] = "Failed the process_docid process"
 
