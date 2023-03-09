@@ -9,6 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - parse_data: Moved insert into mongo to the correct location and return the correct status code.
 
 ### Changed
+- process_insert: Replaced insert into Mongo code with call to parse_data.
 - config/search.py.TEMPLATE: Updated the regular expression to break verb into verb and verbUrl.
 
 ## [0.1.6] - 2023-02-27
