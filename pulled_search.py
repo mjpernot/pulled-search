@@ -630,25 +630,10 @@ def process_insert(args, cfg, fname, log):
     log.log_info("process_insert:  Converting data to JSON.")
     status = True
     data_list = gen_libs.file_2_list(fname)
-    insert_dict = json.loads(gen_libs.list_2_str(data_list))
+    log_json = json.loads(gen_libs.list_2_str(data_list))
 
-    if isinstance(insert_dict, dict):
+    if isinstance(log_json, dict):
         status = parse_data(args, cfg, log, log_json)
-
-### STOPPED HERE
-        """
-        log.log_info("process_insert:  Inserting data into Mongodb.")
-        mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
-        mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, insert_dict)
-
-        if not mongo_stat[0]:
-            log.log_err("process_insert:  Insert of data into MongoDB failed.")
-            log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
-            status = False
-
-        else:
-            log.log_info("process_insert:  Mongo database insertion.")
-        """
 
     else:
         log.log_err("process_insert: Data failed to convert to JSON.")
