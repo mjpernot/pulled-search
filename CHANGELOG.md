@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.7] - 2023-03-09
+### Fixed
+- process_docid: Added check in to see if check_log outfile exists.
+- parse_data: Moved insert into mongo to the correct location and return the correct status code.
+
+### Changed
+- process_insert: Replaced insert into Mongo code with call to parse_data.
+- config/search.py.TEMPLATE: Updated the regular expression to break verb into verb and verbUrl.
+
 ## [0.1.6] - 2023-02-27
 ### Fixed
 - validate_dirs: Active log directory config entry is not checked if searching archive logs.
