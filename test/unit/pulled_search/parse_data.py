@@ -130,7 +130,7 @@ class UnitTest(unittest.TestCase):
         self.args = ArgParser()
         self.cfg = CfgTest()
         self.entry1 = ip1 + ip2 + proxy + user + dtg2 + reqid + verb + stats \
-                      + ref + agt + url
+            + ref + agt + url
         self.entry2 = ip1 + ip2 + line3 + line4 + line5
         self.log_json = {
             "docid": "09109uosdhf",

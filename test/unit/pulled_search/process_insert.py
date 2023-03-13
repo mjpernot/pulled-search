@@ -35,7 +35,6 @@ class ArgParser(object):
 
     Methods:
         __init__
-        get_val
 
     """
 
@@ -51,18 +50,6 @@ class ArgParser(object):
 
         self.cmdline = None
         self.args_array = dict()
-
-    def get_val(self, skey, def_val=None):
-
-        """Method:  get_val
-
-        Description:  Method stub holder for gen_class.ArgParser.get_val.
-
-        Arguments:
-
-        """
-
-        return self.args_array.get(skey, def_val)
 
 
 class CfgTest(object):
@@ -87,31 +74,6 @@ class CfgTest(object):
         """
 
         self.mconfig = "mongo"
-
-
-class CfgTest2(object):
-
-    """Class:  CfgTest2
-
-    Description:  Class which is a representation of a cfg module.
-
-    Methods:
-        __init__
-
-    """
-
-    def __init__(self):
-
-        """Method:  __init__
-
-        Description:  Initialization instance of the CfgTest class.
-
-        Arguments:
-
-        """
-
-        self.dbs = "databasename"
-        self.tbl = "tablename"
 
 
 class Logger(object):
@@ -197,7 +159,6 @@ class UnitTest(unittest.TestCase):
         self.args = ArgParser()
         self.args.args_array = {"-d": "/config_path"}
         self.cfg = CfgTest()
-        self.cfg2 = CfgTest2()
         self.logger = Logger("Name", "Name", "INFO", "%(asctime)s%(message)s",
                              "%m-%d-%YT%H:%M:%SZ|")
         self.data_list = ['{',
@@ -211,11 +172,9 @@ class UnitTest(unittest.TestCase):
                           '}']
         self.fname = "/dir_path/092438k234_insert.json"
 
-    @mock.patch("pulled_search.mongo_libs.ins_doc",
-                mock.Mock(return_value=(False, "mongo failure")))
-    @mock.patch("pulled_search.gen_libs.load_module")
+    @mock.patch("pulled_search.parse_data", mock.Mock(return_value=False))
     @mock.patch("pulled_search.gen_libs.file_2_list")
-    def test_mongo_failed(self, mock_list, mock_load):
+    def test_mongo_failed(self, mock_list):
 
         """Function:  test_mongo_failed
 
@@ -226,16 +185,13 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_list.return_value = self.data_list
-        mock_load.return_value = self.cfg2
 
         self.assertEqual(pulled_search.process_insert(
             self.args, self.cfg, self.fname, self.logger), False)
 
-    @mock.patch("pulled_search.mongo_libs.ins_doc",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.load_module")
+    @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.file_2_list")
-    def test_mongo_successful(self, mock_list, mock_load):
+    def test_mongo_successful(self, mock_list):
 
         """Function:  test_mongo_successful
 
@@ -246,13 +202,10 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_list.return_value = self.data_list
-        mock_load.return_value = self.cfg2
 
         self.assertEqual(pulled_search.process_insert(
             self.args, self.cfg, self.fname, self.logger), True)
 
-    @mock.patch("pulled_search.mongo_libs.ins_doc",
-                mock.Mock(return_value=(True, None)))
     @mock.patch("pulled_search.json.loads", mock.Mock(return_value="String"))
     @mock.patch("pulled_search.gen_libs.file_2_list")
     def test_json_failure(self, mock_list):
@@ -270,11 +223,9 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(pulled_search.process_insert(
             self.args, self.cfg, self.fname, self.logger), False)
 
-    @mock.patch("pulled_search.mongo_libs.ins_doc",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.load_module")
+    @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.file_2_list")
-    def test_with_data(self, mock_list, mock_load):
+    def test_with_data(self, mock_list):
 
         """Function:  test_with_data
 
@@ -285,7 +236,6 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_list.return_value = self.data_list
-        mock_load.return_value = self.cfg2
 
         self.assertEqual(pulled_search.process_insert(
             self.args, self.cfg, self.fname, self.logger), True)
