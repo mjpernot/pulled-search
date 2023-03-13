@@ -165,7 +165,8 @@ class UnitTest(unittest.TestCase):
         mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
                                 self.chk8]
 
-        self.assertEqual(pulled_search.validate_dirs(self.cfg, self.args), self.results8)
+        self.assertEqual(
+            pulled_search.validate_dirs(self.cfg, self.args), self.results8)
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_doc_dir_multiple_two_fail(self, mock_chk):

@@ -109,7 +109,7 @@ mconfig = "mongo"
 # Log parsing section.
 # Warning: Do not modify this section unless you know regular expressions.
 # NOTE: These name tags are reserved and cannot be used: ["command", "docid", "network", "pubDate", "asOf"]
-regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>.*?) \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
+regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>.*?) \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) (?P<verbUrl>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
 # These are the entries that will be parsed from the log entry and placed into the document.
 # Note: Name tags must match between regex and allowable and are case-sensitive.
 allowable = ["userid", "logTime", "verb", "status", "url"]

@@ -443,7 +443,7 @@ def process_docid(args, cfg, docid_dict, log):
             cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
 
-        if not gen_libs.is_empty_file(ofile):
+        if os.path.exists(ofile) and not gen_libs.is_empty_file(ofile):
             log.log_info(
                 "process_docid:  Log entries detected in: %s." % (fname))
             file_log = gen_libs.file_2_list(ofile)
@@ -542,8 +542,8 @@ def parse_data(args, cfg, log, log_json):
                 log.log_err("parse_data:  Unable to parse log entry: %s."
                             % (third_stage))
                 log.log_warn("parse_data: Insert into Mongo without parsing.")
-                status = insert_mongo(args, cfg, log, third_stage)
 
+            status = status & insert_mongo(args, cfg, log, third_stage)
             third_stage = dict(second_stage)
 
         second_stage = dict(first_stage)
@@ -630,20 +630,10 @@ def process_insert(args, cfg, fname, log):
     log.log_info("process_insert:  Converting data to JSON.")
     status = True
     data_list = gen_libs.file_2_list(fname)
-    insert_dict = json.loads(gen_libs.list_2_str(data_list))
+    log_json = json.loads(gen_libs.list_2_str(data_list))
 
-    if isinstance(insert_dict, dict):
-        log.log_info("process_insert:  Inserting data into Mongodb.")
-        mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
-        mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, insert_dict)
-
-        if not mongo_stat[0]:
-            log.log_err("process_insert:  Insert of data into MongoDB failed.")
-            log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
-            status = False
-
-        else:
-            log.log_info("process_insert:  Mongo database insertion.")
+    if isinstance(log_json, dict):
+        status = parse_data(args, cfg, log, log_json)
 
     else:
         log.log_err("process_insert: Data failed to convert to JSON.")
@@ -812,7 +802,7 @@ def recall_search(args, cfg, log, file_dict):
             status = process_docid(args, cfg, docid_dict, log)
 
             if not status:
-                log.log_err("%s: Failed the process_docid process."
+                log.log_err("One or more errors detected for docid: %s"
                             % (docid_dict))
                 failed_dict[fname] = "Failed the process_docid process"
 
