@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.8] - 2023-03-27
+
+
 ## [0.1.7] - 2023-03-09
 ### Fixed
 - process_docid: Added check in to see if check_log outfile exists.
