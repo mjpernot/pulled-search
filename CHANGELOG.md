@@ -7,6 +7,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Changed
 - validate_dirs: Replaced cfg.processed_dir with cfg.processed_file.
 - config/search.py.TEMPLATE: Combined processed_dir and processed_file entries into processed_file.
+- Documentation update.
 
 
 ## [0.1.7] - 2023-03-09

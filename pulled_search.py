@@ -72,10 +72,8 @@
         # NOTE: Do not include the YYYY/MM as part of the path as this will be
         #   added.
         doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
-        # Directory where files with previous processed files are stored at.
-        processed_dir = "BASE_PATH/processed"
-        # File name for previous processed files.
-        processed_file = "processed"
+        # Path and file name for previous processed files.
+        processed_file = "BASE_PATH/processed/processed"
         # Regular expression for search for log file names.
         file_regex = "-PULLED-"
         # Regular expression for search for recalled products.
