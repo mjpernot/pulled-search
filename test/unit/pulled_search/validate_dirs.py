@@ -91,7 +91,7 @@ class CfgTest(object):
         self.outfile = "/dir_path/outfile_dir/outfile"
         self.error_dir = "/dir_path/error_dir"
         self.archive_log_dir = "/dir_path/archive_log_dir"
-        self.processed_dir = "/dir_path/processed_dir"
+        self.processed_file = "/dir_path/processed_dir/processed_file"
 
 
 class UnitTest(unittest.TestCase):

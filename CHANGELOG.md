@@ -5,6 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.8] - 2023-03-28
 ### Changed
+- validate_dirs: Replaced cfg.processed_dir with cfg.processed_file.
 - config/search.py.TEMPLATE: Combined processed_dir and processed_file entries into processed_file.
 
 
@@ -140,6 +141,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [0.1.0] - 2020-03-13
+- Alpha version release.
+
 ### Fixed
 - process_docid:  Seralize the json document before inserting into RabbitMQ.
 

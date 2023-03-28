@@ -964,11 +964,12 @@ def validate_dirs(cfg, args):
         msg_dict[cfg.error_dir] = msg
 
     # Directory where files with previous processed files are stored at
+    basepath2 = gen_libs.get_base_dir(cfg.processed_file)
     status, msg = gen_libs.chk_crt_dir(
-        cfg.processed_dir, write=True, create=True, no_print=True)
+        basepath2, write=True, create=True, no_print=True)
 
     if not status:
-        msg_dict[cfg.processed_dir] = msg
+        msg_dict[basepath2] = msg
 
     return msg_dict
 
