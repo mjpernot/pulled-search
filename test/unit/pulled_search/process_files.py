@@ -88,8 +88,7 @@ class CfgTest(object):
 
         self.file_regex = "*.-PULLED-.*.html"
         self.doc_dir = ["/dir_path/doc_dir"]
-        self.processed_dir = "/dir/path/processed_dir"
-        self.processed_file = "processed_file.txt"
+        self.processed_file = "/dir/path/processed_dir/processed_file.txt"
 
 
 class CfgTest2(object):
@@ -115,8 +114,7 @@ class CfgTest2(object):
 
         self.file_regex = "*.-PULLED-.*.html"
         self.doc_dir = ["/dir_path/doc_dir", "/dir_path/doc_dir2"]
-        self.processed_dir = "/dir/path/processed_dir"
-        self.processed_file = "processed_file.txt"
+        self.processed_file = "/dir/path/processed_dir/processed_file.txt"
 
 
 class UnitTest(unittest.TestCase):

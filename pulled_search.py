@@ -851,9 +851,7 @@ def process_files(args, cfg, log):
             file_dict[file_name] = full_filename
 
     log.log_info("process_files:  Removing previous processed files.")
-    processed_fname = os.path.join(
-        cfg.processed_dir, cfg.processed_file + "." + yearmon2)
-    processed_files = load_processed(processed_fname)
+    processed_files = load_processed(cfg.processed_file)
 
     for p_filename in processed_files:
         if p_filename in file_dict:
@@ -862,7 +860,7 @@ def process_files(args, cfg, log):
     failed_dict = recall_search(args, cfg, log, file_dict)
 
     if file_dict:
-        update_processed(log, processed_fname, file_dict)
+        update_processed(log, cfg.processed_file, file_dict)
 
     if failed_dict:
         process_failed(args, cfg, log, failed_dict)
