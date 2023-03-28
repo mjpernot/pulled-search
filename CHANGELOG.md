@@ -3,7 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
-## [0.1.8] - 2023-03-27
+## [0.1.8] - 2023-03-28
+### Changed
+- config/search.py.TEMPLATE: Combined processed_dir and processed_file entries into processed_file.
 
 
 ## [0.1.7] - 2023-03-09
