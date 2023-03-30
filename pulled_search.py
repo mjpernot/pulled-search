@@ -823,7 +823,6 @@ def process_files(args, cfg, log):
     log.log_info("process_files:  Locating pulled files.")
     docid_files = list()
     yearmon = datetime.date.strftime(datetime.datetime.now(), "%Y/%m")
-    yearmon2 = datetime.date.strftime(datetime.datetime.now(), "%Y%m")
     search_dir = list()
 
     if args.get_val("-m", def_val=None):
@@ -839,23 +838,31 @@ def process_files(args, cfg, log):
             docdir, cfg.file_regex, add_path=True)
         docid_files.extend(tmp_list)
 
-    log.log_info("process_files:  Removing duplicate pulled files.")
+    log.log_info("process_files:  Removing duplicate pulled docids.")
     file_dict = {}
 
-### STOPPED HERE
     for full_filename in docid_files:
-        file_name = os.path.basename(full_filename)
+        docid = re.split(
+            r"-|\.", os.path.basename(full_filename))[
+                re.split(r"-|\.", fname).index('html') - 1]
 
-        if file_name not in file_dict:
-            file_dict[file_name] = full_filename
+        if docid not in file_dict:
+            file_dict[docid] = full_filename
 
-    log.log_info("process_files:  Removing previous processed files.")
+#        file_name = os.path.basename(full_filename)
+#
+#        if file_name not in file_dict:
+#            file_dict[file_name] = full_filename
+
+    log.log_info("process_files:  Removing previous processed docids.")
     processed_docids = load_processed(cfg.processed_file)
 
     for p_docids in processed_docids:
         if p_docids in file_dict:
             file_dict.pop(p_docids)
 
+### STOPPED HERE    -> Working on test unit process_files
+            ###     -> Next work on recall_search
     failed_dict = recall_search(args, cfg, log, file_dict)
 
     if file_dict:
