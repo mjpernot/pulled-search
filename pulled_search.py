@@ -675,25 +675,23 @@ def load_processed(processed_fname):
 
     """Function:  load_processed
 
-    Description:  Read in the previous processed file names.
+    Description:  Read in the previous processed docids.
 
     Arguments:
         (input) processed_fname -> Name of processed file
-        (output) processed_files -> List of processed file names
+        (output) processed_docids -> List of processed docids
 
     """
 
     try:
         with open(processed_fname) as fhdr:
-            processed_files = fhdr.readlines()
-            processed_files = [
-                os.path.basename(line).rstrip() for line in processed_files]
+            processed_docids = [line.rstrip() for line in fhdr.readlines()]
 
     except IOError as msg:
         if msg.args[1] == "No such file or directory":
-            processed_files = list()
+            processed_docids = list()
 
-    return processed_files
+    return processed_docids
 
 
 def update_processed(log, processed_fname, file_dict):
@@ -844,6 +842,7 @@ def process_files(args, cfg, log):
     log.log_info("process_files:  Removing duplicate pulled files.")
     file_dict = {}
 
+### STOPPED HERE
     for full_filename in docid_files:
         file_name = os.path.basename(full_filename)
 
@@ -851,11 +850,11 @@ def process_files(args, cfg, log):
             file_dict[file_name] = full_filename
 
     log.log_info("process_files:  Removing previous processed files.")
-    processed_files = load_processed(cfg.processed_file)
+    processed_docids = load_processed(cfg.processed_file)
 
-    for p_filename in processed_files:
-        if p_filename in file_dict:
-            file_dict.pop(p_filename)
+    for p_docids in processed_docids:
+        if p_docids in file_dict:
+            file_dict.pop(p_docids)
 
     failed_dict = recall_search(args, cfg, log, file_dict)
 

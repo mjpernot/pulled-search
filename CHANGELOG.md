@@ -5,6 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.8] - 2023-03-28
 ### Changed
+- load_processed: Changed from filenames to docids.
 - process_files: Removed YYYYMM from end of processed file name, all processed files will be stored in one file.
 - process_files, validate_dirs: Replaced cfg.processed_dir with cfg.processed_file.
 - config/search.py.TEMPLATE: Combined processed_dir and processed_file entries into processed_file.

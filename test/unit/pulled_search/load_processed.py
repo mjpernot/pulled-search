@@ -56,8 +56,8 @@ class UnitTest(unittest.TestCase):
         self.fname2 = os.path.join(basepath, "test_load_processed2.txt")
         self.fname3 = os.path.join(basepath, "test_load_processed3.txt")
         self.fname4 = os.path.join(basepath, "test_load_processed0.txt")
-        self.results = ["filename1", "filename2"]
-        self.results2 = ["filename1"]
+        self.results = ["docid1", "docid2"]
+        self.results2 = ["docid1"]
         self.results3 = []
 
     def test_missing_file(self):
