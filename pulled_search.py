@@ -713,7 +713,7 @@ def update_processed(log, processed_fname, file_dict):
 
     with open(processed_fname, "a") as fhdr:
         for item in file_dict:
-            fhdr.write(file_dict[item] + "\n")
+            fhdr.write(item + "\n")
 
 
 def process_failed(args, cfg, log, failed_dict):
@@ -857,10 +857,9 @@ def process_files(args, cfg, log):
         if p_docids in file_dict:
             file_dict.pop(p_docids)
 
-### STOPPED HERE -> Next work on recall_search
-### failed_dict will return back as ('docid': '/path/file_name.html'}
     failed_dict = recall_search(args, cfg, log, file_dict)
 
+### STOPPED HERE -> Next work on update_processed
     if file_dict:
         update_processed(log, cfg.processed_file, file_dict)
 
