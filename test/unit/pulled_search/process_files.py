@@ -156,14 +156,14 @@ class UnitTest(unittest.TestCase):
         self.cfg2 = CfgTest2()
         self.args_array = {"-m": "/dir_path/doc_dir3"}
         self.docid_files = list()
-        f_name = "/path/file1.html"
+        f_name = "/path/file-1-09docid1.html"
         self.docid_files2 = [f_name]
-        self.docid_files3 = [f_name, "/path/file2.html"]
+        self.docid_files3 = [f_name, "/path/file-2-09docid2.html"]
         self.docid_files4 = [f_name, f_name]
         self.processed_files = list()
-        self.processed_files2 = ["file2.html"]
+        self.processed_files2 = ["09docid2"]
         self.failed_dict = list()
-        self.failed_dict2 = {"file1.html": f_name}
+        self.failed_dict2 = {"09docid1": f_name}
 
     @mock.patch("pulled_search.process_failed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))

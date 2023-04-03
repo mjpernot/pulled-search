@@ -767,16 +767,17 @@ def recall_search(args, cfg, log, file_dict):
     failed_dict = dict()
     file_dict = dict(file_dict)
 
-    for fname in file_dict:
-        log.log_info("recall_search:  Searching file: %s" % (fname))
+    for docid in file_dict:
+        log.log_info("recall_search:  Docid: %s File: %s"
+                     % (docid, file_dict[docid]))
         try:
-            with open(file_dict[fname], "r") as fhdr:
+            with open(file_dict[docid], "r") as fhdr:
                 data = fhdr.readlines()
                 lines = [line.rstrip() for line in data]
 
         except IOError as msg:
             log.log_err("recall_search: Failed to open file!")
-            failed_dict[fname] = msg.args[1]
+            failed_dict[docid] = msg.args[1]
             lines = list()
 
         if lines:
@@ -784,23 +785,23 @@ def recall_search(args, cfg, log, file_dict):
 
         for line in lines:
             if re.search(cfg.pattern, line):
+                fname = os.path.basename(file_dict[docid])
                 docid_dict["command"] = fname.split("-")[0]
                 docid_dict["pubdate"] = re.split(
                     r"-|\.", fname)[re.split(
                         r"-|\.", fname).index('PULLED') + 1]
-                docid_dict["docid"] = re.split(
-                    r"-|\.", fname)[re.split(r"-|\.", fname).index('html') - 1]
+                docid_dict["docid"] = docid
                 break
 
         if docid_dict:
-            log.log_info("recall_search:  Security recalled product found: %s"
-                         % (docid_dict))
+            log.log_info("recall_search:  Security recall product found in: %s"
+                         % (file_dict[docid]))
             status = process_docid(args, cfg, docid_dict, log)
 
             if not status:
                 log.log_err("One or more errors detected for docid: %s"
                             % (docid_dict))
-                failed_dict[fname] = "Failed the process_docid process"
+                failed_dict[docid] = "Failed the process_docid process"
 
             docid_dict = dict()
 
@@ -841,18 +842,13 @@ def process_files(args, cfg, log):
     log.log_info("process_files:  Removing duplicate pulled docids.")
     file_dict = {}
 
-    for full_filename in docid_files:
+    for filename in docid_files:
         docid = re.split(
-            r"-|\.", os.path.basename(full_filename))[
-                re.split(r"-|\.", fname).index('html') - 1]
+            r"-|\.", os.path.basename(filename))[
+                re.split(r"-|\.", filename).index('html') - 1]
 
         if docid not in file_dict:
-            file_dict[docid] = full_filename
-
-#        file_name = os.path.basename(full_filename)
-#
-#        if file_name not in file_dict:
-#            file_dict[file_name] = full_filename
+            file_dict[docid] = filename
 
     log.log_info("process_files:  Removing previous processed docids.")
     processed_docids = load_processed(cfg.processed_file)
@@ -861,8 +857,8 @@ def process_files(args, cfg, log):
         if p_docids in file_dict:
             file_dict.pop(p_docids)
 
-### STOPPED HERE    -> Working on test unit process_files
-            ###     -> Next work on recall_search
+### STOPPED HERE -> Next work on recall_search
+### failed_dict will return back as ('docid': '/path/file_name.html'}
     failed_dict = recall_search(args, cfg, log, file_dict)
 
     if file_dict:
