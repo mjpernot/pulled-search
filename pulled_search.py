@@ -859,7 +859,6 @@ def process_files(args, cfg, log):
 
     failed_dict = recall_search(args, cfg, log, file_dict)
 
-### STOPPED HERE -> Next work on update_processed
     if file_dict:
         update_processed(log, cfg.processed_file, file_dict)
 
