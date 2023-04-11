@@ -9,11 +9,13 @@
         files for the docid in the file.  Any entries found will be converted
         into a JSON document and send to a RabbitMQ queue.  The program also
         has the ability to detect when new search pulled product log entries
-        are available to be inserted into a database.
+        are available to be inserted into a database.  The program now has the
+        the ability to search for docids listed in a file.
 
     Usage:
         pulled_search.py -c file -d path
             {-P [-m path] [-a] [-i] |
+             -F [-a] [-i] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -26,6 +28,10 @@
         -P => Process Doc ID files send to RabbitMQ.
             -i => Insert the log entries directly to Mongodb.
             -m dir_path => Directory to monitor for doc ID files.
+            -a => This is an archive log search.
+
+        -F => Process Doc ID files send to RabbitMQ.
+            -i => Insert the log entries directly to Mongodb.
             -a => This is an archive log search.
 
         -I => Insert Pulled Search files into Mongodb.
@@ -44,7 +50,7 @@
         NOTE 1:  -v or -h overrides the other options.
         NOTE 2:  -t option is for reporting any errors detected.
         NOTE 3:  -s requires -t option to be included.
-        NOTE 4:  -P and -I are XOR options.
+        NOTE 4:  -P, -F and -I are XOR options.
         NOTE 5:  -m and -n options will override the configuration settings.
             The -m option is mapped to the doc_dir configuration entry, and
             the -n option is mapped to the monitor_dir configuration entry.
@@ -925,6 +931,23 @@ def insert_data(args, cfg, log):
         non_processed(nonproc_list, cfg.merror_dir, log, mail)
 
 
+def file_input(args, cfg, log):
+
+    """Function:  file_input
+
+    Description:  Process docids via input file.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+
+    """
+
+    log.log_info("file_input:  Processing docids from input file.")
+    ### STOPPED HERE
+
+
 def validate_dirs(cfg, args):
 
     """Function:  validate_dirs
@@ -1137,12 +1160,12 @@ def main():
 
     cmdline = gen_libs.get_inst(sys)
     dir_perms_chk = {"-d": 5, "-m": 5, "-n": 7}
-    func_dict = {"-P": process_files, "-I": insert_data}
+    func_dict = {"-P": process_files, "-I": insert_data, "-F": file_input}
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
     opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y"]
-    opt_xor_dict = {"-I": ["-P"], "-P": ["-I"]}
+    opt_xor_dict = {"-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"]}
 
     # Process argument list from command line.
     args = gen_class.ArgParser(

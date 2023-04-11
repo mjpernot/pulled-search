@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.8] - 2023-03-28
+- Added ability to search for docids via an input file.
+
 ### Changed
 - load_processed, recall_search, update_processed: Changed from filenames to docids.
 - recall_search: Replaced section of call with call to search_docid.
