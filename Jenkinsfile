@@ -52,6 +52,7 @@ pipeline {
                 /usr/bin/python2 ./test/unit/pulled_search/process_json.py
                 /usr/bin/python2 ./test/unit/pulled_search/recall_search.py
                 /usr/bin/python2 ./test/unit/pulled_search/run_program.py
+                /usr/bin/python2 ./test/unit/pulled_search/search_docid.py
                 /usr/bin/python2 ./test/unit/pulled_search/update_processed.py
                 /usr/bin/python2 ./test/unit/pulled_search/validate_dirs.py
                 deactivate

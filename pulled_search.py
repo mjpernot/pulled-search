@@ -745,6 +745,32 @@ def process_failed(args, cfg, log, failed_dict):
         mail.send_mail()
 
 
+def search_docid(args, cfg, docid_dict, log):
+
+    """Function:  search_docid
+
+    Description:  Call the process_docid and check on status of docid.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) docid_dict -> Dictionary of individual docid
+        (input) log -> Log class instance
+        (output) docid_status -> Dictionary of status of docid processing
+
+    """
+
+    docid_status = dict()
+    status = process_docid(args, cfg, docid_dict, log)
+
+    if not status:
+        log.log_err("search_docid: Error detected for docid: %s"
+                    % (docid_dict))
+        docid_status[docid_dict["docid"]] = "Failed the process_docid process"
+
+    return docid_status
+
+
 def recall_search(args, cfg, log, file_dict):
 
     """Function:  recall_search
@@ -796,13 +822,7 @@ def recall_search(args, cfg, log, file_dict):
         if docid_dict:
             log.log_info("recall_search:  Security recall product found in: %s"
                          % (file_dict[docid]))
-            status = process_docid(args, cfg, docid_dict, log)
-
-            if not status:
-                log.log_err("One or more errors detected for docid: %s"
-                            % (docid_dict))
-                failed_dict[docid] = "Failed the process_docid process"
-
+            failed_dict.update(search_docid(args, cfg, docid_dict, log))
             docid_dict = dict()
 
     return failed_dict

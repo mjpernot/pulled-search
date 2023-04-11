@@ -11,6 +11,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - config/search.py.TEMPLATE: Combined processed_dir and processed_file entries into processed_file.
 - Documentation update.
 
+### Added
+- search_docid: Call the process_docid and check on status of docid.
+
 
 ## [0.1.7] - 2023-03-09
 ### Fixed
