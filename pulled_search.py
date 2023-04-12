@@ -15,7 +15,7 @@
     Usage:
         pulled_search.py -c file -d path
             {-P [-m path] [-a] [-i] |
-             -F [-a] [-i] |
+             -F /path/filename [-a] [-i] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -30,7 +30,7 @@
             -m dir_path => Directory to monitor for doc ID files.
             -a => This is an archive log search.
 
-        -F => Process Doc ID files send to RabbitMQ.
+        -F /path/filename => Process DocIDs from a file.
             -i => Insert the log entries directly to Mongodb.
             -a => This is an archive log search.
 
@@ -1190,6 +1190,7 @@ def main():
 
     cmdline = gen_libs.get_inst(sys)
     dir_perms_chk = {"-d": 5, "-m": 5, "-n": 7}
+    file_perms_chk = {"-F": 4}
     func_dict = {"-P": process_files, "-I": insert_data, "-F": file_input}
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
@@ -1206,7 +1207,8 @@ def main():
        and args.arg_require(opt_req=opt_req_list)                           \
        and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)                \
        and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
-       and args.arg_xor_dict(opt_xor_val=opt_xor_dict):
+       and args.arg_xor_dict(opt_xor_val=opt_xor_dict)                      \
+       and args.arg_file_chk(file_perm_chk=file_perms_chk):
 
         try:
             prog_lock = gen_class.ProgramLock(

@@ -7,6 +7,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Added ability to search for docids via an input file.
 
 ### Changed
+- main: Added gen_class.ArgsParser.arg_file_chk call to check -F option file.
 - load_processed, recall_search, update_processed: Changed from filenames to docids.
 - recall_search: Replaced sections of code with calls to search_docidi and remove_processed.
 - process_files: Removed YYYYMM from end of processed file name, all processed files will be stored in one file.
