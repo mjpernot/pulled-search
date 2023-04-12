@@ -15,6 +15,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Documentation update.
 
 ### Added
+- remove_processed: Removes any previous processed docids from the file_dict.
 - search_docid: Call the process_docid and check on status of docid.
 
 

@@ -777,6 +777,31 @@ def search_docid(args, cfg, docid_dict, log):
     return docid_status
 
 
+def remove_processed(cfg, log, file_dict):
+
+    """Function:  remove_processed
+
+    Description:  Removes any previous processed docids from the file_dict.
+
+    Arguments:
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) file_dict -> Dictionary list of docids
+        (output) file_dict -> Dict list of docids, processed docids removed
+
+    """
+
+    file_dict = dict(file_dict)
+    log.log_info("remove_processed:  Removing previous processed docids.")
+    processed_docids = load_processed(cfg.processed_file)
+
+    for p_docids in processed_docids:
+        if p_docids in file_dict:
+            file_dict.pop(p_docids)
+
+    return file_dict
+
+
 def recall_search(args, cfg, log, file_dict):
 
     """Function:  recall_search
@@ -876,12 +901,16 @@ def process_files(args, cfg, log):
         if docid not in file_dict:
             file_dict[docid] = filename
 
+###############################################################################
+# New function: file_dict = remove_processed(cfg, log, file_dict)
+#   Returns modified file_dict.
     log.log_info("process_files:  Removing previous processed docids.")
     processed_docids = load_processed(cfg.processed_file)
 
     for p_docids in processed_docids:
         if p_docids in file_dict:
             file_dict.pop(p_docids)
+###############################################################################
 
     failed_dict = recall_search(args, cfg, log, file_dict)
 
@@ -890,6 +919,34 @@ def process_files(args, cfg, log):
 
     if failed_dict:
         process_failed(args, cfg, log, failed_dict)
+
+
+def file_input(args, cfg, log):
+
+    """Function:  file_input
+
+    Description:  Process docids via input file.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+
+    """
+
+    log.log_info("file_input:  Processing docids from input file.")
+    # 1. Read in file.
+    # 2. Loop on file lines:
+        # a. Parse file line
+        # b. If line is not in dictionary, put in dictionary.
+        # c. If line is in dictionary, but different then dictionary, log it.
+    # 3. Remove previous processed docids
+        # a. Log any previous processed entries into log.
+        # Note: Will have override option.
+    # 4. Call recall_search2()
+    # 5. Update processed file.
+        # What happens if override option is on?
+    # 6. Process failed docids.
 
 
 def insert_data(args, cfg, log):
@@ -929,23 +986,6 @@ def insert_data(args, cfg, log):
         nonproc_list = cleanup_files(
             insert_list, processed_list, cfg.marchive_dir, log)
         non_processed(nonproc_list, cfg.merror_dir, log, mail)
-
-
-def file_input(args, cfg, log):
-
-    """Function:  file_input
-
-    Description:  Process docids via input file.
-
-    Arguments:
-        (input) args -> ArgParser class instance
-        (input) cfg -> Configuration setup
-        (input) log -> Log class instance
-
-    """
-
-    log.log_info("file_input:  Processing docids from input file.")
-    ### STOPPED HERE
 
 
 def validate_dirs(cfg, args):
