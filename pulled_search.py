@@ -901,17 +901,7 @@ def process_files(args, cfg, log):
         if docid not in file_dict:
             file_dict[docid] = filename
 
-###############################################################################
-# New function: file_dict = remove_processed(cfg, log, file_dict)
-#   Returns modified file_dict.
-    log.log_info("process_files:  Removing previous processed docids.")
-    processed_docids = load_processed(cfg.processed_file)
-
-    for p_docids in processed_docids:
-        if p_docids in file_dict:
-            file_dict.pop(p_docids)
-###############################################################################
-
+    file_dict = remove_processed(cfg, log, file_dict)
     failed_dict = recall_search(args, cfg, log, file_dict)
 
     if file_dict:

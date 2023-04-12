@@ -160,18 +160,20 @@ class UnitTest(unittest.TestCase):
         self.docid_files2 = [f_name]
         self.docid_files3 = [f_name, "/path/file-2-09docid2.html"]
         self.docid_files4 = [f_name, f_name]
-        self.processed_files = list()
-        self.processed_files2 = ["09docid2"]
+        self.file_dict = {"09docid1": "metadata"}
+        self.file_dict2 = {"09docid1": "metadata", "09docid2": "metadata"}
+        self.file_dict3 = dict()
         self.failed_dict = list()
         self.failed_dict2 = {"09docid1": f_name}
 
     @mock.patch("pulled_search.process_failed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_failed_dict(self, mock_log, mock_search, mock_load, mock_recall):
+    def test_failed_dict(self, mock_log, mock_search, mock_remove,
+                         mock_recall):
 
         """Function:  test_failed_dict
 
@@ -182,7 +184,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files3
-        mock_load.return_value = self.processed_files2
+        mock_remove.return_value = self.file_dict
         mock_recall.return_value = self.failed_dict2
 
         self.assertFalse(
@@ -190,10 +192,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_update_process(self, mock_log, mock_search, mock_load,
+    def test_update_process(self, mock_log, mock_search, mock_remove,
                             mock_recall):
 
         """Function:  test_update_process
@@ -205,7 +207,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files3
-        mock_load.return_value = self.processed_files2
+        mock_remove.return_value = self.file_dict
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
@@ -213,10 +215,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_processed_file_dupes(self, mock_log, mock_search, mock_load,
+    def test_processed_file_dupes(self, mock_log, mock_search, mock_remove,
                                   mock_recall):
 
         """Function:  test_processed_file_dupes
@@ -228,7 +230,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files3
-        mock_load.return_value = self.processed_files2
+        mock_remove.return_value = self.file_dict
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
@@ -236,10 +238,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_processed_file_exist(self, mock_log, mock_search, mock_load,
+    def test_processed_file_exist(self, mock_log, mock_search, mock_remove,
                                   mock_recall):
 
         """Function:  test_processed_file_exist
@@ -251,7 +253,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files2
-        mock_load.return_value = self.processed_files2
+        mock_remove.return_value = self.file_dict2
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
@@ -259,10 +261,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_processed_file_none(self, mock_log, mock_search, mock_load,
+    def test_processed_file_none(self, mock_log, mock_search, mock_remove,
                                  mock_recall):
 
         """Function:  test_processed_file_none
@@ -274,7 +276,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files3
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict2
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
@@ -282,10 +284,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_file_dict_dupes(self, mock_log, mock_search, mock_load,
+    def test_file_dict_dupes(self, mock_log, mock_search, mock_remove,
                              mock_recall):
 
         """Function:  test_file_dict_dupes
@@ -297,7 +299,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files4
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
@@ -305,10 +307,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_file_dict_no_dupes(self, mock_log, mock_search, mock_load,
+    def test_file_dict_no_dupes(self, mock_log, mock_search, mock_remove,
                                 mock_recall):
 
         """Function:  test_file_dict_no_dupes
@@ -320,7 +322,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files3
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict2
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
@@ -328,10 +330,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_docid_files_multiple(self, mock_log, mock_search, mock_load,
+    def test_docid_files_multiple(self, mock_log, mock_search, mock_remove,
                                   mock_recall):
 
         """Function:  test_docid_files_multiple
@@ -343,7 +345,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files3
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict2
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
@@ -351,10 +353,10 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_docid_files_single(self, mock_log, mock_search, mock_load,
+    def test_docid_files_single(self, mock_log, mock_search, mock_remove,
                                 mock_recall):
 
         """Function:  test_docid_files_single
@@ -366,17 +368,17 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files2
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_docid_files_empty(self, mock_log, mock_search, mock_load,
+    def test_docid_files_empty(self, mock_log, mock_search, mock_remove,
                                mock_recall):
 
         """Function:  test_docid_files_empty
@@ -388,17 +390,17 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict3
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_search_dir_multiple(self, mock_log, mock_search, mock_load,
+    def test_search_dir_multiple(self, mock_log, mock_search, mock_remove,
                                  mock_recall):
 
         """Function:  test_search_dir_multiple
@@ -410,17 +412,17 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict3
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg2, mock_log))
 
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_search_dir_single(self, mock_log, mock_search, mock_load,
+    def test_search_dir_single(self, mock_log, mock_search, mock_remove,
                                mock_recall):
 
         """Function:  test_search_dir_single
@@ -432,17 +434,18 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_search.return_value = self.docid_files
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict3
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
     @mock.patch("pulled_search.recall_search")
-    @mock.patch("pulled_search.load_processed")
+    @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_arg_m_option(self, mock_log, mock_search, mock_load, mock_recall):
+    def test_arg_m_option(self, mock_log, mock_search, mock_remove,
+                          mock_recall):
 
         """Function:  test_arg_m_option
 
@@ -455,7 +458,7 @@ class UnitTest(unittest.TestCase):
         self.args.args_array = self.args_array
 
         mock_search.return_value = self.docid_files
-        mock_load.return_value = self.processed_files
+        mock_remove.return_value = self.file_dict3
         mock_recall.return_value = self.failed_dict
 
         self.assertFalse(
