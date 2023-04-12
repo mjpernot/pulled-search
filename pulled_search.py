@@ -925,11 +925,23 @@ def file_input(args, cfg, log):
     """
 
     log.log_info("file_input:  Processing docids from input file.")
-    # 1. Read in file.
-    # 2. Loop on file lines:
-        # a. Parse file line
-        # b. If line is not in dictionary, put in dictionary.
-        # c. If line is in dictionary, but different then dictionary, log it.
+    docid_dict = dict()
+    file_list = gen_libs.file_2_list(args.get_val("-F"))
+
+    for line in file_list:
+        docid = fname.split(" ")[0]
+        metadata = {
+            "command": fname.split(" ")[1], "pubdate": fname.split(" ")[2]}
+
+        if docid not in docid_dict:
+            docid_dict[docid] = metadata
+
+        else:
+            log.log_warn("file_input: Duplicate lines detected in file.")
+            log.log_warn("Docid: %s" % (docid))
+            log.log_want("Line 1: %s" % (docid_dict[docid]))
+            log.log_want("Line 2: %s" % (metadata))
+### STOPPED HERE
     # 3. Remove previous processed docids
         # a. Log any previous processed entries into log.
         # Note: Will have override option.
