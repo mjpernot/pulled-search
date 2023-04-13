@@ -859,6 +859,26 @@ def recall_search(args, cfg, log, file_dict):
     return failed_dict
 
 
+def recall_search2(args, cfg, log, docid_dict):
+
+    """Function:  recall_search2
+
+    Description:  Search for docids from an input file and process those files.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) docid_dict -> Dictionary list of docids to process
+        (output) failed_dict -> Dictionary list of files that failed to process
+
+    """
+
+    docid_dict = dict(docid_dict)
+
+    for docid in docid_dict:
+### STOPPED HERE
+
 def process_files(args, cfg, log):
 
     """Function:  process_files
@@ -909,24 +929,6 @@ def process_files(args, cfg, log):
 
     if failed_dict:
         process_failed(args, cfg, log, failed_dict)
-
-
-def recall_search2(args, cfg, log, docid_dict):
-
-    """Function:  recall_search2
-
-    Description:  Search for docids from an input file and process those files.
-
-    Arguments:
-        (input) args -> ArgParser class instance
-        (input) cfg -> Configuration setup
-        (input) log -> Log class instance
-        (input) docid_dict -> Dictionary list of docids to process
-        (output) failed_dict -> Dictionary list of files that failed to process
-
-    """
-
-    docid_dict = dict(docid_dict)
 
 
 def file_input(args, cfg, log):
