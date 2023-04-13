@@ -911,6 +911,24 @@ def process_files(args, cfg, log):
         process_failed(args, cfg, log, failed_dict)
 
 
+def recall_search2(args, cfg, log, docid_dict):
+
+    """Function:  recall_search2
+
+    Description:  Search for docids from an input file and process those files.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) docid_dict -> Dictionary list of docids to process
+        (output) failed_dict -> Dictionary list of files that failed to process
+
+    """
+
+    docid_dict = dict(docid_dict)
+
+
 def file_input(args, cfg, log):
 
     """Function:  file_input
@@ -929,9 +947,9 @@ def file_input(args, cfg, log):
     file_list = gen_libs.file_2_list(args.get_val("-F"))
 
     for line in file_list:
-        docid = fname.split(" ")[0]
+        docid = line.split(" ")[0]
         metadata = {
-            "command": fname.split(" ")[1], "pubdate": fname.split(" ")[2]}
+            "command": line.split(" ")[1], "pubdate": line.split(" ")[2]}
 
         if docid not in docid_dict:
             docid_dict[docid] = metadata
@@ -941,14 +959,15 @@ def file_input(args, cfg, log):
             log.log_warn("Docid: %s" % (docid))
             log.log_want("Line 1: %s" % (docid_dict[docid]))
             log.log_want("Line 2: %s" % (metadata))
-### STOPPED HERE
-    # 3. Remove previous processed docids
-        # a. Log any previous processed entries into log.
-        # Note: Will have override option.
-    # 4. Call recall_search2()
-    # 5. Update processed file.
-        # What happens if override option is on?
-    # 6. Process failed docids.
+
+    docid_dict = remove_processed(cfg, log, docid_dict)
+    failed_dict = recall_search2(args, cfg, log, docid_dict)
+
+    if docid_dict:
+        update_processed(log, cfg.processed_file, docid_dict)
+
+    if failed_dict:
+        process_failed(args, cfg, log, failed_dict)
 
 
 def insert_data(args, cfg, log):
