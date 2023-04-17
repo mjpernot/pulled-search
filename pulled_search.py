@@ -863,21 +863,31 @@ def recall_search2(args, cfg, log, docid_dict):
 
     """Function:  recall_search2
 
-    Description:  Search for docids from an input file and process those files.
+    Description:  Get docids from an input file and process the docids.
 
     Arguments:
         (input) args -> ArgParser class instance
         (input) cfg -> Configuration setup
         (input) log -> Log class instance
-        (input) docid_dict -> Dictionary list of docids to process
-        (output) failed_dict -> Dictionary list of files that failed to process
+        (input) docid_dict -> Dictionary of docids to process
+        (output) failed_dict -> Dictionary of docids that failed to process
 
     """
 
     docid_dict = dict(docid_dict)
+    t_docid = dict()
+    failed_dict = dict()
 
     for docid in docid_dict:
-### STOPPED HERE
+        log.log_info("recall_search2:  Processing docid: %s" % (docid))
+        t_docid["docid"] = docid
+        t_docid["command"] = docid_dict[docid]["command"]
+        t_docid["pubdate"] = docid_dict[docid]["pubdate"]
+        failed_dict.update(search_docid(args, cfg, t_docid, log))
+        t_docid = dict()
+
+    return failed_dict
+
 
 def process_files(args, cfg, log):
 
