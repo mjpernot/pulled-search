@@ -9,11 +9,13 @@
         files for the docid in the file.  Any entries found will be converted
         into a JSON document and send to a RabbitMQ queue.  The program also
         has the ability to detect when new search pulled product log entries
-        are available to be inserted into a database.
+        are available to be inserted into a database.  The program now has the
+        the ability to search for docids listed in a file.
 
     Usage:
         pulled_search.py -c file -d path
             {-P [-m path] [-a] [-i] |
+             -F /path/filename [-a] [-i] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -26,6 +28,10 @@
         -P => Process Doc ID files send to RabbitMQ.
             -i => Insert the log entries directly to Mongodb.
             -m dir_path => Directory to monitor for doc ID files.
+            -a => This is an archive log search.
+
+        -F /path/filename => Process DocIDs from a file.
+            -i => Insert the log entries directly to Mongodb.
             -a => This is an archive log search.
 
         -I => Insert Pulled Search files into Mongodb.
@@ -44,7 +50,7 @@
         NOTE 1:  -v or -h overrides the other options.
         NOTE 2:  -t option is for reporting any errors detected.
         NOTE 3:  -s requires -t option to be included.
-        NOTE 4:  -P and -I are XOR options.
+        NOTE 4:  -P, -F and -I are XOR options.
         NOTE 5:  -m and -n options will override the configuration settings.
             The -m option is mapped to the doc_dir configuration entry, and
             the -n option is mapped to the monitor_dir configuration entry.
@@ -53,6 +59,14 @@
             of compressed file will not work.
         NOTE 7: -i option overrides sending the JSON document to RabbitMQ
             directly or via email.
+
+    Input files:
+        The file for the -F option must be in the following layout in ACSII
+        format.  The fields are space-delimited.
+        Each line of the file consists of three fields:
+            docid command publication_date
+        Example:
+            09109abcdef EUCOM 20230417
 
     Configuration files:
         Configuration file (config/search.py.TEMPLATE).  Below is the
@@ -72,10 +86,8 @@
         # NOTE: Do not include the YYYY/MM as part of the path as this will be
         #   added.
         doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
-        # Directory where files with previous processed files are stored at.
-        processed_dir = "BASE_PATH/processed"
-        # File name for previous processed files.
-        processed_file = "processed"
+        # Path and file name for previous processed files.
+        processed_file = "BASE_PATH/processed/processed"
         # Regular expression for search for log file names.
         file_regex = "-PULLED-"
         # Regular expression for search for recalled products.
@@ -677,25 +689,23 @@ def load_processed(processed_fname):
 
     """Function:  load_processed
 
-    Description:  Read in the previous processed file names.
+    Description:  Read in the previous processed docids.
 
     Arguments:
         (input) processed_fname -> Name of processed file
-        (output) processed_files -> List of processed file names
+        (output) processed_docids -> List of processed docids
 
     """
 
     try:
         with open(processed_fname) as fhdr:
-            processed_files = fhdr.readlines()
-            processed_files = [
-                os.path.basename(line).rstrip() for line in processed_files]
+            processed_docids = [line.rstrip() for line in fhdr.readlines()]
 
     except IOError as msg:
         if msg.args[1] == "No such file or directory":
-            processed_files = list()
+            processed_docids = list()
 
-    return processed_files
+    return processed_docids
 
 
 def update_processed(log, processed_fname, file_dict):
@@ -717,7 +727,7 @@ def update_processed(log, processed_fname, file_dict):
 
     with open(processed_fname, "a") as fhdr:
         for item in file_dict:
-            fhdr.write(file_dict[item] + "\n")
+            fhdr.write(item + "\n")
 
 
 def process_failed(args, cfg, log, failed_dict):
@@ -749,6 +759,57 @@ def process_failed(args, cfg, log, failed_dict):
         mail.send_mail()
 
 
+def search_docid(args, cfg, docid_dict, log):
+
+    """Function:  search_docid
+
+    Description:  Call the process_docid and check on status of docid.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) docid_dict -> Dictionary of individual docid
+        (input) log -> Log class instance
+        (output) docid_status -> Dictionary of status of docid processing
+
+    """
+
+    docid_status = dict()
+    status = process_docid(args, cfg, docid_dict, log)
+
+    if not status:
+        log.log_err("search_docid: Error detected for docid: %s"
+                    % (docid_dict))
+        docid_status[docid_dict["docid"]] = "Failed the process_docid process"
+
+    return docid_status
+
+
+def remove_processed(cfg, log, file_dict):
+
+    """Function:  remove_processed
+
+    Description:  Removes any previous processed docids from the file_dict.
+
+    Arguments:
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) file_dict -> Dictionary list of docids
+        (output) file_dict -> Dict list of docids, processed docids removed
+
+    """
+
+    file_dict = dict(file_dict)
+    log.log_info("remove_processed:  Removing previous processed docids.")
+    processed_docids = load_processed(cfg.processed_file)
+
+    for p_docids in processed_docids:
+        if p_docids in file_dict:
+            file_dict.pop(p_docids)
+
+    return file_dict
+
+
 def recall_search(args, cfg, log, file_dict):
 
     """Function:  recall_search
@@ -771,16 +832,17 @@ def recall_search(args, cfg, log, file_dict):
     failed_dict = dict()
     file_dict = dict(file_dict)
 
-    for fname in file_dict:
-        log.log_info("recall_search:  Searching file: %s" % (fname))
+    for docid in file_dict:
+        log.log_info("recall_search:  Docid: %s File: %s"
+                     % (docid, file_dict[docid]))
         try:
-            with open(file_dict[fname], "r") as fhdr:
+            with open(file_dict[docid], "r") as fhdr:
                 data = fhdr.readlines()
                 lines = [line.rstrip() for line in data]
 
         except IOError as msg:
             log.log_err("recall_search: Failed to open file!")
-            failed_dict[fname] = msg.args[1]
+            failed_dict[docid] = msg.args[1]
             lines = list()
 
         if lines:
@@ -788,25 +850,49 @@ def recall_search(args, cfg, log, file_dict):
 
         for line in lines:
             if re.search(cfg.pattern, line):
+                fname = os.path.basename(file_dict[docid])
                 docid_dict["command"] = fname.split("-")[0]
                 docid_dict["pubdate"] = re.split(
                     r"-|\.", fname)[re.split(
                         r"-|\.", fname).index('PULLED') + 1]
-                docid_dict["docid"] = re.split(
-                    r"-|\.", fname)[re.split(r"-|\.", fname).index('html') - 1]
+                docid_dict["docid"] = docid
                 break
 
         if docid_dict:
-            log.log_info("recall_search:  Security recalled product found: %s"
-                         % (docid_dict))
-            status = process_docid(args, cfg, docid_dict, log)
-
-            if not status:
-                log.log_err("One or more errors detected for docid: %s"
-                            % (docid_dict))
-                failed_dict[fname] = "Failed the process_docid process"
-
+            log.log_info("recall_search:  Security recall product found in: %s"
+                         % (file_dict[docid]))
+            failed_dict.update(search_docid(args, cfg, docid_dict, log))
             docid_dict = dict()
+
+    return failed_dict
+
+
+def recall_search2(args, cfg, log, docid_dict):
+
+    """Function:  recall_search2
+
+    Description:  Get docids from an input file and process the docids.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) docid_dict -> Dictionary of docids to process
+        (output) failed_dict -> Dictionary of docids that failed to process
+
+    """
+
+    docid_dict = dict(docid_dict)
+    t_docid = dict()
+    failed_dict = dict()
+
+    for docid in docid_dict:
+        log.log_info("recall_search2:  Processing docid: %s" % (docid))
+        t_docid["docid"] = docid
+        t_docid["command"] = docid_dict[docid]["command"]
+        t_docid["pubdate"] = docid_dict[docid]["pubdate"]
+        failed_dict.update(search_docid(args, cfg, t_docid, log))
+        t_docid = dict()
 
     return failed_dict
 
@@ -827,7 +913,6 @@ def process_files(args, cfg, log):
     log.log_info("process_files:  Locating pulled files.")
     docid_files = list()
     yearmon = datetime.date.strftime(datetime.datetime.now(), "%Y/%m")
-    yearmon2 = datetime.date.strftime(datetime.datetime.now(), "%Y%m")
     search_dir = list()
 
     if args.get_val("-m", def_val=None):
@@ -843,28 +928,63 @@ def process_files(args, cfg, log):
             docdir, cfg.file_regex, add_path=True)
         docid_files.extend(tmp_list)
 
-    log.log_info("process_files:  Removing duplicate pulled files.")
+    log.log_info("process_files:  Removing duplicate pulled docids.")
     file_dict = {}
 
-    for full_filename in docid_files:
-        file_name = os.path.basename(full_filename)
+    for filename in docid_files:
+        docid = re.split(
+            r"-|\.", os.path.basename(filename))[
+                re.split(r"-|\.", filename).index('html') - 1]
 
-        if file_name not in file_dict:
-            file_dict[file_name] = full_filename
+        if docid not in file_dict:
+            file_dict[docid] = filename
 
-    log.log_info("process_files:  Removing previous processed files.")
-    processed_fname = os.path.join(
-        cfg.processed_dir, cfg.processed_file + "." + yearmon2)
-    processed_files = load_processed(processed_fname)
-
-    for p_filename in processed_files:
-        if p_filename in file_dict:
-            file_dict.pop(p_filename)
-
+    file_dict = remove_processed(cfg, log, file_dict)
     failed_dict = recall_search(args, cfg, log, file_dict)
 
     if file_dict:
-        update_processed(log, processed_fname, file_dict)
+        update_processed(log, cfg.processed_file, file_dict)
+
+    if failed_dict:
+        process_failed(args, cfg, log, failed_dict)
+
+
+def file_input(args, cfg, log):
+
+    """Function:  file_input
+
+    Description:  Process docids via input file.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+
+    """
+
+    log.log_info("file_input:  Processing docids from input file.")
+    docid_dict = dict()
+    file_list = gen_libs.file_2_list(args.get_val("-F"))
+
+    for line in file_list:
+        docid = line.split(" ")[0]
+        metadata = {
+            "command": line.split(" ")[1], "pubdate": line.split(" ")[2]}
+
+        if docid not in docid_dict:
+            docid_dict[docid] = metadata
+
+        else:
+            log.log_warn("file_input: Duplicate lines detected in file.")
+            log.log_warn("Docid: %s" % (docid))
+            log.log_want("Line 1: %s" % (docid_dict[docid]))
+            log.log_want("Line 2: %s" % (metadata))
+
+    docid_dict = remove_processed(cfg, log, docid_dict)
+    failed_dict = recall_search2(args, cfg, log, docid_dict)
+
+    if docid_dict:
+        update_processed(log, cfg.processed_file, docid_dict)
 
     if failed_dict:
         process_failed(args, cfg, log, failed_dict)
@@ -964,11 +1084,12 @@ def validate_dirs(cfg, args):
         msg_dict[cfg.error_dir] = msg
 
     # Directory where files with previous processed files are stored at
+    basepath2 = gen_libs.get_base_dir(cfg.processed_file)
     status, msg = gen_libs.chk_crt_dir(
-        cfg.processed_dir, write=True, create=True, no_print=True)
+        basepath2, write=True, create=True, no_print=True)
 
     if not status:
-        msg_dict[cfg.processed_dir] = msg
+        msg_dict[basepath2] = msg
 
     return msg_dict
 
@@ -1120,12 +1241,13 @@ def main():
 
     cmdline = gen_libs.get_inst(sys)
     dir_perms_chk = {"-d": 5, "-m": 5, "-n": 7}
-    func_dict = {"-P": process_files, "-I": insert_data}
+    file_perms_chk = {"-F": 4}
+    func_dict = {"-P": process_files, "-I": insert_data, "-F": file_input}
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
     opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y"]
-    opt_xor_dict = {"-I": ["-P"], "-P": ["-I"]}
+    opt_xor_dict = {"-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"]}
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
@@ -1136,7 +1258,8 @@ def main():
        and args.arg_require(opt_req=opt_req_list)                           \
        and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)                \
        and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
-       and args.arg_xor_dict(opt_xor_val=opt_xor_dict):
+       and args.arg_xor_dict(opt_xor_val=opt_xor_dict)                      \
+       and args.arg_file_chk(file_perm_chk=file_perms_chk):
 
         try:
             prog_lock = gen_class.ProgramLock(
