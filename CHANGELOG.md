@@ -3,6 +3,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.8] - 2023-03-28
+- Added ability to search for docids via an input file.
+
+### Changed
+- main: Added gen_class.ArgsParser.arg_file_chk call to check -F option file.
+- load_processed, recall_search, update_processed: Changed from filenames to docids.
+- recall_search: Replaced sections of code with calls to search_docidi and remove_processed.
+- process_files: Removed YYYYMM from end of processed file name, all processed files will be stored in one file.
+- process_files, validate_dirs: Replaced cfg.processed_dir with cfg.processed_file.
+- config/search.py.TEMPLATE: Combined processed_dir and processed_file entries into processed_file.
+- Documentation update.
+
+### Added
+- recall_search2: Get docids from an input file and process the docids.
+- file_input: Process docids via input file.
+- remove_processed: Removes any previous processed docids from the file_dict.
+- search_docid: Call the process_docid and check on status of docid.
+
+
 ## [0.1.7] - 2023-03-09
 ### Fixed
 - process_docid: Added check in to see if check_log outfile exists.
@@ -135,6 +154,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [0.1.0] - 2020-03-13
+- Alpha version release.
+
 ### Fixed
 - process_docid:  Seralize the json document before inserting into RabbitMQ.
 
