@@ -60,6 +60,14 @@
         NOTE 7: -i option overrides sending the JSON document to RabbitMQ
             directly or via email.
 
+    Input files:
+        The -F file option must be in the following layout in an ACSII format.
+        Each line of the file consists of three fields:
+            docid command publication_date
+        The fields are space-delimited.
+        Example:
+            09109abcdef EUCOM 20230417
+
     Configuration files:
         Configuration file (config/search.py.TEMPLATE).  Below is the
         configuration file format for the environment setup in the program.

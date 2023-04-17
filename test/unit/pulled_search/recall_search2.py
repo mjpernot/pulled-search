@@ -109,14 +109,13 @@ class UnitTest(unittest.TestCase):
         docid2 = "090109fedcba"
         self.docid_dict = {}
         self.docid_dict2 = {docid: {"command": "eucom", "pubdate": "20230417"}}
-        self.docid_dict3 = {docid: {
-            "command": "eucom", "pubdate": "20230417",
-            "command": "socom", "pubdate": "20230120"}}
+        self.docid_dict3 = {
+            docid: {"command": "eucom", "pubdate": "20230417"},
+            docid2: {"command": "socom", "pubdate": "20230120"}}
         self.results = dict()
         self.results2 = {docid: "Failed the process_docid process"}
         self.docid_results = dict()
         self.docid_results2 = {docid: "Failed the process_docid process"}
-        
 
     @mock.patch("pulled_search.search_docid", mock.Mock(return_value=dict()))
     @mock.patch("pulled_search.gen_class.Logger")

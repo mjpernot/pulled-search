@@ -130,7 +130,6 @@ class UnitTest(unittest.TestCase):
         self.results3 = {self.docid: "Failed the process_docid process"}
         self.docid_results = dict()
         self.docid_results2 = {self.docid: "Failed the process_docid process"}
-        
 
     @mock.patch("pulled_search.search_docid")
     @mock.patch("pulled_search.gen_class.Logger")

@@ -67,7 +67,6 @@ class UnitTest(unittest.TestCase):
 
     """
 
-
     def setUp(self):
 
         """Function:  setUp
