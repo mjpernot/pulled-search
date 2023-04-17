@@ -81,8 +81,7 @@ Make the appropriate changes to the environment.
   * Make the appropriate changes to Process/Search setup section.
   * Update this section if using the -P option.
     - doc_dir = "DOC_DIR_PATH"
-    - processed_dir = "BASE_PATH/processed"
-    - processed_file = "processed"
+    - processed_file = "BASE_PATH/processed/processed"
     - file_regex = "-PULLED-"
     - pattern = "JAC.pull.subtype.\*.SECURITY RECALL"
     - log_dir = "LOG_DIR_PATH"

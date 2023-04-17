@@ -39,6 +39,7 @@ class ArgParser(object):
         arg_cond_req_or
         arg_dir_chk
         arg_exist
+        arg_file_chk
         arg_require
         get_args
         get_val
@@ -62,6 +63,8 @@ class ArgParser(object):
         self.opt_req2 = True
         self.dir_perms_chk = None
         self.dir_perms_chk2 = True
+        self.file_perm_chk = None
+        self.file_perm_chk2 = True
         self.opt_con_or = None
         self.opt_con_or2 = True
         self.opt_xor_val = None
@@ -107,6 +110,20 @@ class ArgParser(object):
         """
 
         return True if arg in self.args_array else False
+
+    def arg_file_chk(self, file_perm_chk):
+
+        """Method:  arg_file_chk
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_file_chk.
+
+        Arguments:
+
+        """
+
+        self.file_perm_chk = file_perm_chk
+
+        return self.file_perm_chk2
 
     def arg_require(self, opt_req):
 
@@ -204,6 +221,8 @@ class UnitTest(unittest.TestCase):
         test_dir_chk_crt_true
         test_xor_dict_false
         test_xor_dict_true
+        test_arg_file_chk_false
+        test_arg_file_chk_true
         test_run_program
         test_programlock_true
         test_programlock_false
@@ -400,15 +419,53 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.main())
 
-    @mock.patch("pulled_search.run_program", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_class.ProgramLock")
     @mock.patch("pulled_search.gen_libs.help_func")
     @mock.patch("pulled_search.gen_class.ArgParser")
-    def test_xor_dict_true(self, mock_arg, mock_help, mock_lock):
+    def test_xor_dict_true(self, mock_arg, mock_help):
 
         """Function:  test_xor_dict_true
 
         Description:  Test with arg_xor_dict returns True.
+
+        Arguments:
+
+        """
+
+        self.args.file_perm_chk2 = False
+
+        mock_arg.return_value = self.args
+        mock_help.return_value = False
+
+        self.assertFalse(pulled_search.main())
+
+    @mock.patch("pulled_search.gen_libs.help_func")
+    @mock.patch("pulled_search.gen_class.ArgParser")
+    def test_arg_file_chk_false(self, mock_arg, mock_help):
+
+        """Function:  test_arg_file_chk_false
+
+        Description:  Test with arg_file_chk returns False.
+
+        Arguments:
+
+        """
+
+        self.args.file_perm_chk2 = False
+
+        mock_arg.return_value = self.args
+        mock_help.return_value = False
+
+        self.assertFalse(pulled_search.main())
+
+    @mock.patch("pulled_search.run_program", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.gen_class.ProgramLock")
+    @mock.patch("pulled_search.gen_libs.help_func")
+    @mock.patch("pulled_search.gen_class.ArgParser")
+    def test_arg_file_chk_true(self, mock_arg, mock_help, mock_lock):
+
+        """Function:  test_arg_file_chk_true
+
+        Description:  Test with arg_file_chk returns True.
 
         Arguments:
 
