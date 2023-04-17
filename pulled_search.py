@@ -61,10 +61,10 @@
             directly or via email.
 
     Input files:
-        The -F file option must be in the following layout in an ACSII format.
+        The file for the -F option must be in the following layout in ACSII
+        format.  The fields are space-delimited.
         Each line of the file consists of three fields:
             docid command publication_date
-        The fields are space-delimited.
         Example:
             09109abcdef EUCOM 20230417
 
