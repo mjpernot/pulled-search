@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.9] - 2023-04-25
+
+
 ## [0.1.8] - 2023-03-28
 - Added ability to search for docids via an input file.
 
