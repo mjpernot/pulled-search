@@ -1246,7 +1246,7 @@ def main():
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
-    opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y"]
+    opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y", "-F"]
     opt_xor_dict = {"-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"]}
 
     # Process argument list from command line.

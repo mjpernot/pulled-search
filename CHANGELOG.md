@@ -5,6 +5,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.9] - 2023-04-25
 
+### Fixed
+- main: Added -F option to opt_val_list variable.
+
 
 ## [0.1.8] - 2023-03-28
 - Added ability to search for docids via an input file.
