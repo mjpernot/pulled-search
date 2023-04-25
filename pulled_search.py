@@ -1254,7 +1254,7 @@ def main():
         cmdline.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
         do_parse=True)
 
-    if not gen_libs.help_func(args.get_args(), __version__, help_message)   \
+    if not gen_libs.help_func(args, __version__, help_message)   \
        and args.arg_require(opt_req=opt_req_list)                           \
        and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)                \
        and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \

@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.9] - 2023-04-25
+- Upgraded python-lib to v2.10.1
 
 ### Fixed
 - main: Added -F option to opt_val_list variable.
+
+### Changed
+- main: Changed gen_libs.help_func call to pass ArgParser class instance.
 
 
 ## [0.1.8] - 2023-03-28
