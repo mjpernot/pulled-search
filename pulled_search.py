@@ -586,8 +586,8 @@ def process_json(args, cfg, log, log_json):
         status = parse_data(args, cfg, log, log_json)
 
     elif cfg.to_addr and cfg.subj:
-        log.log_info("process_json:  Emailing JSON log entries to: %s"
-                     % (cfg.to_addr))
+        log.log_info("process_json:  Email log entries to: %s, Subject: %s"
+                     % (cfg.to_addr, cfg.subj))
         mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
         mail.add_2_msg(log_json)
         mail.send_mail()

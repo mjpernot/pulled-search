@@ -11,6 +11,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ### Changed
 - main: Changed gen_libs.help_func call to pass ArgParser class instance.
+- process_json: Added email subject to log entry when using mail option.
 
 
 ## [0.1.8] - 2023-03-28
