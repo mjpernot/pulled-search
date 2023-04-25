@@ -417,6 +417,7 @@ def process_docid(args, cfg, docid_dict, log):
 
     cmd_regex = cmd + ".*" + cfg.log_type
 
+###STOPPED HERE
     if args.arg_exist("-a"):
         log.log_info("process_docid:  Searching archive directory: %s"
                      % (cfg.archive_log_dir))
@@ -891,6 +892,7 @@ def recall_search2(args, cfg, log, docid_dict):
         t_docid["docid"] = docid
         t_docid["command"] = docid_dict[docid]["command"]
         t_docid["pubdate"] = docid_dict[docid]["pubdate"]
+        t_docid["pulldate"] = docid_dict[docid]["pulldate"]
         failed_dict.update(search_docid(args, cfg, t_docid, log))
         t_docid = dict()
 
@@ -969,7 +971,9 @@ def file_input(args, cfg, log):
     for line in file_list:
         docid = line.split(" ")[0]
         metadata = {
-            "command": line.split(" ")[1], "pubdate": line.split(" ")[2]}
+            "command": line.split(" ")[1],
+            "pubdate": line.split(" ")[2],
+            "pulldate": line.split(" ")[3]}
 
         if docid not in docid_dict:
             docid_dict[docid] = metadata

@@ -4,12 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.1.9] - 2023-04-25
+- Added pulldate for docids coming in via file.
 - Upgraded python-lib to v2.10.1
 
 ### Fixed
 - main: Added -F option to opt_val_list variable.
 
 ### Changed
+- recall_search2: Passed pulldate to the search_docid call.
+- file_input: Parsed pulldate from input file.
 - main: Changed gen_libs.help_func call to pass ArgParser class instance.
 - process_json: Added email subject to log entry when using mail option.
 
