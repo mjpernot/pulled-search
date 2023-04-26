@@ -419,12 +419,13 @@ def process_docid(args, cfg, docid_dict, log):
 
     cmd_regex = cmd + ".*" + cfg.log_type
 
-###STOPPED HERE
     if args.arg_exist("-a"):
         log.log_info("process_docid:  Searching archive directory: %s"
                      % (cfg.archive_log_dir))
+        pulldate = docid_dict["pulldate"] if "pulldate" in docid_dict else None
         log_files = get_archive_files(
-            cfg.archive_log_dir, cmd, docid_dict["pubdate"], cmd_regex)
+            cfg.archive_log_dir, cmd, docid_dict["pubdate"], cmd_regex,
+            pulldate=pulldate)
 
     else:
         log.log_info("process_docid:  Searching apache log directory: %s"
