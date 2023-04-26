@@ -363,7 +363,7 @@ def non_processed(docid_files, error_dir, log, mail=None):
             mail.send_mail()
 
 
-def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
+def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
 
     """Function:  get_archive_files
 
@@ -374,6 +374,8 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
         (input) cmd -> Command to search in
         (input) pubdate -> Published date of document
         (input) cmd_regex -> Regular expression of log file name
+        (input) kwargs:
+            pulldate -> Date document was pulled.
         (output) log_files -> List of archive log files to search
 
     """
@@ -381,7 +383,10 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
     log_files = []
     cmd_dir = os.path.join(archive_dir, cmd)
     start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
-    end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
+    end_dt = kwargs.get("pulldate") if kwargs.get("pulldate", None) \
+             else datetime.datetime.now() - datetime.timedelta(days=1)
+    # end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
+    # STOPPED HERE - update unit test module
 
     for date in gen_libs.date_range(start_dt, end_dt):
         yearmon = datetime.date.strftime(date, "%Y/%m")
