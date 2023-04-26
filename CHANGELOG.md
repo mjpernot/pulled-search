@@ -11,10 +11,12 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main: Added -F option to opt_val_list variable.
 
 ### Changed
+- cleanup_files: Added destination directory to the log entry when archiving the file.
 - recall_search2: Passed pulldate to the search_docid call.
 - file_input: Parsed pulldate from input file.
 - main: Changed gen_libs.help_func call to pass ArgParser class instance.
 - process_json: Added email subject to log entry when using mail option.
+- Documentation updates.
 
 
 ## [0.1.8] - 2023-03-28

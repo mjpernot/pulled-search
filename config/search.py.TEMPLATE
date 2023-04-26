@@ -2,6 +2,7 @@
 # Classification (U)
 # Unclassified until filled.
 
+################################################################################
 # Pulled Search General Configuration section.
 # This section is for either the -P or -I option.
 #
@@ -9,6 +10,7 @@
 # File name including directory path.
 log_file = "BASE_PATH/log/pulled_search.log"
 
+################################################################################
 # Pulled Search Process Configuration section.
 # Update this section if using the -P option.
 #
@@ -41,7 +43,7 @@ error_dir = "BASE_PATH/search_error"
 # This is for the naming of the access logs which are not always under the command name.
 command = {"intelink": "eucom"}
 
-
+################################################################################
 # Pulled Search Process/RabbitMQ Configuration section.
 # Update this section if using the -P option.
 # Fill either the mail section to send to RabbitMQ via email or fill in the
@@ -50,6 +52,7 @@ command = {"intelink": "eucom"}
 # Note: If the email is filled in then this will override the RabbitMQ
 #   section.
 #
+########################################
 # Email section
 # Email address to rabbitmq alias for the rmq_2_mail.py program.
 #   Note:  Leave to_addr and subj set to None if not using email capability.
@@ -60,6 +63,7 @@ to_addr = None
 # Example:  subj = "Pulledsearch"
 subj = None
 #
+########################################
 # RabbitMQ section
 # Login information.
 user = "USER"
@@ -90,6 +94,7 @@ q_durable = True
 # Do queues automatically delete once message is processed:  True|False
 auto_delete = False
 
+################################################################################
 # Pulled Search Insert Configuration section.
 # Update this section if using the -I option.
 # Directory where to monitor for new files to insert into Mongodb.
@@ -104,6 +109,7 @@ merror_dir = "BASE_PATH/mongo_error"
 # Do not change unless changing the name of the external Mongo config file.
 mconfig = "mongo"
 
+################################################################################
 # Log parsing section.
 # Warning: Do not modify this section unless you know regular expressions.
 # NOTE: These name tags are reserved and cannot be used: ["command", "docid", "network", "pubDate", "asOf"]

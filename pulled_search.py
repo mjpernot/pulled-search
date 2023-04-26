@@ -27,7 +27,8 @@
 
         -P => Process Doc ID files send to RabbitMQ.
             -i => Insert the log entries directly to Mongodb.
-            -m dir_path => Directory to monitor for doc ID files.
+            -m dir_path => Directory to monitor for doc ID files.  This
+                overrides the config file setting.
             -a => This is an archive log search.
 
         -F /path/filename => Process DocIDs from a file.
@@ -35,7 +36,8 @@
             -a => This is an archive log search.
 
         -I => Insert Pulled Search files into Mongodb.
-            -n dir_path => Directory to monitor for pulled search files.
+            -n dir_path => Directory to monitor for pulled search files.  This
+                overrides the config file setting.
 
         -t email_address(es) => Send output to one or more email addresses.
             -s subject_line => Pre-amble to the subject line of email.
@@ -676,7 +678,8 @@ def cleanup_files(docid_files, processed_list, dest_dir, log):
     processed_list = list(processed_list)
 
     for fname in processed_list:
-        log.log_info("cleanup_files:  Archiving file: %s" % (fname))
+        log.log_info("cleanup_files:  Archiving file: %s to %s"
+                     % (os.path.basename(fname), dest_dir))
         dtg = datetime.datetime.strftime(
             datetime.datetime.now(), "%Y%m%d_%H%M%S")
         new_fname = os.path.basename(fname)
