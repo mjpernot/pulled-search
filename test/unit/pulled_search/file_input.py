@@ -121,17 +121,26 @@ class UnitTest(unittest.TestCase):
         self.args = ArgParser()
         self.cfg = CfgTest()
         self.args_array = {"-F": "/dir_path/input_file"}
-        docid = "09docid1 eucom 20230212"
+        docid = "09docid1 eucom 20230212 20230325"
         self.file_list = list()
         self.file_list2 = [docid]
-        self.file_list3 = [docid, "09docid2 eucom 20230214"]
+        self.file_list3 = [docid, "09docid2 eucom 20230214 20230401"]
         self.file_list4 = [docid, docid]
         self.docid_dict = dict()
         self.docid_dict2 = {
-            "09docid1": {"command": "eucom", "pubdate": "20230212"}}
+            "09docid1": {
+                "command": "eucom",
+                "pubdate": "20230212",
+                "pulldate": "20230401"}}
         self.docid_dict3 = {
-            "09docid1": {"command": "eucom", "pubdate": "20230212"},
-            "09docid2": {"command": "eucom", "pubdate": "20230214"}}
+            "09docid1": {
+                "command": "eucom",
+                "pubdate": "20230212",
+                "pulldate": "20230401"},
+            "09docid2": {
+                "command": "eucom",
+                "pubdate": "20230214",
+                "pulldate": "20230401"}}
         self.failed_dict = list()
         self.failed_dict2 = {"09docid1": "error_message"}
 
