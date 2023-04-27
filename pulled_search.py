@@ -27,7 +27,8 @@
 
         -P => Process Doc ID files send to RabbitMQ.
             -i => Insert the log entries directly to Mongodb.
-            -m dir_path => Directory to monitor for doc ID files.
+            -m dir_path => Directory to monitor for doc ID files.  This
+                overrides the config file setting.
             -a => This is an archive log search.
 
         -F /path/filename => Process DocIDs from a file.
@@ -35,7 +36,8 @@
             -a => This is an archive log search.
 
         -I => Insert Pulled Search files into Mongodb.
-            -n dir_path => Directory to monitor for pulled search files.
+            -n dir_path => Directory to monitor for pulled search files.  This
+                overrides the config file setting.
 
         -t email_address(es) => Send output to one or more email addresses.
             -s subject_line => Pre-amble to the subject line of email.
@@ -361,7 +363,7 @@ def non_processed(docid_files, error_dir, log, mail=None):
             mail.send_mail()
 
 
-def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
+def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
 
     """Function:  get_archive_files
 
@@ -372,6 +374,8 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
         (input) cmd -> Command to search in
         (input) pubdate -> Published date of document
         (input) cmd_regex -> Regular expression of log file name
+        (input) kwargs:
+            pulldate -> Date document was pulled.
         (output) log_files -> List of archive log files to search
 
     """
@@ -379,7 +383,9 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex):
     log_files = []
     cmd_dir = os.path.join(archive_dir, cmd)
     start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
-    end_dt = datetime.datetime.now() - datetime.timedelta(days=1)
+    end_dt = datetime.datetime.strptime(kwargs.get("pulldate")[0:6], "%Y%m") \
+        if kwargs.get("pulldate", None)                                      \
+        else datetime.datetime.now() - datetime.timedelta(days=1)
 
     for date in gen_libs.date_range(start_dt, end_dt):
         yearmon = datetime.date.strftime(date, "%Y/%m")
@@ -420,8 +426,10 @@ def process_docid(args, cfg, docid_dict, log):
     if args.arg_exist("-a"):
         log.log_info("process_docid:  Searching archive directory: %s"
                      % (cfg.archive_log_dir))
+        pulldate = docid_dict["pulldate"] if "pulldate" in docid_dict else None
         log_files = get_archive_files(
-            cfg.archive_log_dir, cmd, docid_dict["pubdate"], cmd_regex)
+            cfg.archive_log_dir, cmd, docid_dict["pubdate"], cmd_regex,
+            pulldate=pulldate)
 
     else:
         log.log_info("process_docid:  Searching apache log directory: %s"
@@ -586,8 +594,8 @@ def process_json(args, cfg, log, log_json):
         status = parse_data(args, cfg, log, log_json)
 
     elif cfg.to_addr and cfg.subj:
-        log.log_info("process_json:  Emailing JSON log entries to: %s"
-                     % (cfg.to_addr))
+        log.log_info("process_json:  Email log entries to: %s, Subject: %s"
+                     % (cfg.to_addr, cfg.subj))
         mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
         mail.add_2_msg(log_json)
         mail.send_mail()
@@ -675,7 +683,8 @@ def cleanup_files(docid_files, processed_list, dest_dir, log):
     processed_list = list(processed_list)
 
     for fname in processed_list:
-        log.log_info("cleanup_files:  Archiving file: %s" % (fname))
+        log.log_info("cleanup_files:  Archiving file: %s to %s"
+                     % (os.path.basename(fname), dest_dir))
         dtg = datetime.datetime.strftime(
             datetime.datetime.now(), "%Y%m%d_%H%M%S")
         new_fname = os.path.basename(fname)
@@ -891,6 +900,7 @@ def recall_search2(args, cfg, log, docid_dict):
         t_docid["docid"] = docid
         t_docid["command"] = docid_dict[docid]["command"]
         t_docid["pubdate"] = docid_dict[docid]["pubdate"]
+        t_docid["pulldate"] = docid_dict[docid]["pulldate"]
         failed_dict.update(search_docid(args, cfg, t_docid, log))
         t_docid = dict()
 
@@ -969,7 +979,9 @@ def file_input(args, cfg, log):
     for line in file_list:
         docid = line.split(" ")[0]
         metadata = {
-            "command": line.split(" ")[1], "pubdate": line.split(" ")[2]}
+            "command": line.split(" ")[1],
+            "pubdate": line.split(" ")[2],
+            "pulldate": line.split(" ")[3]}
 
         if docid not in docid_dict:
             docid_dict[docid] = metadata
@@ -1246,7 +1258,7 @@ def main():
     opt_con_req_dict = {"-s": ["-t"]}
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
-    opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y"]
+    opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y", "-F"]
     opt_xor_dict = {"-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"]}
 
     # Process argument list from command line.
@@ -1254,7 +1266,7 @@ def main():
         cmdline.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
         do_parse=True)
 
-    if not gen_libs.help_func(args.get_args(), __version__, help_message)   \
+    if not gen_libs.help_func(args, __version__, help_message)   \
        and args.arg_require(opt_req=opt_req_list)                           \
        and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)                \
        and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
