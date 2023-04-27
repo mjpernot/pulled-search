@@ -384,8 +384,8 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     cmd_dir = os.path.join(archive_dir, cmd)
     start_dt = datetime.datetime.strptime(pubdate[0:6], "%Y%m")
     end_dt = datetime.datetime.strptime(kwargs.get("pulldate")[0:6], "%Y%m") \
-             if kwargs.get("pulldate", None)                                 \
-             else datetime.datetime.now() - datetime.timedelta(days=1)
+        if kwargs.get("pulldate", None)                                      \
+        else datetime.datetime.now() - datetime.timedelta(days=1)
 
     for date in gen_libs.date_range(start_dt, end_dt):
         yearmon = datetime.date.strftime(date, "%Y/%m")
