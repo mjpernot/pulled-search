@@ -27,6 +27,7 @@ coverage run -a --source=pulled_search test/unit/pulled_search/process_files.py
 coverage run -a --source=pulled_search test/unit/pulled_search/process_insert.py
 coverage run -a --source=pulled_search test/unit/pulled_search/process_json.py
 coverage run -a --source=pulled_search test/unit/pulled_search/recall_search.py
+coverage run -a --source=pulled_search test/unit/pulled_search/recall_search2.py
 coverage run -a --source=pulled_search test/unit/pulled_search/remove_processed.py
 coverage run -a --source=pulled_search test/unit/pulled_search/run_program.py
 coverage run -a --source=pulled_search test/unit/pulled_search/search_docid.py

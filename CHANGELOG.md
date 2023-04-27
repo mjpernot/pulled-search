@@ -3,6 +3,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.1.9] - 2023-04-25
+- Added pulldate for docids coming in via file.
+- Upgraded python-lib to v2.10.1
+
+### Fixed
+- main: Added -F option to opt_val_list variable.
+
+### Changed
+- get_archive_files: Set end datetime to pulldate if exists otherwise use current datetime.
+- process_docid: Determine if pulldate exist for -a (archive) option and pass to get_archive_files call.
+- cleanup_files: Added destination directory to the log entry when archiving the file.
+- recall_search2: Passed pulldate to the search_docid call.
+- file_input: Parsed pulldate from input file.
+- main: Changed gen_libs.help_func call to pass ArgParser class instance.
+- process_json: Added email subject to log entry when using mail option.
+- Documentation updates.
+
+
 ## [0.1.8] - 2023-03-28
 - Added ability to search for docids via an input file.
 
