@@ -36,6 +36,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_pull_date
+        test_end_date_now
         test_one_month
         test_two_months
 
@@ -54,6 +56,7 @@ class UnitTest(unittest.TestCase):
         self.archive_dir = "/dir/archive"
         self.cmd = "command"
         self.pubdate = "20200210"
+        self.pulldate = "20200315"
         self.cmd_regex = "Regular expression"
         self.now_dt = datetime.datetime.now()
         self.now_dt.replace(day=10)
@@ -75,6 +78,48 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("pulled_search.gen_libs.filename_search")
     @mock.patch("pulled_search.gen_libs.date_range")
+    def test_pull_date(self, mock_range, mock_search):
+
+        """Function:  test_pull_date
+
+        Description:  Test with a pull date set.
+
+        Arguments:
+
+        """
+
+        mock_range.return_value = self.range
+        mock_search.side_effect = [self.subresult1, self.subresult2]
+
+        self.assertEqual(
+            pulled_search.get_archive_files(
+                self.archive_dir, self.cmd, self.pubdate, self.cmd_regex,
+                pulldate=self.pulldate), self.results)
+
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_libs.date_range")
+    @mock.patch("pulled_search.datetime.datetime")
+    def test_end_date_now(self, mock_now, mock_range, mock_search):
+
+        """Function:  test_end_date_now
+
+        Description:  Test with end date set to now.
+
+        Arguments:
+
+        """
+
+        mock_now.now.return_value = self.now_dt
+        mock_range.return_value = self.range
+        mock_search.side_effect = [self.subresult1, self.subresult2]
+
+        self.assertEqual(
+            pulled_search.get_archive_files(
+                self.archive_dir, self.cmd, self.pubdate, self.cmd_regex),
+            self.results)
+
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_libs.date_range")
     @mock.patch("pulled_search.datetime.datetime")
     def test_one_month(self, mock_now, mock_range, mock_search):
 
@@ -91,8 +136,8 @@ class UnitTest(unittest.TestCase):
         mock_search.return_value = self.subresult1
 
         self.assertEqual(
-            pulled_search.get_archive_files(self.archive_dir, self.cmd,
-                                            self.pubdate, self.cmd_regex),
+            pulled_search.get_archive_files(
+                self.archive_dir, self.cmd, self.pubdate, self.cmd_regex),
             self.results2)
 
     @mock.patch("pulled_search.gen_libs.filename_search")
@@ -113,8 +158,8 @@ class UnitTest(unittest.TestCase):
         mock_search.side_effect = [self.subresult1, self.subresult2]
 
         self.assertEqual(
-            pulled_search.get_archive_files(self.archive_dir, self.cmd,
-                                            self.pubdate, self.cmd_regex),
+            pulled_search.get_archive_files(
+                self.archive_dir, self.cmd, self.pubdate, self.cmd_regex),
             self.results)
 
 
