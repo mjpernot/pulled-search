@@ -600,7 +600,7 @@ def process_json(args, cfg, log, log_json):
     """
 
     log.log_info("process_json:  Processing JSON document.")
-    status = True
+    status = False
 
     # Insert entries into Mongo
     if args.arg_exist("-i"):
@@ -615,18 +615,16 @@ def process_json(args, cfg, log, log_json):
         msg["From"] = getpass.getuser() + "@" + socket.gethostname()
         msg["To"] = cfg.to_addr
         msg["Subject"] = cfg.subj
-        filename = log_json["docid"] + "_docid"
+        fname = log_json["docid"] + "_docid"
         part = MIMEBase("application", "json")
         encoders.encode_base64(part)
-        part.add_header("Content-Disposition", "attachment", filename=filename)
-        message.attach(part)
-        text = message.as_string()
-        server = smptlib.SMTP("localhost")
-        server.sendmail(sender_email, receiver_email, text)
-
-#        mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
-#        mail.add_2_msg(log_json)
-#        mail.send_mail()
+        part.add_header("Content-Disposition", "attachment", filename=fname)
+        msg.attach(part)
+        text = msg.as_string()
+        inst = gen_libs.get_inst(smtplib)
+        mail = inst.SMTP("localhost")
+        mail.sendmail(msg["From"], msg["To"], text)
+        status = True
 
     # Publish entries to RabbitMQ
     elif args.arg_exist("-r"):
