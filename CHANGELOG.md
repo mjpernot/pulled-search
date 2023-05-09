@@ -9,10 +9,10 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Upgraded python-lib to v2.10.1
 
 ### Fixed
+- process_json: Replace the gen_class.Mail with email and smptlib code to send data as an attachment.
 - main: Added -F option to opt_val_list variable.
 
 ### Changed
-- process_json: Replace the gen_class.Mail with email and smptlib code to send data as an attachment.
 - get_archive_files: Set end datetime to pulldate if exists otherwise use current datetime.
 - process_docid: Determine if pulldate exist for -a (archive) option and pass to get_archive_files call.
 - cleanup_files: Added destination directory to the log entry when archiving the file.
