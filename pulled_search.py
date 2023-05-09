@@ -297,6 +297,7 @@ import socket
 import datetime
 import json
 import re
+import base64
 
 # Temporary libraries until gen_class.Mail2 is ready
 import smtplib
@@ -305,8 +306,6 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import getpass
-import socket
-import base64
 
 # Local
 try:
