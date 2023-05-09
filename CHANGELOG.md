@@ -13,6 +13,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main: Added -F option to opt_val_list variable.
 
 ### Changed
+- process_insert: Added code to read a file, decode it and convert it to JSON.
 - get_archive_files: Set end datetime to pulldate if exists otherwise use current datetime.
 - process_docid: Determine if pulldate exist for -a (archive) option and pass to get_archive_files call.
 - cleanup_files: Added destination directory to the log entry when archiving the file.
