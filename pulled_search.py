@@ -14,8 +14,8 @@
 
     Usage:
         pulled_search.py -c file -d path
-            {-P [-m path] [-a] [-i] |
-             -F /path/filename [-a] [-i] |
+            {-P [-m path] [-a] [-i | -e | -r] |
+             -F /path/filename [-a] [-i | -e | -r] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -26,20 +26,25 @@
         -d dir_path => Directory path for option '-c'.  Required argument.
 
         -P => Process Doc ID files send to RabbitMQ.
-            -i => Insert the log entries directly to Mongodb.
+            -i => Insert the log entries into Mongodb.
+            -e => Email log entries.
+            -r => Publish log entries to RabbitMQ.
             -m dir_path => Directory to monitor for doc ID files.  This
                 overrides the config file setting.
             -a => This is an archive log search.
 
         -F /path/filename => Process DocIDs from a file.
-            -i => Insert the log entries directly to Mongodb.
+            -i => Insert the log entries into Mongodb.
+            -e => Email log entries.
+            -r => Publish log entries to RabbitMQ.
             -a => This is an archive log search.
 
         -I => Insert Pulled Search files into Mongodb.
             -n dir_path => Directory to monitor for pulled search files.  This
                 overrides the config file setting.
 
-        -t email_address(es) => Send output to one or more email addresses.
+        -t email_address(es) => Send output to one or more email addresses for
+            reporting any errors detected within the program.
             -s subject_line => Pre-amble to the subject line of email.
 
         -y value => A flavor id for the program lock.  To create unique lock.
@@ -50,29 +55,29 @@
             the incorrect servername will be set in the JSON document.
 
         NOTE 1:  -v or -h overrides the other options.
-        NOTE 2:  -t option is for reporting any errors detected.
-        NOTE 3:  -s requires -t option to be included.
-        NOTE 4:  -P, -F and -I are XOR options.
-        NOTE 5:  -m and -n options will override the configuration settings.
+        NOTE 2:  -s requires -t option to be included.
+        NOTE 3:  -P, -F and -I are XOR options.
+        NOTE 4:  -m and -n options will override the configuration settings.
             The -m option is mapped to the doc_dir configuration entry, and
             the -n option is mapped to the monitor_dir configuration entry.
-        NOTE 6:  The log files can be normal flat files or compressed files
+        NOTE 5:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
-        NOTE 7: -i option overrides sending the JSON document to RabbitMQ
-            directly or via email.
+        NOTE 6: The -i, -e and -r options are XOR options under the -F and -P
+            options.
 
     Input files:
         The file for the -F option must be in the following layout in ACSII
         format.  The fields are space-delimited.
-        Each line of the file consists of three fields:
-            docid command publication_date
+        Each line of the file consists of four fields:
+            docid command publication_date pulled_date
         Example:
-            09109abcdef EUCOM 20230417
+            09109abcdef EUCOM 20230417 20230502
 
     Configuration files:
         Configuration file (config/search.py.TEMPLATE).  Below is the
         configuration file format for the environment setup in the program.
+        More details in the configuraton file.
 
         # Pulled Search General Configuration section.
         # This section is for either the -P or -I option.
@@ -83,7 +88,6 @@
 
         # Pulled Search Process Configuration section.
         # Update this section if using the -P option.
-        #
         # Directory where Docid Pulled Html files are located at.
         # NOTE: Do not include the YYYY/MM as part of the path as this will be
         #   added.
@@ -293,6 +297,15 @@ import socket
 import datetime
 import json
 import re
+import base64
+
+# Temporary libraries until gen_class.Mail2 is ready
+import smtplib
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import getpass
 
 # Local
 try:
@@ -587,20 +600,34 @@ def process_json(args, cfg, log, log_json):
     """
 
     log.log_info("process_json:  Processing JSON document.")
-    status = True
+    status = False
 
+    # Insert entries into Mongo
     if args.arg_exist("-i"):
         log.log_info("process_json:  Inserting JSON log entries into Mongo")
         status = parse_data(args, cfg, log, log_json)
 
-    elif cfg.to_addr and cfg.subj:
+    # Email entries
+    elif args.arg_exist("-e"):
         log.log_info("process_json:  Email log entries to: %s, Subject: %s"
                      % (cfg.to_addr, cfg.subj))
-        mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
-        mail.add_2_msg(log_json)
-        mail.send_mail()
+        msg = MIMEMultipart()
+        msg["From"] = getpass.getuser() + "@" + socket.gethostname()
+        msg["To"] = cfg.to_addr
+        msg["Subject"] = cfg.subj
+        fname = log_json["docid"] + "_docid"
+        part = MIMEBase("application", "json")
+        encoders.encode_base64(part)
+        part.add_header("Content-Disposition", "attachment", filename=fname)
+        msg.attach(part)
+        text = msg.as_string()
+        inst = gen_libs.get_inst(smtplib)
+        mail = inst.SMTP("localhost")
+        mail.sendmail(msg["From"], msg["To"], text)
+        status = True
 
-    else:
+    # Publish entries to RabbitMQ
+    elif args.arg_exist("-r"):
         log.log_info("process_json:  Publishing log entries to RabbitMQ.")
         status, err_msg = rabbitmq_class.pub_2_rmq(
             cfg, json.dumps(log_json))
@@ -649,8 +676,17 @@ def process_insert(args, cfg, fname, log):
 
     log.log_info("process_insert:  Converting data to JSON.")
     status = True
-    data_list = gen_libs.file_2_list(fname)
-    log_json = json.loads(gen_libs.list_2_str(data_list))
+
+    with open(fname, "r") as f_hdr:
+        data = f_hdr.read()
+
+    # Check the first 70 chars in case the decode is split into multiple lines
+    # NOTE:  Will not work in Python 3.  Will require a seperate function.
+    if base64.b64encode(base64.b64decode(data))[1:70] == data[1:70]:
+        log_json = eval(base64.b64decode(data))
+
+    else:
+        log_json = data
 
     if isinstance(log_json, dict):
         status = parse_data(args, cfg, log, log_json)
@@ -1259,7 +1295,9 @@ def main():
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
     opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y", "-F"]
-    opt_xor_dict = {"-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"]}
+    opt_xor_dict = {
+        "-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"],
+        "-i": ["-e", "-r"], "-e": ["-i", "-r"], "-r": ["-e", "-i"]}
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
