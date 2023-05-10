@@ -5,12 +5,15 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.1.9] - 2023-04-25
 - Added pulldate for docids coming in via file.
+- Added -e and -r options for the -P and -F options.
 - Upgraded python-lib to v2.10.1
 
 ### Fixed
+- process_json: Replace the gen_class.Mail with email and smptlib code to send data as an attachment.
 - main: Added -F option to opt_val_list variable.
 
 ### Changed
+- process_insert: Added code to read a file, decode it and convert it to JSON.
 - get_archive_files: Set end datetime to pulldate if exists otherwise use current datetime.
 - process_docid: Determine if pulldate exist for -a (archive) option and pass to get_archive_files call.
 - cleanup_files: Added destination directory to the log entry when archiving the file.

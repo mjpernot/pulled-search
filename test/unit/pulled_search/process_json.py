@@ -182,6 +182,63 @@ class CfgTest(object):
         self.error_dir = "/dir/path/error_dir"
 
 
+class Smtplib(object):
+
+    """Class:  SubProcess
+
+    Description:  Class which is a representation of the smtplib class.
+
+    Methods:
+        __init__
+        sendmail
+        quit
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization instance of the subprocess class.
+
+        Arguments:
+
+        """
+
+        self.frm = None
+        self.toaddr = None
+        self.data = None
+
+    def sendmail(self, frm, toaddr, data):
+
+        """Method:  sendmail
+
+        Description:  Mock representation of sendmail method.
+
+        Arguments:
+            frm
+            toaddr
+            func
+
+        """
+
+        self.frm = frm
+        self.toaddr = toaddr
+        self.data = data
+
+    def quit(self):
+
+        """Method:  quit
+
+        Description:  Mock representation of quit method.
+
+        Arguments:
+
+        """
+
+        pass
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -192,7 +249,7 @@ class UnitTest(unittest.TestCase):
         setUp
         test_mongo_failed
         test_mongo
-        test_email_json
+        test_email
         test_rabbitmq_pass
         test_rabbitmq_failed
         test_rabbitmq_failed_mail
@@ -215,6 +272,8 @@ class UnitTest(unittest.TestCase):
         self.mail = Mail()
         self.args_array = {"-t": "EmailAddr"}
         self.args_array2 = {"-i": True}
+        self.args_array3 = {"-e": True}
+        self.args_array4 = {"-r": True}
         self.log_json = {
             "docid": "09109uosdhf",
             "command": "COMMAND",
@@ -222,6 +281,25 @@ class UnitTest(unittest.TestCase):
             "network": "ENCLAVE",
             "asOf": "20200306 084503",
             "servers": {"server_name": ["line1", "line2", "line3"]}}
+
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_no_option(self, mock_log):
+
+        """Function:  test_no_option
+
+        Description:  Test with no option selected.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array
+
+        mock_log.return_value = True
+
+        self.assertFalse(
+            pulled_search.process_json(
+                self.args, self.cfg2, mock_log, self.log_json))
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=False))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -263,20 +341,26 @@ class UnitTest(unittest.TestCase):
             pulled_search.process_json(
                 self.args, self.cfg2, mock_log, self.log_json))
 
-    @mock.patch("pulled_search.gen_class.setup_mail")
+    @mock.patch(
+        "pulled_search.socket.gethostname", mock.Mock(return_value="host"))
+    @mock.patch(
+        "pulled_search.getpass.getuser", mock.Mock(return_value="user"))
+    @mock.patch("pulled_search.smtplib.SMTP")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_email_json(self, mock_log, mock_mail):
+    def test_email(self, mock_log, mock_mail):
 
-        """Function:  test_email_json
+        """Function:  test_email
 
-        Description:  Test with emailing JSON document.
+        Description:  Test with emailing document.
 
         Arguments:
 
         """
 
+        self.args.args_array = self.args_array3
+
         mock_log.return_value = True
-        mock_mail.return_value = self.mail
+        mock_mail.return_value = Smtplib()
 
         self.assertTrue(
             pulled_search.process_json(
@@ -296,6 +380,8 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
+        self.args.args_array = self.args_array4
 
         mock_log.return_value = True
 
@@ -318,6 +404,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.args_array = self.args_array4
+
         mock_log.return_value = True
 
         self.assertFalse(
@@ -339,6 +427,8 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
+        self.args.args_array = self.args_array4
 
         mock_log.return_value = True
         mock_mail.return_value = self.mail
