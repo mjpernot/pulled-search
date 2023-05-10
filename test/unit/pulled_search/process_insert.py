@@ -161,20 +161,25 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.logger = Logger("Name", "Name", "INFO", "%(asctime)s%(message)s",
                              "%m-%d-%YT%H:%M:%SZ|")
-        self.data_list = ['{',
-                          '"docID": "weotiuer",',
-                          '"command": "COMMAND",',
-                          '"pubDate": "20200102-101134",',
-                          '"securityEnclave": "ENCLAVE",',
-                          '"asOf": "20200306 084503",',
-                          '"serverName": "SERVERNAME",',
-                          '"logEntries": ["line1", "line2", "line3"]',
-                          '}']
-        self.fname = "/dir_path/092438k234_insert.json"
+#        self.data_list = ['{',
+#                          '"docID": "weotiuer",',
+#                          '"command": "COMMAND",',
+#                          '"pubDate": "20200102-101134",',
+#                          '"securityEnclave": "ENCLAVE",',
+#                          '"asOf": "20200306 084503",',
+#                          '"serverName": "SERVERNAME",',
+#                          '"logEntries": ["line1", "line2", "line3"]',
+#                          '}']
+#        self.fname = "/dir_path/092438k234_insert.json"
+
+        base = os.getcwd()
+        self.in_file = os.path.join(
+            base, "test/unit/pulled_search/testfiles/test_docid.json")
+        self.in_file2 = os.path.join(
+            base, "test/unit/pulled_search/testfiles/test_docid2.json")
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=False))
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    def test_mongo_failed(self, mock_list):
+    def test_mongo_failed(self):
 
         """Function:  test_mongo_failed
 
@@ -184,14 +189,12 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_list.return_value = self.data_list
-
-        self.assertEqual(pulled_search.process_insert(
-            self.args, self.cfg, self.fname, self.logger), False)
+        self.assertEqual(
+            pulled_search.process_insert(
+                self.args, self.cfg, self.in_file, self.logger), False)
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    def test_mongo_successful(self, mock_list):
+    def test_mongo_successful(self):
 
         """Function:  test_mongo_successful
 
@@ -201,14 +204,11 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_list.return_value = self.data_list
+        self.assertEqual(
+            pulled_search.process_insert(
+                self.args, self.cfg, self.in_file, self.logger), True)
 
-        self.assertEqual(pulled_search.process_insert(
-            self.args, self.cfg, self.fname, self.logger), True)
-
-    @mock.patch("pulled_search.json.loads", mock.Mock(return_value="String"))
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    def test_json_failure(self, mock_list):
+    def test_json_failure(self):
 
         """Function:  test_json_failure
 
@@ -218,14 +218,12 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_list.return_value = self.data_list
-
-        self.assertEqual(pulled_search.process_insert(
-            self.args, self.cfg, self.fname, self.logger), False)
+        self.assertEqual(
+            pulled_search.process_insert(
+                self.args, self.cfg, self.in_file2, self.logger), False)
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_libs.file_2_list")
-    def test_with_data(self, mock_list):
+    def test_with_data(self):
 
         """Function:  test_with_data
 
@@ -235,10 +233,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_list.return_value = self.data_list
-
-        self.assertEqual(pulled_search.process_insert(
-            self.args, self.cfg, self.fname, self.logger), True)
+        self.assertEqual(
+            pulled_search.process_insert(
+                self.args, self.cfg, self.in_file, self.logger), True)
 
 
 if __name__ == "__main__":
