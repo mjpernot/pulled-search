@@ -274,6 +274,7 @@ class UnitTest(unittest.TestCase):
         self.args_array2 = {"-i": True}
         self.args_array3 = {"-e": True}
         self.args_array4 = {"-r": True}
+        self.args_array5 = {"-r": True, "-t": True}
         self.log_json = {
             "docid": "09109uosdhf",
             "command": "COMMAND",
@@ -428,12 +429,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.args.args_array = self.args_array4
+        self.args.args_array = self.args_array5
 
         mock_log.return_value = True
         mock_mail.return_value = self.mail
-
-        self.args.args_array = self.args_array
 
         self.assertFalse(
             pulled_search.process_json(
