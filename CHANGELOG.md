@@ -6,6 +6,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [0.2.0] - 2023-05-11
 Beta release
 
+### Fixed
+- process_insert: Added eval call to the log_json variable assignment.
+
 
 ## [0.1.9] - 2023-04-25
 - Added pulldate for docids coming in via file.

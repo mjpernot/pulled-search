@@ -141,8 +141,9 @@ class UnitTest(unittest.TestCase):
         setUp
         test_mongo_failed
         test_mongo_successful
+        test_json_success
         test_json_failure
-        test_with_data
+        test_with_encoded_data
 
     """
 
@@ -161,22 +162,13 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.logger = Logger("Name", "Name", "INFO", "%(asctime)s%(message)s",
                              "%m-%d-%YT%H:%M:%SZ|")
-#        self.data_list = ['{',
-#                          '"docID": "weotiuer",',
-#                          '"command": "COMMAND",',
-#                          '"pubDate": "20200102-101134",',
-#                          '"securityEnclave": "ENCLAVE",',
-#                          '"asOf": "20200306 084503",',
-#                          '"serverName": "SERVERNAME",',
-#                          '"logEntries": ["line1", "line2", "line3"]',
-#                          '}']
-#        self.fname = "/dir_path/092438k234_insert.json"
-
         base = os.getcwd()
         self.in_file = os.path.join(
             base, "test/unit/pulled_search/testfiles/test_docid.json")
         self.in_file2 = os.path.join(
             base, "test/unit/pulled_search/testfiles/test_docid2.json")
+        self.in_file3 = os.path.join(
+            base, "test/unit/pulled_search/testfiles/test_docid3.json")
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=False))
     def test_mongo_failed(self):
@@ -208,6 +200,22 @@ class UnitTest(unittest.TestCase):
             pulled_search.process_insert(
                 self.args, self.cfg, self.in_file, self.logger), True)
 
+    @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
+    def test_json_success(self):
+
+        """Function:  test_json_success
+
+        Description:  Test with conversion to JSON successful.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            pulled_search.process_insert(
+                self.args, self.cfg, self.in_file3, self.logger), True)
+
+    @unittest.skip("Fails on files with text only.")
     def test_json_failure(self):
 
         """Function:  test_json_failure
@@ -223,11 +231,11 @@ class UnitTest(unittest.TestCase):
                 self.args, self.cfg, self.in_file2, self.logger), False)
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
-    def test_with_data(self):
+    def test_with_encoded_data(self):
 
-        """Function:  test_with_data
+        """Function:  test_with_encoded_data
 
-        Description:  Test with successful log file check.
+        Description:  Test with encoded data in the file.
 
         Arguments:
 

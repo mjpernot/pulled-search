@@ -680,13 +680,13 @@ def process_insert(args, cfg, fname, log):
     with open(fname, "r") as f_hdr:
         data = f_hdr.read()
 
-    # Check the first 70 chars in case the decode is split into multiple lines
+    # Check the first 70 chars in case the encoded is split into multiple lines
     # NOTE:  Will not work in Python 3.  Will require a seperate function.
     if base64.b64encode(base64.b64decode(data))[1:70] == data[1:70]:
         log_json = eval(base64.b64decode(data))
 
     else:
-        log_json = data
+        log_json = eval(data)
 
     if isinstance(log_json, dict):
         status = parse_data(args, cfg, log, log_json)
