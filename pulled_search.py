@@ -617,6 +617,7 @@ def process_json(args, cfg, log, log_json):
         msg["Subject"] = cfg.subj
         fname = log_json["docid"] + "_docid"
         part = MIMEBase("application", "json")
+        part.set_payload(str(log_json))
         encoders.encode_base64(part)
         part.add_header("Content-Disposition", "attachment", filename=fname)
         msg.attach(part)
@@ -680,13 +681,13 @@ def process_insert(args, cfg, fname, log):
     with open(fname, "r") as f_hdr:
         data = f_hdr.read()
 
-    # Check the first 70 chars in case the decode is split into multiple lines
+    # Check the first 70 chars in case the encoded is split into multiple lines
     # NOTE:  Will not work in Python 3.  Will require a seperate function.
     if base64.b64encode(base64.b64decode(data))[1:70] == data[1:70]:
         log_json = eval(base64.b64decode(data))
 
     else:
-        log_json = data
+        log_json = eval(data)
 
     if isinstance(log_json, dict):
         status = parse_data(args, cfg, log, log_json)

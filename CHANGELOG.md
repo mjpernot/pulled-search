@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.0] - 2023-05-11
+Beta release
+
+### Fixed
+- process_insert: Added eval call to the log_json variable assignment.
+- process_json: Added set_payload call to add attachment.
+
+
 ## [0.1.9] - 2023-04-25
 - Added pulldate for docids coming in via file.
 - Added -e and -r options for the -P and -F options.
