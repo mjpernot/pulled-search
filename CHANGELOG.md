@@ -8,6 +8,7 @@ Beta release
 
 ### Fixed
 - process_insert: Added eval call to the log_json variable assignment.
+- process_json: Added set_payload call to add attachment.
 
 
 ## [0.1.9] - 2023-04-25

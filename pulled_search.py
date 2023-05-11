@@ -617,6 +617,7 @@ def process_json(args, cfg, log, log_json):
         msg["Subject"] = cfg.subj
         fname = log_json["docid"] + "_docid"
         part = MIMEBase("application", "json")
+        part.set_payload(str(log_json))
         encoders.encode_base64(part)
         part.add_header("Content-Disposition", "attachment", filename=fname)
         msg.attach(part)
