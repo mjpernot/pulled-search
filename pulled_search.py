@@ -3,14 +3,18 @@
 
 """Program:  pulled_search.py
 
-    Description:  The pulled_search program is a multi-optional program for use
-        with the pulled product process.  It can detect when new pulled product
-        files are created, parse the file, call the search program to check log
-        files for the docid in the file.  Any entries found will be converted
-        into a JSON document and send to a RabbitMQ queue.  The program also
-        has the ability to detect when new search pulled product log entries
-        are available to be inserted into a database.  The program now has the
-        the ability to search for docids listed in a file.
+    Description: The pulled_search program is designed to monitor for docids
+        that have been pulled for a specific reason (i.e. security recall).
+        Once detected, then the program will search either the active apache
+        access logs or the archived access logs for the docid and compile a
+        list of entries which have accessed the docid.  This data can then be
+        sent either to an email (normally then parse into RabbitMQ), published
+        to RabbitMQ or inserted into a Mongo database.  In addition, it also
+        will look for files that have been subscribed to from RabbitMQ (this
+        requires the use of the rmq_sysmon program).  Once a file is detected,
+        it will parse the file and insert it into a Mongo database.  Lastly,
+        the program has the ability to accept input directly from a file
+        which contains the docid, command, publication date and pulled date.
 
     Usage:
         pulled_search.py -c file -d path
@@ -25,7 +29,7 @@
         -c file => Configuration file.  Required argument.
         -d dir_path => Directory path for option '-c'.  Required argument.
 
-        -P => Process Doc ID files send to RabbitMQ.
+        -P => Process Doc ID files from html files.
             -i => Insert the log entries into Mongodb.
             -e => Email log entries.
             -r => Publish log entries to RabbitMQ.
@@ -33,7 +37,7 @@
                 overrides the config file setting.
             -a => This is an archive log search.
 
-        -F /path/filename => Process DocIDs from a file.
+        -F /path/filename => Process DocIDs from an input file.
             -i => Insert the log entries into Mongodb.
             -e => Email log entries.
             -r => Publish log entries to RabbitMQ.
@@ -75,207 +79,219 @@
             09109abcdef EUCOM 20230417 20230502
 
     Configuration files:
-        Configuration file (config/search.py.TEMPLATE).  Below is the
-        configuration file format for the environment setup in the program.
-        More details in the configuraton file.
 
-        # Pulled Search General Configuration section.
-        # This section is for either the -P or -I option.
-        #
-        # Logger file for the storage of log entries.
-        # File name including directory path.
-        log_file = "BASE_PATH/log/pulled_search.log"
+    Configuration file (config/search.py.TEMPLATE).  Below is the
+    configuration file format for the environment setup in the program.
+    More details in the configuraton file.
 
-        # Pulled Search Process Configuration section.
-        # Update this section if using the -P option.
-        # Directory where Docid Pulled Html files are located at.
-        # NOTE: Do not include the YYYY/MM as part of the path as this will be
-        #   added.
-        doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
-        # Path and file name for previous processed files.
-        processed_file = "BASE_PATH/processed/processed"
-        # Regular expression for search for log file names.
-        file_regex = "-PULLED-"
-        # Regular expression for search for recalled products.
-        pattern = "JAC.pull.subtype.*.SECURITY RECALL"
+    ###########################################################################
+    # Pulled Search General Configuration section.
+    # This section is for the -P, -F and -I options.
+    #
+    # Logger file for the storage of log entries.
+    # File name including directory path.
+    log_file = "BASE_PATH/log/pulled_search.log"
 
-        # Enter the archive_log_dir if using the -a option otherwise enter the
-        #   log_dir.
-        # Directory where active log files to be searched are.
-        log_dir = "LOG_DIR_PATH"
-        # Directory where archived log files to be searched are.
-        archive_log_dir = "ARCHIVE_DIR_PATH"
 
-        # Type of log files to checked.
-        log_type = "access_log"
-        # Temporary file where check_log will write to.
-        # File name including directory path.
-        outfile = "BASE_PATH/tmp/checklog.out"
-        # Security enclave these files are being processed on.
-        enclave = "ENCLAVE"
-        # Directory path to where error and non-processed files are saved to.
-        error_dir = "BASE_PATH/search_error"
-        # Mapping of commands to keywords.
-        # This is for the naming of the access logs which are not always under
-        #   the command name.
-        command = {"intelink": "eucom"}
+    ###########################################################################
+    # Pulled Search Process Configuration section.
+    # This section is for the -P option.
+    #
+    # Directory where Docid Pulled Html files are located at.
+    # NOTE: Do not include the YYYY/MM as part of the path as this will be
+    #     added.
+    doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
+    # Path and file name for previous processed files.
+    processed_file = "BASE_PATH/processed/processed"
+    # Temporary file where check_log will write to.
+    # File name including directory path.
+    outfile = "BASE_PATH/tmp/checklog.out"
+    # Directory path to where error and non-processed files are saved to.
+    error_dir = "BASE_PATH/search_error"
+    # Security enclave these files are being processed on.
+    enclave = "ENCLAVE"
 
-        # Pulled Search Process/RabbitMQ Configuration section.
-        # Update this section if using the -P option.
-        # Fill either the mail section to send to RabbitMQ via email or fill in
-        #   the RabbitMQ section to publish to RabbitMQ directly.  If using
-        #   mail option this is normally used in conjunction with the
-        #   rmq_2_mail.py program.
-        # Note: If the email is filled in then this will override the RabbitMQ
-        #   section.
-        #
-        # Email section
-        # Email address to rabbitmq alias for the rmq_2_mail.py program.
-        #   Note:  Leave to_addr and subj set to None if not using email
-        #   capability.
-        # Example: to_addr = "rabbitmq@domain.name"
-        to_addr = None
-        # Name of the RabbitMQ queue.
-        # Note: Subject must match exactly the RabbitMQ queue name and is
-        #   case-sensitive.
-        # Example:  subj = "Pulledsearch"
-        subj = None
-        #
-        # RabbitMQ section
-        # Login information.
-        user = "USER"
-        japd = "PSWORD"
-        # Address to single RabbitMQ node.
-        host = "HOSTNAME"
-        # List of hosts along with their ports to a multiple node RabbitMQ
-        #   cluster.
-        # Format of each entry is: "IP:PORT".
-        # Example:
-        #   host_list = ["hostname:5672", "hostname2:5672", "hostname:5673"]
-        # Note:  If host_list is set, it will take precedence over the host
-        #   entry.
-        host_list = []
-        # RabbitMQ Queue name.
-        queue = "QUEUENAME"
-        # RabbitMQ R-Key name (normally same as queue name).
-        r_key = "RKEYNAME"
-        # RabbitMQ Exchange name for each instance run.
-        exchange_name = "EXCHANGE_NAME"
-        # RabbitMQ listening port
-        # Default is 5672
-        port = 5672
-        # Type of exchange
-        # Names allowed:  direct, topic, fanout, headers
-        exchange_type = "direct"
-        # Is exchange durable: True|False
-        x_durable = True
-        # Are queues durable: True|False
-        q_durable = True
-        # Do queues automatically delete once message is processed:  True|False
-        auto_delete = False
+    # Use one of the two entries below.
+    # If not using the -a option.
+    # Directory where active log files to be searched are.
+    log_dir = "LOG_DIR_PATH"
+    # If using the -a option.
+    # Directory where archived log files to be searched are.
+    archive_log_dir = "ARCHIVE_DIR_PATH"
 
-        # Pulled Search Insert Configuration section.
-        # Update this section if using the -I option.
-        # Directory where to monitor for new files to insert into Mongodb.
-        monitor_dir = "MONITOR_DIR_PATH"
-        # Regular expression for search for Insert/Mongodb file names.
-        mfile_regex = "_mongo.json"
-        # Directory path to where Insert/Mongodb archived files are saved to.
-        marchive_dir = "BASE_PATH/archive"
-        # Directory path to where Insert/Mongodb error and non-processed files
-        #   are saved to.
-        merror_dir = "BASE_PATH/mongo_error"
-        # Name of Mongo configuration file.  (Do not include the ".py" in the
-        #   name.)
-        # Do not change unless changing the name of the external Mongo config
-        #   file.
-        mconfig = "mongo"
+    # These options will not need to be updated normally.
+    # Regular expression for search for html file names.
+    file_regex = "-PULLED-"
+    # Regular expression for search for recalled products.
+    pattern = "JAC.pull.subtype.*.SECURITY RECALL"
+    # Type of apache log files to checked.
+    log_type = "access_log"
+    # Mapping of commands to keywords.
+    # This is for the naming of the access logs which are not always under the
+    #     command name.
+    command = {"intelink": "eucom"}
 
-        # Log parsing section.
-        # Warning: Do not modify this section unless you know regular
-        #   expressions.
-        # NOTE: These name tags are reserved and cannot be used:
-        #   ["command", "docid", "network", "pubDate", "asOf"]
-        regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>.*?)
-            \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?)
-            (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?)
-            HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?)
-            \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
-        # These are the entries that will be parsed from the log entry and
-        #   placed into the document.
-        # Note: Name tags must match between regex and allowable and are
-        #   case-sensitive.
-        allowable = ["userid", "logTime", "verb", "status", "url"]
 
-        Mongo configuration file format (config/mongo.py.TEMPLATE).  The
-        configuration file format is for connecting to a Mongo database or
-        replica set for monitoring.  A second configuration file can also
-        be used to connect to a Mongo database or replica set to insert the
-        results of the performance monitoring into.
+    ###########################################################################
+    # Email Configuration section.
+    # Update this section if using the (-P or -F) and -e options.
+    # This option is normally is used in conjunction with the rmq_2_mail.py
+    #     program.
+    # Email address to rabbitmq alias for the rmq_2_mail.py program.
+    # Example: to_addr = "rabbitmq@domain.name"
+    to_addr = None
+    # Name of the RabbitMQ queue.
+    # Note: Subject must match exactly the RabbitMQ queue name and is
+    #     case-sensitive.  Also the subject will be CamelCased when processed.
+    # Example:  subj = "Pulledsearch"
+    subj = None
 
-        # Pulled Search Insert/Mongo DB Configuration section.
-        # Update this file if using the -I option.
-        user = "USER"
-        japd = "PSWORD"
-        # Mongo DB host information
-        host = "HOST_IP"
-        name = "HOSTNAME"
-        # Mongo database port
-        # Default port for Mongo is 27017.
-        port = 27017
-        # Mongo configuration settings
-        # Only set if using a different Mongo configuration file.
-        conf_file = None
-        # Authentication required:  True|False
-        # Only set to False if no authentication is taking place.
-        auth = True
-        # Authentication database
-        # Name of database to authenticate the user in.
-        auth_db = "admin"
-        # Authentication mechanism
-        #   Current values allowed:  MONGODB-CR, SCRAM-SHA-1, SCRAM-SHA-256
-        #   NOTE 1:  SCRAM-SHA-256 only works for Mongodb 4.0 and better.
-        #   NOTE 2:  FIPS 140-2 environment requires SCRAM-SHA-1 or
-        #       SCRAM-SHA-256.
-        #   NOTE 3:  MONGODB-CR is not suppoerted in Mongodb 4.0 and better.
-        auth_mech = "SCRAM-SHA-1"
 
-        # Replica Set Mongo configuration settings.
-        # By default all settings are set to None.
-        #    None means the Mongo database is not part of a replica set.
-        #
-        # Replica set name.
-        # Format:  repset = "REPLICA_SET_NAME"
-        repset = None
-        # Replica host listing.
-        # Format:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
-        repset_hosts = None
-        # Database to authentication to.
-        # Format:  db_auth = "AUTHENTICATION_DATABASE"
-        db_auth = None
+    ###########################################################################
+    # RabbitMQ Configuration section.
+    # Update this section if using the (-P or -F) and -r options.
+    # Login information.
+    user = "USER"
+    japd = "PSWORD"
+    # Address to single RabbitMQ node.
+    host = "HOSTNAME"
+    # List of hosts along with their ports to a multiple node RabbitMQ cluster.
+    # Format of each entry is: "IP:PORT".
+    # Example: host_list = ["hostname:5672", "hostname2:5672", "hostname:5673"]
+    # Note:  If host_list is set, it will take precedence over the host entry.
+    host_list = []
+    # RabbitMQ Queue name.
+    queue = "QUEUENAME"
+    # RabbitMQ R-Key name (normally same as queue name).
+    r_key = "RKEYNAME"
+    # RabbitMQ Exchange name for each instance run.
+    exchange_name = "EXCHANGE_NAME"
 
-        # SSL Configuration settings
-        # If not set will connect to Mongo without using SSL connections.
-        # File containing the SSL certificate authority.
-        # Example: ssl_client_ca = "/opt/mongo/certs/ca.pem"
-        ssl_client_ca = None
-        # File containing the SSL key.
-        # Example:  ssl_client_key = "/opt/mongo/certs/client-key.pem"
-        ssl_client_key = None
-        # File containing the SSL certificate file.
-        # Example: ssl_client_cert = "/opt/mongo/certs/client-cert.pem"
-        ssl_client_cert = None
-        # Pass phrase for the SSL Client Key, if one is set.
-        # Example:  ssl_client_phrase = "Phrase"
-        ssl_client_phrase = None
+    # These options will not need to be updated normally.
+    # RabbitMQ listening port
+    # Default is 5672
+    port = 5672
+    # Type of exchange
+    # Names allowed:  direct, topic, fanout, headers
+    exchange_type = "direct"
+    # Is exchange durable: True|False
+    x_durable = True
+    # Are queues durable: True|False
+    q_durable = True
+    # Do queues automatically delete once message is processed:  True|False
+    auto_delete = False
 
-        # Name of Mongo database for data insertion
-        dbs = "DATABASE"
-        # Name of Mongo collection
-        tbl = "COLLECTION"
 
-        Configuration modules -> Name is runtime dependent as it can be used to
-            connect to different databases with different names.
+    ###########################################################################
+    # Pulled Search Insert Configuration section.
+    # Update this section if using the -I option.
+    # Directory where to monitor for new files to insert into Mongodb.
+    monitor_dir = "MONITOR_DIR_PATH"
+    # Regular expression for search for Insert/Mongodb file names.
+    mfile_regex = "_mongo.json"
+    # Directory path to where Insert/Mongodb archived files are saved to.
+    marchive_dir = "BASE_PATH/archive"
+    # Directory path to where Insert/Mongodb error and non-processed files are
+    #     saved to.
+    merror_dir = "BASE_PATH/mongo_error"
+
+
+    ###########################################################################
+    # Name of Mongo configuration file.  (Do not include the ".py" in the
+    #     name.)
+    # This entry is used by the (-F and -i), (-P and -i) and -I options.
+    # Do not change unless changing the name of the external Mongo config file.
+    mconfig = "mongo"
+
+    ###########################################################################
+    # Log parsing section.
+    # Warning: Do not modify this section unless you know regular expressions.
+    # NOTE: These name tags are reserved and cannot be used:
+    #     ["command", "docid", "network", "pubDate", "asOf"]
+    regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>CN=.*?) \[(?P<logTime>.*?)
+        (?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/
+        (?P<msecs>.*?) \"(?P<verb>.*?) (?P<verbUrl>.*?) HTTP/(?P<httpVer>.*?)\
+        " (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"
+        (?P<userAgent>.*?)\" (?P<url>.*?)?$"
+    # These are the entries that will be parsed from the log entry and placed
+    #     into the document.
+    # Note 1: Name tags must match between regex and allowable and are
+    #     case-sensitive.
+    # Note 2: The "url" tag is hardcoded in the program to add "https://" to
+    #     the front of the url.
+    allowable = ["userid", "logTime", "verb", "status", "url"]
+
+
+    Mongo configuration file format (config/mongo.py.TEMPLATE).  The
+    configuration file format is for connecting to a Mongo database or
+    replica set for monitoring.  A second configuration file can also
+    be used to connect to a Mongo database or replica set to insert the
+    results of the performance monitoring into.
+
+    # Pulled Search Insert/Mongo DB Configuration section.
+    # Update this file if using the -I option.
+    user = "USER"
+    japd = "PSWORD"
+    # Mongo DB host information
+    host = "HOST_IP"
+    name = "HOSTNAME"
+    # Mongo database port
+    # Default port for Mongo is 27017.
+    port = 27017
+    # Mongo configuration settings
+    # Only set if using a different Mongo configuration file.
+    conf_file = None
+    # Authentication required:  True|False
+    # Only set to False if no authentication is taking place.
+    auth = True
+    # Authentication database
+    # Name of database to authenticate the user in.
+    auth_db = "admin"
+    # Authentication mechanism
+    #   Current values allowed:  MONGODB-CR, SCRAM-SHA-1, SCRAM-SHA-256
+    #   NOTE 1:  SCRAM-SHA-256 only works for Mongodb 4.0 and better.
+    #   NOTE 2:  FIPS 140-2 environment requires SCRAM-SHA-1 or SCRAM-SHA-256.
+    #   NOTE 3:  MONGODB-CR is not suppoerted in Mongodb 4.0 and better.
+    auth_mech = "SCRAM-SHA-1"
+
+    # Replica Set Mongo configuration settings.
+    # By default all settings are set to None.
+    #    None means the Mongo database is not part of a replica set.
+    #
+    # Replica set name.
+    # Format:  repset = "REPLICA_SET_NAME"
+    repset = None
+    # Replica host listing.
+    # Format:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
+    repset_hosts = None
+    # Database to authentication to.
+    # Format:  db_auth = "AUTHENTICATION_DATABASE"
+    db_auth = None
+
+    # SSL Configuration settings
+    # If not set will connect to Mongo without using SSL connections.
+    # File containing the SSL certificate authority.
+    # Example: ssl_client_ca = "/opt/mongo/certs/ca.pem"
+    ssl_client_ca = None
+    # File containing the SSL key.
+    # Example:  ssl_client_key = "/opt/mongo/certs/client-key.pem"
+    ssl_client_key = None
+    # File containing the SSL certificate file.
+    # Example: ssl_client_cert = "/opt/mongo/certs/client-cert.pem"
+    ssl_client_cert = None
+    # Pass phrase for the SSL Client Key, if one is set.
+    # Example:  ssl_client_phrase = "Phrase"
+    ssl_client_phrase = None
+
+    # Name of Mongo database for data insertion
+    dbs = "DATABASE"
+    # Name of Mongo collection
+    tbl = "COLLECTION"
+
+
+    Configuration modules -> Name is runtime dependent as it can be used to
+        connect to different databases with different names.
+
 
     Examples:
         pulled_search.py -c search -d /opt/local/pulled/config -P

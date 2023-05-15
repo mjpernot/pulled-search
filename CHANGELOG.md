@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.1] - 2023-05-15
+### Changed
+- config/search.py.TEMPLATE:  Added "CN=" to the userid tag in the regex entry.
+- Documentation updates.
+
+
 ## [0.2.0] - 2023-05-11
 Beta release
 
