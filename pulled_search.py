@@ -676,6 +676,28 @@ def process_json(args, cfg, log, log_json):
     return status
 
 
+def is_base64(data):
+
+    """Function:  is_base64
+
+    Description:  Determines if the data is base64 encoded.
+
+    Arguments:
+        (input) data -> Data string to be checked
+        (output) status -> True|False - Is base64 encoded
+
+    """
+
+    try:
+        status = True if base64.b64encode(
+            base64.b64decode(data))[1:70] == data[1:70] else False
+
+    except TypeError as err:
+        status = False
+
+    return status
+
+
 def process_insert(args, cfg, fname, log):
 
     """Function:  process_insert
