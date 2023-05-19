@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.2.1] - 2023-05-15
+### Fixed
+- process_insert: Will not stacktrace if file is a string.
+
 ### Added
 - is_base64: Determines if the data is base64 encoded.
 

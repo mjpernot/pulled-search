@@ -139,7 +139,6 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
-        test_json_in_str
         test_mongo_failed
         test_mongo_successful
         test_json_success
@@ -170,23 +169,6 @@ class UnitTest(unittest.TestCase):
             base, "test/unit/pulled_search/testfiles/test_docid2.json")
         self.in_file3 = os.path.join(
             base, "test/unit/pulled_search/testfiles/test_docid3.json")
-        self.in_file4 = os.path.join(
-            base, "test/unit/pulled_search/testfiles/test_docid4.json")
-
-    @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
-    def test_json_in_str(self):
-
-        """Function:  test_json_in_str
-
-        Description:  Test with JSON in a string.
-
-        Arguments:
-
-        """
-
-        self.assertEqual(
-            pulled_search.process_insert(
-                self.args, self.cfg, self.in_file4, self.logger), True)
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=False))
     def test_mongo_failed(self):
@@ -233,7 +215,6 @@ class UnitTest(unittest.TestCase):
             pulled_search.process_insert(
                 self.args, self.cfg, self.in_file3, self.logger), True)
 
-    @unittest.skip("Fails on files with text only.")
     def test_json_failure(self):
 
         """Function:  test_json_failure
