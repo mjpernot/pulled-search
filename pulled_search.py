@@ -300,6 +300,10 @@
         pulled_search.py -c search -d /opt/local/pulled/config -I
             -n /opt/local/pulled/monitor -y pulled_insert
 
+    Known Bugs:
+        The -I option will not work in Python 3.  See notes in process_insert
+        and is_base64 functions.
+
 """
 
 # Libraries and Global Variables
@@ -686,6 +690,8 @@ def is_base64(data):
     Arguments:
         (input) data -> Data string to be checked
         (output) status -> True|False - Is base64 encoded
+
+    Known Bug:  Will not work in Python 3.
 
     """
 
