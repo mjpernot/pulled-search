@@ -215,7 +215,6 @@ class UnitTest(unittest.TestCase):
             pulled_search.process_insert(
                 self.args, self.cfg, self.in_file3, self.logger), True)
 
-    @unittest.skip("Fails on files with text only.")
     def test_json_failure(self):
 
         """Function:  test_json_failure

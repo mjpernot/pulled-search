@@ -14,6 +14,7 @@ echo "Unit test:  pulled_search.py"
 /usr/bin/python ./test/unit/pulled_search/help_message.py
 /usr/bin/python ./test/unit/pulled_search/insert_data.py
 /usr/bin/python ./test/unit/pulled_search/insert_mongo.py
+/usr/bin/python ./test/unit/pulled_search/is_base64.py
 /usr/bin/python ./test/unit/pulled_search/load_processed.py
 /usr/bin/python ./test/unit/pulled_search/main.py
 /usr/bin/python ./test/unit/pulled_search/mvalidate_dirs.py

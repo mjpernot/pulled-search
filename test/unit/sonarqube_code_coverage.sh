@@ -16,6 +16,7 @@ coverage run -a --source=pulled_search test/unit/pulled_search/get_archive_files
 coverage run -a --source=pulled_search test/unit/pulled_search/help_message.py
 coverage run -a --source=pulled_search test/unit/pulled_search/insert_data.py
 coverage run -a --source=pulled_search test/unit/pulled_search/insert_mongo.py
+coverage run -a --source=pulled_search test/unit/pulled_search/is_base64.py
 coverage run -a --source=pulled_search test/unit/pulled_search/load_processed.py
 coverage run -a --source=pulled_search test/unit/pulled_search/main.py
 coverage run -a --source=pulled_search test/unit/pulled_search/mvalidate_dirs.py
