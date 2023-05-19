@@ -9,7 +9,7 @@ pipeline {
         stage('Test') {
             steps {
                 dir ('lib') {
-                    git branch: "mod/294", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
+                    git branch: "mod/2101", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/python-lib.git"
                 }
                 dir ('mongo_lib') {
                     git branch: "mod/422", credentialsId: "2cfb403c-be21-4fac-94d7-c8cd5c531feb", url: "https://gitlab.code.dicelab.net/JAC-IDM/mongo-lib.git"
@@ -41,6 +41,7 @@ pipeline {
                 /usr/bin/python2 ./test/unit/pulled_search/help_message.py
                 /usr/bin/python2 ./test/unit/pulled_search/insert_data.py
                 /usr/bin/python2 ./test/unit/pulled_search/insert_mongo.py
+                /usr/bin/python2 ./test/unit/pulled_search/is_base64.py
                 /usr/bin/python2 ./test/unit/pulled_search/load_processed.py
                 /usr/bin/python2 ./test/unit/pulled_search/main.py
                 /usr/bin/python2 ./test/unit/pulled_search/mvalidate_dirs.py
