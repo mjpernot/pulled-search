@@ -32,6 +32,7 @@
         -P => Process Doc ID files from html files.
             -i => Insert the log entries into Mongodb.
             -e => Email log entries.
+                -b => Summary count of docid findings written to file.
             -r => Publish log entries to RabbitMQ.
             -m dir_path => Directory to monitor for doc ID files.  This
                 overrides the config file setting.
@@ -69,6 +70,8 @@
             of compressed file will not work.
         NOTE 6: The -i, -e and -r options are XOR options under the -F and -P
             options.
+        NOTE 7: -b option writes file to base directory of processed_file in
+            the configuration file.  File is named: docid_transfer.YYYYMM
 
     Input files:
         The file for the -F option must be in the following layout in ACSII
@@ -605,6 +608,39 @@ def parse_data(args, cfg, log, log_json):
     return status
 
 
+def write_summary(cfg, log, log_json):
+
+    """Function:  write_summary
+
+    Description:  Write summary results for docid to docid transfer file.
+
+    Arguments:
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) log_json -> JSON log document
+        (output) status -> True|False - Successful processing
+
+    """
+
+    log.log_info("write_summary:  Updating Docid Transfer summary for %s" %
+                 (log_json["docid"]))
+    yearmon = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m")
+    fname = os.path.join(
+        os.path.dirname(cfg.processed_file), "docid_transfer." + yearmon)
+    file_entry = {
+        "docid": log_json["docid"], "network": log_json["network"],
+        "count": cnt}
+
+    for svr in log_json["servers"]:
+        file_entry["count"] += len(log_json["servers"][svr])
+
+    log.log_info("write_summary: %s" % (file_entry))
+
+    if file_entry["count"]:
+        with open(fname, "a") as fhdr:
+            fhdr.write(file_entry + "\n")
+
+
 def process_json(args, cfg, log, log_json):
 
     """Function:  process_json
@@ -630,6 +666,9 @@ def process_json(args, cfg, log, log_json):
 
     # Email entries
     elif args.arg_exist("-e"):
+        if args.arg_exist("-b"):
+            write_summary(cfg, log, log_json)
+
         log.log_info("process_json:  Email log entries to: %s, Subject: %s"
                      % (cfg.to_addr, cfg.subj))
         msg = MIMEMultipart()
