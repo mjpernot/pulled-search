@@ -32,3 +32,4 @@ echo "Unit test:  pulled_search.py"
 /usr/bin/python3 ./test/unit/pulled_search/search_docid.py
 /usr/bin/python3 ./test/unit/pulled_search/update_processed.py
 /usr/bin/python3 ./test/unit/pulled_search/validate_dirs.py
+/usr/bin/python3 ./test/unit/pulled_search/write_summary.py

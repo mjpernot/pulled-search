@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.2] - 2023-05-22
+- Add ability to create summary report when emailing out docid findings.
+
+### Added
+- write_summary: Write summary results for docid to docid transfer file.
+
+### Changed
+- process_json: Call to write_summary if email and -b option are selected.
+
+
 ## [0.2.1] - 2023-05-15
 ### Fixed
 - process_insert: Will not stacktrace if file is a string.
