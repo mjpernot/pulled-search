@@ -629,7 +629,7 @@ def write_summary(cfg, log, log_json):
         os.path.dirname(cfg.processed_file), "docid_transfer." + yearmon)
     file_entry = {
         "docid": log_json["docid"], "network": log_json["network"],
-        "count": cnt}
+        "count": 0}
 
     for svr in log_json["servers"]:
         file_entry["count"] += len(log_json["servers"][svr])
@@ -638,7 +638,7 @@ def write_summary(cfg, log, log_json):
 
     if file_entry["count"]:
         with open(fname, "a") as fhdr:
-            fhdr.write(file_entry + "\n")
+            fhdr.write(json.dumps(file_entry) + "\n")
 
 
 def process_json(args, cfg, log, log_json):

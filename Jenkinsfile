@@ -59,6 +59,7 @@ pipeline {
                 /usr/bin/python2 ./test/unit/pulled_search/search_docid.py
                 /usr/bin/python2 ./test/unit/pulled_search/update_processed.py
                 /usr/bin/python2 ./test/unit/pulled_search/validate_dirs.py
+                /usr/bin/python2 ./test/unit/pulled_search/write_summary.py
                 deactivate
                 rm -rf test_env
                 """
