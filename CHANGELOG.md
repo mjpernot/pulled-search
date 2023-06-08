@@ -5,8 +5,12 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [0.2.3] - 2023-06-08
 - Updated check-log to v4.0.4
+- Merged archive_log_dir config entry into log_dir.
 
 ### Changed
+- validate_dirs: Removed -a check and removed cfg.archive_log_dir directory check.
+- process_docid: Replaced cfg.archive_log_dir with cfg.log_dir.
+- config/search.py.TEMPLATE: Removed archive_log_dir entry.
 - Documentation updates.
 
 

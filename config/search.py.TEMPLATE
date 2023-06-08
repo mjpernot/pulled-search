@@ -27,14 +27,8 @@ outfile = "BASE_PATH/tmp/checklog.out"
 error_dir = "BASE_PATH/search_error"
 # Security enclave these files are being processed on.
 enclave = "ENCLAVE"
-
-# Use one of the two entries below.
-# If not using the -a option.
-# Directory where active log files to be searched are.
+# Directory where active or archive log files to be searched are.
 log_dir = "LOG_DIR_PATH"
-# If using the -a option.
-# Directory where archived log files to be searched are.
-archive_log_dir = "ARCHIVE_DIR_PATH"
 
 # These options will not need to be updated normally.
 # Regular expression for search for html file names.

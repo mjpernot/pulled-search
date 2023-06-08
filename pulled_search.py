@@ -111,14 +111,8 @@
     error_dir = "BASE_PATH/search_error"
     # Security enclave these files are being processed on.
     enclave = "ENCLAVE"
-
-    # Use one of the two entries below.
-    # If not using the -a option.
-    # Directory where active log files to be searched are.
+    # Directory where active or archived log files to be searched are.
     log_dir = "LOG_DIR_PATH"
-    # If using the -a option.
-    # Directory where archived log files to be searched are.
-    archive_log_dir = "ARCHIVE_DIR_PATH"
 
     # These options will not need to be updated normally.
     # Regular expression for search for html file names.
@@ -463,10 +457,10 @@ def process_docid(args, cfg, docid_dict, log):
 
     if args.arg_exist("-a"):
         log.log_info("process_docid:  Searching archive directory: %s"
-                     % (cfg.archive_log_dir))
+                     % (cfg.log_dir))
         pulldate = docid_dict["pulldate"] if "pulldate" in docid_dict else None
         log_files = get_archive_files(
-            cfg.archive_log_dir, cmd, docid_dict["pubdate"], cmd_regex,
+            cfg.log_dir, cmd, docid_dict["pubdate"], cmd_regex,
             pulldate=pulldate)
 
     else:
@@ -1190,21 +1184,11 @@ def validate_dirs(cfg, args):
         if not status:
             msg_dict[entry] = msg
 
-    if args.get_val("-a", def_val=None):
-        # Directory path to where archived log files to be searched are
-        status, msg = gen_libs.chk_crt_dir(
-            cfg.archive_log_dir, read=True, no_print=True)
+    # Directory where active/archived log files to be searched are
+    status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
 
-        if not status:
-            msg_dict[cfg.archive_log_dir] = msg
-
-    else:
-        # Directory where active log files to be searched are
-        status, msg = gen_libs.chk_crt_dir(
-            cfg.log_dir, read=True, no_print=True)
-
-        if not status:
-            msg_dict[cfg.log_dir] = msg
+    if not status:
+        msg_dict[cfg.log_dir] = msg
 
     # Temporary file where check_log will write to
     basepath = gen_libs.get_base_dir(cfg.outfile)
