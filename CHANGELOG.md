@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.3] - 2023-06-08
+
+
 ## [0.2.2] - 2023-05-22
 - Add ability to create summary report when emailing out docid findings.
 
