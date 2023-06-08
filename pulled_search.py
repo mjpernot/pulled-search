@@ -85,16 +85,14 @@
 
     Configuration file (config/search.py.TEMPLATE).  Below is the
     configuration file format for the environment setup in the program.
-    More details in the configuraton file.
 
     ###########################################################################
     # Pulled Search General Configuration section.
-    # This section is for the -P, -F and -I options.
+    # This section is for all options.
     #
     # Logger file for the storage of log entries.
     # File name including directory path.
     log_file = "BASE_PATH/log/pulled_search.log"
-
 
     ###########################################################################
     # Pulled Search Process Configuration section.
@@ -102,7 +100,7 @@
     #
     # Directory where Docid Pulled Html files are located at.
     # NOTE: Do not include the YYYY/MM as part of the path as this will be
-    #     added.
+    #   added.
     doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
     # Path and file name for previous processed files.
     processed_file = "BASE_PATH/processed/processed"
@@ -131,28 +129,29 @@
     log_type = "access_log"
     # Mapping of commands to keywords.
     # This is for the naming of the access logs which are not always under the
-    #     command name.
+    #   command name.
     command = {"intelink": "eucom"}
-
 
     ###########################################################################
     # Email Configuration section.
-    # Update this section if using the (-P or -F) and -e options.
+    # These entries are for the -e option under the -P and -F options.
+    #
     # This option is normally is used in conjunction with the rmq_2_mail.py
-    #     program.
+    #   program.
     # Email address to rabbitmq alias for the rmq_2_mail.py program.
     # Example: to_addr = "rabbitmq@domain.name"
     to_addr = None
     # Name of the RabbitMQ queue.
     # Note: Subject must match exactly the RabbitMQ queue name and is
-    #     case-sensitive.  Also the subject will be CamelCased when processed.
+    #   case-sensitive.
+    #     Also the subject will be CamelCased when processed.
     # Example:  subj = "Pulledsearch"
     subj = None
 
-
     ###########################################################################
     # RabbitMQ Configuration section.
-    # Update this section if using the (-P or -F) and -r options.
+    # These entries are for the -r option under the -P and -F options.
+    #
     # Login information.
     user = "USER"
     japd = "PSWORD"
@@ -184,10 +183,10 @@
     # Do queues automatically delete once message is processed:  True|False
     auto_delete = False
 
-
     ###########################################################################
     # Pulled Search Insert Configuration section.
-    # Update this section if using the -I option.
+    # These entries are for the -I option.
+    #
     # Directory where to monitor for new files to insert into Mongodb.
     monitor_dir = "MONITOR_DIR_PATH"
     # Regular expression for search for Insert/Mongodb file names.
@@ -195,33 +194,35 @@
     # Directory path to where Insert/Mongodb archived files are saved to.
     marchive_dir = "BASE_PATH/archive"
     # Directory path to where Insert/Mongodb error and non-processed files are
-    #     saved to.
+    #   saved to.
     merror_dir = "BASE_PATH/mongo_error"
-
 
     ###########################################################################
     # Name of Mongo configuration file.  (Do not include the ".py" in the
-    #     name.)
-    # This entry is used by the (-F and -i), (-P and -i) and -I options.
+    #   name.)
+    # This entry is for the -i and -I options (mongo database).
+    #
     # Do not change unless changing the name of the external Mongo config file.
     mconfig = "mongo"
 
     ###########################################################################
     # Log parsing section.
+    # These entries are for the -I and -P options.
+    #
     # Warning: Do not modify this section unless you know regular expressions.
     # NOTE: These name tags are reserved and cannot be used:
-    #     ["command", "docid", "network", "pubDate", "asOf"]
+    #   ["command", "docid", "network", "pubDate", "asOf"]
     regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>CN=.*?) \[(?P<logTime>.*?)
-        (?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/
-        (?P<msecs>.*?) \"(?P<verb>.*?) (?P<verbUrl>.*?) HTTP/(?P<httpVer>.*?)\
-        " (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"
-        (?P<userAgent>.*?)\" (?P<url>.*?)?$"
+        (?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?)
+        (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) (?P<verbUrl>.*?)
+        HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?)
+        \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
     # These are the entries that will be parsed from the log entry and placed
-    #     into the document.
+    #   into the document.
     # Note 1: Name tags must match between regex and allowable and are
-    #     case-sensitive.
+    #   case-sensitive.
     # Note 2: The "url" tag is hardcoded in the program to add "https://" to
-    #     the front of the url.
+    #   the front of the url.
     allowable = ["userid", "logTime", "verb", "status", "url"]
 
 
