@@ -6,6 +6,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [0.2.3] - 2023-06-08
 - Updated check-log to v4.0.4
 
+### Changed
+- Documentation updates.
+
 
 ## [0.2.2] - 2023-05-22
 - Add ability to create summary report when emailing out docid findings.
