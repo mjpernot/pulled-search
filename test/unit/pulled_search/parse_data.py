@@ -83,6 +83,7 @@ class CfgTest(object):
         sect6 = r"\"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
         self.regex = sect1 + sect2 + sect3 + sect4 + sect5 + sect6
         self.allowable = ["userid", "logTime", "verb", "status", "url"]
+        self.marchive_dir = "/path/to/archive"
 
 
 class UnitTest(unittest.TestCase):
@@ -162,6 +163,8 @@ class UnitTest(unittest.TestCase):
             "asOf": dtg,
             "servers": {"server_name": [self.entry2]}}
 
+    @mock.patch(
+        "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
     @mock.patch("pulled_search.re.match", mock.Mock(return_value=None))
     @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
@@ -181,6 +184,8 @@ class UnitTest(unittest.TestCase):
             pulled_search.parse_data(
                 self.args, self.cfg, mock_log, self.log_json))
 
+    @mock.patch(
+        "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
     @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_partial_log_entry(self, mock_log):
@@ -199,6 +204,8 @@ class UnitTest(unittest.TestCase):
             pulled_search.parse_data(
                 self.args, self.cfg, mock_log, self.log_json4))
 
+    @mock.patch(
+        "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
     @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_multiple_servers(self, mock_log):
@@ -217,6 +224,8 @@ class UnitTest(unittest.TestCase):
             pulled_search.parse_data(
                 self.args, self.cfg, mock_log, self.log_json3))
 
+    @mock.patch(
+        "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
     @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_single_svr_multiple_entries(self, mock_log):
@@ -235,6 +244,8 @@ class UnitTest(unittest.TestCase):
             pulled_search.parse_data(
                 self.args, self.cfg, mock_log, self.log_json2))
 
+    @mock.patch(
+        "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
     @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_single_svr_single_entry(self, mock_log):

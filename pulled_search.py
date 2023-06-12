@@ -185,8 +185,6 @@
     monitor_dir = "MONITOR_DIR_PATH"
     # Regular expression for search for Insert/Mongodb file names.
     mfile_regex = "_mongo.json"
-    # Directory path to where Insert/Mongodb archived files are saved to.
-    marchive_dir = "BASE_PATH/archive"
     # Directory path to where Insert/Mongodb error and non-processed files are
     #   saved to.
     merror_dir = "BASE_PATH/mongo_error"
@@ -194,8 +192,10 @@
     ###########################################################################
     # Name of Mongo configuration file.  (Do not include the ".py" in the
     #   name.)
-    # This entry is for the -i and -I options (mongo database).
+    # These entries are for the -i and -I options (mongo database).
     #
+    # Directory path to where Insert/Mongodb archived files are saved to.
+    marchive_dir = "BASE_PATH/archive"
     # Do not change unless changing the name of the external Mongo config file.
     mconfig = "mongo"
 
@@ -566,6 +566,10 @@ def parse_data(args, cfg, log, log_json):
     first_stage["pubDate"] = log_json["pubDate"]
     first_stage["asOf"] = log_json["asOf"]
     second_stage = dict(first_stage)
+    log.log_info("parse_data:  Writing to archive: %s" % (cfg.marchive_dir))
+    fname = os.path.join(
+        cfg.marchive_dir, log_json["docid"] + log_json["asOf"] + ".json")
+    gen_libs.write_file(fname=fname, mode="w", line=log_json)
     log.log_info("parse_data:  Parsing docid: %s" % (first_stage["docid"]))
 
     # Loop on servers

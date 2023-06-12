@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Merged archive_log_dir config entry into log_dir.
 
 ### Changed
+- parse_data: Added write data to an archive directory.
 - validate_dirs: Removed -a check and removed cfg.archive_log_dir directory check.
 - process_docid: Replaced cfg.archive_log_dir with cfg.log_dir.
 - config/search.py.TEMPLATE: Removed archive_log_dir entry.
