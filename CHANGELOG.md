@@ -6,6 +6,10 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [0.2.3] - 2023-06-08
 - Updated check-log to v4.0.4
 - Merged archive_log_dir config entry into log_dir.
+- Added archive of logs for the -i option.
+
+### Fixed
+- checklog/check_log: Fixed sending out empty emails.
 
 ### Changed
 - parse_data: Added write data to an archive directory.
