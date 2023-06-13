@@ -89,7 +89,6 @@ class CfgTest(object):
         self.log_type = "access_log"
         self.log_dir = "/dir_path/log"
         self.outfile = "/dir/path/outfile"
-        self.archive_log_dir = "/dir/archive_dir"
         self.command = {"intelink": "eucom"}
         self.enclave = "ENCLAVE"
 

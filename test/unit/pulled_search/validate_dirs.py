@@ -90,7 +90,6 @@ class CfgTest(object):
         self.log_dir = "/dir_path/log_dir"
         self.outfile = "/dir_path/outfile_dir/outfile"
         self.error_dir = "/dir_path/error_dir"
-        self.archive_log_dir = "/dir_path/archive_log_dir"
         self.processed_file = "/dir_path/processed_dir/processed_file"
 
 
@@ -106,7 +105,6 @@ class UnitTest(unittest.TestCase):
         test_doc_dir_multiple_two_fail
         test_doc_dir_multiple_one_fail
         test_doc_dir_multiple
-        test_archive_log_dir_failure
         test_multiple_failures
         test_error_dir_failure
         test_outfile_failure
@@ -140,7 +138,6 @@ class UnitTest(unittest.TestCase):
         self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
         self.results5 = {self.errdir: self.errval}
         self.results6 = {self.dockey: self.docval, self.errdir: self.errval}
-        self.results7 = {"/dir_path/archive_log_dir": "Archive_dir failure"}
         self.results8 = {"/dir_path/processed_dir": "Processed_dir failure"}
         self.chk = (True, None)
         self.chk2 = (False, self.docval)
@@ -148,7 +145,6 @@ class UnitTest(unittest.TestCase):
         self.chk3 = (False, "Log_dir failure")
         self.chk4 = (False, "Outfile failure")
         self.chk5 = (False, self.errval)
-        self.chk7 = (False, "Archive_dir failure")
         self.chk8 = (False, "Processed_dir failure")
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
@@ -223,25 +219,6 @@ class UnitTest(unittest.TestCase):
                                 self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg, self.args), {})
-
-    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
-    def test_archive_log_dir_failure(self, mock_chk):
-
-        """Function:  test_archive_log_dir_failure
-
-        Description:  Test with failure on archive_log_dir check.
-
-        Arguments:
-
-        """
-
-        self.args.args_array = {"-a": True}
-
-        mock_chk.side_effect = [self.chk, self.chk7, self.chk, self.chk,
-                                self.chk]
-
-        self.assertEqual(
-            pulled_search.validate_dirs(self.cfg, self.args), self.results7)
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_multiple_failures(self, mock_chk):
