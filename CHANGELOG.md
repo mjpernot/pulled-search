@@ -12,6 +12,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - checklog/check_log: Fixed sending out empty emails.
 
 ### Changed
+- is_base64, process_insert: Removed unused err variable.
 - parse_data: Added write data to an archive directory.
 - validate_dirs: Removed -a check and removed cfg.archive_log_dir directory check.
 - process_docid: Replaced cfg.archive_log_dir with cfg.log_dir.

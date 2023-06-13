@@ -737,7 +737,7 @@ def is_base64(data):
         status = True if base64.b64encode(
             base64.b64decode(data))[1:70] == data[1:70] else False
 
-    except TypeError as err:
+    except TypeError:
         status = False
 
     return status
@@ -773,7 +773,7 @@ def process_insert(args, cfg, fname, log):
         try:
             log_json = json.loads(data)
 
-        except ValueError as err:
+        except ValueError:
             log_json = data
 
     if isinstance(log_json, dict):
@@ -1165,7 +1165,7 @@ def insert_data(args, cfg, log):
         non_processed(nonproc_list, cfg.merror_dir, log, mail)
 
 
-def validate_dirs(cfg, args):
+def validate_dirs(cfg):
 
     """Function:  validate_dirs
 
@@ -1174,7 +1174,6 @@ def validate_dirs(cfg, args):
 
     Arguments:
         (input) cfg -> Configuration setup
-        (input) args -> ArgParser class instance
         (output) msg_dict -> Dictionary of any error messages detected
 
     """
@@ -1273,7 +1272,7 @@ def checks_dirs(args, cfg):
     msg_dict = dict()
 
     if args.get_val("-P", def_val=None):
-        msg_dict = validate_dirs(cfg, args)
+        msg_dict = validate_dirs(cfg)
 
     elif args.get_val("-I", def_val=None):
         msg_dict = mvalidate_dirs(cfg)
