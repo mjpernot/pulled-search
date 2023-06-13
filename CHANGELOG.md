@@ -3,6 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.3] - 2023-06-08
+- Updated check-log to v4.0.4
+- Merged archive_log_dir config entry into log_dir.
+
+### Changed
+- parse_data: Added write data to an archive directory.
+- validate_dirs: Removed -a check and removed cfg.archive_log_dir directory check.
+- process_docid: Replaced cfg.archive_log_dir with cfg.log_dir.
+- config/search.py.TEMPLATE: Removed archive_log_dir entry.
+- Documentation updates.
+
+
 ## [0.2.2] - 2023-05-22
 - Add ability to create summary report when emailing out docid findings.
 

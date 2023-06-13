@@ -130,7 +130,6 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(data["count"], 6)
 
-
     @mock.patch("pulled_search.gen_class.Logger")
     def test_multiple_count(self, mock_log):
 
@@ -169,7 +168,6 @@ class UnitTest(unittest.TestCase):
         data = json.loads(data)
 
         self.assertEqual(data["count"], 3)
-
 
     @mock.patch("pulled_search.gen_class.Logger")
     def test_single_count(self, mock_log):
@@ -217,7 +215,6 @@ class UnitTest(unittest.TestCase):
 
         if os.path.isfile(self.f_name):
             os.remove(self.f_name)
-        
 
 
 if __name__ == "__main__":

@@ -9,3 +9,4 @@ lib
 mongo_lib
 rabbit_lib
 checklog
+.scannerwork
