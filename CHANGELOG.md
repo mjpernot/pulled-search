@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.4] - 2023-06-27
+
+
 ## [0.2.3] - 2023-06-08
 - Updated check-log to v4.0.4
 - Merged archive_log_dir config entry into log_dir.
