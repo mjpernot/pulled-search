@@ -7,6 +7,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Fixed
 - parse_data: Corrected incorrect keyword argument to gen_libs.write_file.
 
+### Changed
+- main: Removed gen_libs.get_inst call.
+
 
 ## [0.2.3] - 2023-06-08
 - Updated check-log to v4.0.4

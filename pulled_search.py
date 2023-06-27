@@ -1364,7 +1364,6 @@ def main():
 
     """
 
-    cmdline = gen_libs.get_inst(sys)
     dir_perms_chk = {"-d": 5, "-m": 5, "-n": 7}
     file_perms_chk = {"-F": 4}
     func_dict = {"-P": process_files, "-I": insert_data, "-F": file_input}
@@ -1378,7 +1377,7 @@ def main():
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
-        cmdline.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
+        sys.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
         do_parse=True)
 
     if not gen_libs.help_func(args, __version__, help_message)   \
@@ -1390,7 +1389,7 @@ def main():
 
         try:
             prog_lock = gen_class.ProgramLock(
-                cmdline.argv, args.get_val("-y", def_val=""))
+                sys.argv, args.get_val("-y", def_val=""))
             run_program(args, func_dict)
             del prog_lock
 
