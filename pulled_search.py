@@ -569,7 +569,7 @@ def parse_data(args, cfg, log, log_json):
     log.log_info("parse_data:  Writing to archive: %s" % (cfg.marchive_dir))
     fname = os.path.join(
         cfg.marchive_dir, log_json["docid"] + log_json["asOf"] + ".json")
-    gen_libs.write_file(fname=fname, mode="w", line=log_json)
+    gen_libs.write_file(fname=fname, mode="w", data=log_json)
     log.log_info("parse_data:  Parsing docid: %s" % (first_stage["docid"]))
 
     # Loop on servers
