@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.4] - 2023-06-27
+### Fixed
+- parse_data: Corrected incorrect keyword argument to gen_libs.write_file.
+
+### Changed
+- main: Removed gen_libs.get_inst call.
+
+
 ## [0.2.3] - 2023-06-08
 - Updated check-log to v4.0.4
 - Merged archive_log_dir config entry into log_dir.
