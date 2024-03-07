@@ -568,7 +568,7 @@ def parse_data(args, cfg, log, log_json):
     second_stage = dict(first_stage)
     log.log_info("parse_data:  Writing to archive: %s" % (cfg.marchive_dir))
     fname = os.path.join(
-        cfg.marchive_dir, log_json["docid"] + log_json["asOf"] + ".json")
+        cfg.marchive_dir, log_json["docid"] + "." + log_json["asOf"] + ".json")
     gen_libs.write_file(fname=fname, mode="w", data=log_json)
     log.log_info("parse_data:  Parsing docid: %s" % (first_stage["docid"]))
 
@@ -681,8 +681,7 @@ def process_json(args, cfg, log, log_json):
         part.add_header("Content-Disposition", "attachment", filename=fname)
         msg.attach(part)
         text = msg.as_string()
-        inst = gen_libs.get_inst(smtplib)
-        mail = inst.SMTP("localhost")
+        mail = smtplib.SMTP("localhost")
         mail.sendmail(msg["From"], msg["To"], text)
         status = True
 

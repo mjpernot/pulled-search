@@ -10,7 +10,13 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Updated python-lib to v3.0.3
 - Updated check-log to v4.0.7
 
+### Fixed
+- parse: Added delimiter (.) in the archive file name.
+- config/search.py.TEMPLATE: Fixed eucom entry.
+
 ### Changed
+- config/search.py.TEMPLATE: Added acic to command.
+- process_json: Removed gen_libs.get_inst call.
 - Set simplejson to 3.12.0 for Python 3.
 - Set chardet to 3.0.4 for Python 2.
 - Documentation updates.
