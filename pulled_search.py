@@ -568,7 +568,7 @@ def parse_data(args, cfg, log, log_json):
     second_stage = dict(first_stage)
     log.log_info("parse_data:  Writing to archive: %s" % (cfg.marchive_dir))
     fname = os.path.join(
-        cfg.marchive_dir, log_json["docid"] + log_json["asOf"] + ".json")
+        cfg.marchive_dir, log_json["docid"] + "." + log_json["asOf"] + ".json")
     gen_libs.write_file(fname=fname, mode="w", data=log_json)
     log.log_info("parse_data:  Parsing docid: %s" % (first_stage["docid"]))
 
@@ -681,8 +681,7 @@ def process_json(args, cfg, log, log_json):
         part.add_header("Content-Disposition", "attachment", filename=fname)
         msg.attach(part)
         text = msg.as_string()
-        inst = gen_libs.get_inst(smtplib)
-        mail = inst.SMTP("localhost")
+        mail = smtplib.SMTP("localhost")
         mail.sendmail(msg["From"], msg["To"], text)
         status = True
 
@@ -1054,7 +1053,13 @@ def process_files(args, cfg, log):
 
     else:
         for dir_entry in cfg.doc_dir:
-            search_dir.append(os.path.join(dir_entry, yearmon))
+            dir_path = os.path.join(dir_entry, yearmon)
+
+            if os.path.isdir(dir_path):
+                search_dir.append(dir_path)
+
+            else:
+                log.log_warn("process_files: %s does not exist" % (dir_path))
 
     for docdir in search_dir:
         log.log_info("process_files:  Searching directory: %s" % (docdir))

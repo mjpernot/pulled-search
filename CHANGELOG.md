@@ -3,6 +3,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.5] - 2024-03-07
+- Updated to work in Red Hat 8
+- Updated rabbitmq-lib to v2.2.3
+- Updated mongo-lib to v4.2.9
+- Updated python-lib to v3.0.3
+- Updated check-log to v4.0.7
+
+### Fixed
+- process_files: Checks to see if search directory exists.
+- parse: Added delimiter (.) in the archive file name.
+- config/search.py.TEMPLATE: Fixed eucom entry.
+
+### Changed
+- config/search.py.TEMPLATE: Added acic to command.
+- process_json: Removed gen_libs.get_inst call.
+- Set simplejson to 3.12.0 for Python 3.
+- Set chardet to 3.0.4 for Python 2.
+- Documentation updates.
+
+
 ## [0.2.4] - 2023-06-27
 ### Fixed
 - parse_data: Corrected incorrect keyword argument to gen_libs.write_file.
