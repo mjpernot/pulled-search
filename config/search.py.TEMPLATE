@@ -39,7 +39,7 @@ pattern = "JAC.pull.subtype.*.SECURITY RECALL"
 log_type = "access_log"
 # Mapping of commands to keywords.
 # This is for the naming of the access logs which are not always under the command name.
-command = {"intelink": "eucom"}
+command = {"eucom": "intelink", "acic": "usacic"}
 
 
 ################################################################################
