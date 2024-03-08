@@ -11,6 +11,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Updated check-log to v4.0.7
 
 ### Fixed
+- process_files: Checks to see if search directory exists.
 - parse: Added delimiter (.) in the archive file name.
 - config/search.py.TEMPLATE: Fixed eucom entry.
 

@@ -125,6 +125,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_search_dir_not_exist
+        test_search_dir_exist
         test_failed_dict
         test_update_process
         test_processed_file_dupes
@@ -166,6 +168,50 @@ class UnitTest(unittest.TestCase):
         self.failed_dict = list()
         self.failed_dict2 = {"09docid1": f_name}
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=False))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.remove_processed")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_search_dir_not_exist(self, mock_log, mock_remove, mock_recall):
+
+        """Function:  test_search_dir_not_exist
+
+        Description:  Test with search directory not existing.
+
+        Arguments:
+
+        """
+
+        mock_remove.return_value = self.file_dict3
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.recall_search")
+    @mock.patch("pulled_search.remove_processed")
+    @mock.patch("pulled_search.gen_libs.filename_search")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_search_dir_exist(self, mock_log, mock_search, mock_remove,
+                              mock_recall):
+
+        """Function:  test_search_dir_exist
+
+        Description:  Test with search directory existing.
+
+        Arguments:
+
+        """
+
+        mock_search.return_value = self.docid_files
+        mock_remove.return_value = self.file_dict3
+        mock_recall.return_value = self.failed_dict
+
+        self.assertFalse(
+            pulled_search.process_files(self.args, self.cfg, mock_log))
+
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.process_failed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
@@ -190,6 +236,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
@@ -213,6 +260,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
@@ -236,6 +284,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
@@ -259,6 +308,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
@@ -282,6 +332,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
@@ -305,6 +356,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
@@ -328,6 +380,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
@@ -351,6 +404,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
@@ -374,6 +428,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
@@ -396,6 +451,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")
@@ -418,6 +474,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             pulled_search.process_files(self.args, self.cfg2, mock_log))
 
+    @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=True))
     @mock.patch("pulled_search.recall_search")
     @mock.patch("pulled_search.remove_processed")
     @mock.patch("pulled_search.gen_libs.filename_search")

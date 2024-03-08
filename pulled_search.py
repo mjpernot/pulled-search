@@ -1053,7 +1053,13 @@ def process_files(args, cfg, log):
 
     else:
         for dir_entry in cfg.doc_dir:
-            search_dir.append(os.path.join(dir_entry, yearmon))
+            dir_path = os.path.join(dir_entry, yearmon)
+
+            if os.path.isdir(dir_path):
+                search_dir.append(dir_path)
+
+            else:
+                log.log_warn("process_files: %s does not exist" % (dir_path))
 
     for docdir in search_dir:
         log.log_info("process_files:  Searching directory: %s" % (docdir))
