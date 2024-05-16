@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.7] - 2024-05-15
+- Added filters to remove non-related entries.
+
+### Changed
+- insert_mongo: Added check for unparsed entries, write insert error data out to a file and added email capability.
+- parse_data: Added checks to remove non-related entries from being inserted into Mongo database and insert unparsed data into another collection.
+- config/mongo.py.TEMPLATE: Added collection name for unparsed entries: unparsed
+
+
 ## [0.2.6] - 2024-04-23
 - Updated mongo-lib to v4.3.0
 - Added TLS capability for Mongo

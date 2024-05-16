@@ -27,6 +27,58 @@ import version
 __version__ = version.__version__
 
 
+class Mail(object):
+
+    """Class:  Mail
+
+    Description:  Class stub holder for gen_class.Mail class.
+
+    Methods:
+        __init__
+        add_2_msg
+        send_mail
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.data = None
+
+    def add_2_msg(self, data):
+
+        """Method:  add_2_msg
+
+        Description:  Stub method holder for Mail.add_2_msg.
+
+        Arguments:
+
+        """
+
+        self.data = data
+
+        return True
+
+    def send_mail(self):
+
+        """Method:  send_mail
+
+        Description:  Stub method holder for Mail.send_mail.
+
+        Arguments:
+
+        """
+
+        return True
+
+
 class ArgParser(object):
 
     """Class:  ArgParser
@@ -86,6 +138,7 @@ class CfgTest(object):
         """
 
         self.mconfig = "mongo"
+        self.merror_dir = "/dir/path"
 
 
 class MCfgTest(object):
@@ -111,6 +164,7 @@ class MCfgTest(object):
 
         self.dbs = "database_name"
         self.tbl = "table_name"
+        self.unparsed = "unparsed"
 
 
 class Logger(object):
@@ -176,6 +230,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_mongo_failed_email
+        test_mongo_unparsed
         test_mongo_failed
         test_mongo_successful
 
@@ -194,19 +250,59 @@ class UnitTest(unittest.TestCase):
         self.args = ArgParser()
         self.cfg = CfgTest()
         self.mcfg = MCfgTest()
+        self.mail = Mail()
         self.logger = Logger("Name", "Name", "INFO", "%(asctime)s%(message)s",
                              "%m-%d-%YT%H:%M:%SZ|")
         self.data = {
-            "docid": "09109uosdhf",
-            "command": "COMMAND",
-            "pubDate": "20200102-101134",
-            "network": "ENCLAVE",
-            "asOf": "20200306 084503",
-            "entry": "data_line",
-            "logTime": "log_time",
-            "userID": "user_id",
-            "requestMethod": "GET"}
+            "docid": "09109uosdhf", "command": "COMMAND",
+            "pubDate": "20200102-101134", "network": "ENCLAVE",
+            "asOf": "20200306 084503", "entry": "data_line",
+            "logTime": "log_time", "userID": "user_id", "requestMethod": "GET"}
 
+    @mock.patch("pulled_search.gen_libs.write_file",
+                mock.Mock(return_value=True))
+    @mock.patch("pulled_search.mongo_libs.ins_doc",
+                mock.Mock(return_value=(False, "mongo failure")))
+    @mock.patch("pulled_search.gen_class.setup_mail")
+    @mock.patch("pulled_search.gen_libs.load_module")
+    def test_mongo_failed_email(self, mock_load, mock_mail):
+
+        """Function:  test_mongo_failed_email
+
+        Description:  Test with failed Mongo data insertion.
+
+        Arguments:
+
+        """
+
+        self.args.args_array["-t"] = "email_address"
+
+        mock_load.return_value = self.mcfg
+        mock_mail.return_value = self.mail
+
+        self.assertFalse(pulled_search.insert_mongo(
+            self.args, self.cfg, self.logger, self.data))
+
+    @mock.patch("pulled_search.mongo_libs.ins_doc",
+                mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.gen_libs.load_module")
+    def test_mongo_unparsed(self, mock_load):
+
+        """Function:  test_mongo_unparsed
+
+        Description:  Test with passing unparsed argument.
+
+        Arguments:
+
+        """
+
+        mock_load.return_value = self.mcfg
+
+        self.assertTrue(pulled_search.insert_mongo(
+            self.args, self.cfg, self.logger, self.data, unparsed=True))
+
+    @mock.patch("pulled_search.gen_libs.write_file",
+                mock.Mock(return_value=True))
     @mock.patch("pulled_search.mongo_libs.ins_doc",
                 mock.Mock(return_value=(False, "mongo failure")))
     @mock.patch("pulled_search.gen_libs.load_module")
