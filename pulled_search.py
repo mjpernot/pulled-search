@@ -286,7 +286,7 @@
     # Example:  ssl_client_phrase = "Phrase"
     ssl_client_phrase = None
 
-    # TLS Configuration settings 
+    # TLS Configuration settings
     # File containing the TLS certificate authority.
     # Example: tls_ca_certs = "/opt/mongo/certs/ca.pem"
     tls_ca_certs = None
@@ -339,7 +339,6 @@ import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 import getpass
 
 # Local
@@ -531,7 +530,7 @@ def process_docid(args, cfg, docid_dict, log):
     return status
 
 
-def insert_mongo(args, cfg, log, data):
+def insert_mongo(args, cfg, log, data, **kwargs):
 
     """Function:  insert_mongo
 
@@ -542,18 +541,31 @@ def insert_mongo(args, cfg, log, data):
         (input) cfg -> Configuration setup
         (input) log -> Log class instance
         (input) log_json -> JSON log document
+        (input) kwargs:
+            unparsed -> True|False - This is an unparsed entry
         (output) status -> True|False - Successful insertion into Mongo
 
     """
 
     status = True
     mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
-    mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, data)
+    tbl = mcfg.unparsed if kwargs.get("unparsed", False) else mcfg.tbl
+    mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, tbl, data)
 
     if not mongo_stat[0]:
         log.log_err("insert_mongo:  Insertion into Mongo failed.")
         log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
+        fname = os.path.join(
+            cfg.merror_dir, data["docid"] + ".failed_to_insert.json")
+        gen_libs.write_file(fname=fname, mode="a", data=data)
         status = False
+
+    if not status and args.get_val("-t"):
+        mail = gen_class.setup_mail(
+            args.get_val("-t"), subj="Pulledsearch_Failed_to_Insert_Mongo")
+        mail.add_2_msg("Failed to insert the entries in the file into Mongo")
+        mail.add_2_msg("File: " + fname)
+        mail.send_mail()
 
     return status
 
@@ -602,20 +614,29 @@ def parse_data(args, cfg, log, log_json):
             if parsed_line:
                 parsed_line = parsed_line.groupdict()
 
-                for entry in parsed_line:
+                # Filter out non-related entries
+                if log_json["docid"] in parsed_line["url"]      \
+                   and "transformer" in parsed_line["url"]      \
+                   and "2ndReview" not in parsed_line["url"]    \
+                   and parsed_line["status"] == "200"           \
+                   and ".ic.gov" not in parsed_line["userid"]:
 
-                    if entry in cfg.allowable and entry == "url":
-                        third_stage[entry] = "https://" + parsed_line[entry]
+                    for entry in parsed_line:
+                        if entry in cfg.allowable and entry == "url":
+                            third_stage[entry] = \
+                                "https://" + parsed_line[entry]
 
-                    elif entry in cfg.allowable:
-                        third_stage[entry] = parsed_line[entry]
+                        elif entry in cfg.allowable:
+                            third_stage[entry] = parsed_line[entry]
+
+                    status = status & insert_mongo(args, cfg, log, third_stage)
 
             else:
                 log.log_err("parse_data:  Unable to parse log entry: %s."
                             % (third_stage))
-                log.log_warn("parse_data: Insert into Mongo without parsing.")
+                status = status & insert_mongo(
+                    args, cfg, log, third_stage, unparsed=True)
 
-            status = status & insert_mongo(args, cfg, log, third_stage)
             third_stage = dict(second_stage)
 
         second_stage = dict(first_stage)
