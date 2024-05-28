@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.8] - 2024-05-28
+- Add ability to send Mongo inserts via email body instead of as an attachment.
+
+
 ## [0.2.7] - 2024-05-15
 - Added filters to remove non-related entries.
 
