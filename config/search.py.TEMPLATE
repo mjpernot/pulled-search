@@ -4,7 +4,7 @@
 
 ################################################################################
 # Pulled Search General Configuration section.
-# This section is for all options.
+# This section is for all options (-F, -I, -P).
 #
 # Logger file for the storage of log entries.
 # File name including directory path.
@@ -78,7 +78,7 @@ r_key = "RKEYNAME"
 # RabbitMQ Exchange name for each instance run.
 exchange_name = "EXCHANGE_NAME"
 
-# These options will not need to be updated normally.
+# NOTE: These entries will not need to be updated normally.
 # RabbitMQ listening port
 # Default is 5672
 port = 5672
@@ -112,6 +112,7 @@ merror_dir = "BASE_PATH/mongo_error"
 # Directory path to where Insert/Mongodb archived files are saved to.
 marchive_dir = "BASE_PATH/archive"
 # Do not change unless changing the name of the external Mongo config file.
+# The config file is saved to the same location as the -d option.
 mconfig = "mongo"
 
 
