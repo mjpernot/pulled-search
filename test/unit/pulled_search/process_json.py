@@ -247,6 +247,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_email_body
         test_email_summary
         test_mongo_failed
         test_mongo
@@ -277,6 +278,7 @@ class UnitTest(unittest.TestCase):
         self.args_array4 = {"-r": True}
         self.args_array5 = {"-r": True, "-t": True}
         self.args_array6 = {"-e": True, "-b": True}
+        self.args_array7 = {"-e": True, "-g": True}
         self.log_json = {
             "docid": "09109uosdhf",
             "command": "COMMAND",
@@ -284,6 +286,27 @@ class UnitTest(unittest.TestCase):
             "network": "ENCLAVE",
             "asOf": "20200306 084503",
             "servers": {"server_name": ["line1", "line2", "line3"]}}
+
+    @mock.patch("pulled_search.gen_class.setup_mail")
+    @mock.patch("pulled_search.gen_class.Logger")
+    def test_email_body(self, mock_log, mock_mail):
+
+        """Function:  test_email_body
+
+        Description:  Test with emailing document within email body.
+
+        Arguments:
+
+        """
+
+        self.args.args_array = self.args_array7
+
+        mock_log.return_value = True
+        mock_mail.return_value = self.mail
+
+        self.assertTrue(
+            pulled_search.process_json(
+                self.args, self.cfg2, mock_log, self.log_json))
 
     @mock.patch("pulled_search.write_summary", mock.Mock(return_value=True))
     @mock.patch(

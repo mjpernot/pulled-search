@@ -18,8 +18,8 @@
 
     Usage:
         pulled_search.py -c file -d path
-            {-P [-m path] [-a] [-i | -e | -r] |
-             -F /path/filename [-a] [-i | -e | -r] |
+            {-P [-m path] [-a] [-i | -e [-b] | -r] |
+             -F /path/filename [-a] [-i | -e [-b] | -r] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -33,6 +33,7 @@
             -i => Insert the log entries into Mongodb.
             -e => Email log entries.
                 -b => Summary count of docid findings written to file.
+                -g => Sends data via email body instead of as an attachment.
             -r => Publish log entries to RabbitMQ.
             -m dir_path => Directory to monitor for doc ID files.  This
                 overrides the config file setting.
@@ -41,6 +42,8 @@
         -F /path/filename => Process DocIDs from an input file.
             -i => Insert the log entries into Mongodb.
             -e => Email log entries.
+                -b => Summary count of docid findings written to file.
+                -g => Sends data via email body instead of as an attachment.
             -r => Publish log entries to RabbitMQ.
             -a => This is an archive log search.
 
@@ -88,7 +91,7 @@
 
     ###########################################################################
     # Pulled Search General Configuration section.
-    # This section is for all options.
+    # This section is for all options (-F, -I, -P).
     #
     # Logger file for the storage of log entries.
     # File name including directory path.
@@ -163,7 +166,7 @@
     # RabbitMQ Exchange name for each instance run.
     exchange_name = "EXCHANGE_NAME"
 
-    # These options will not need to be updated normally.
+    # NOTE: These options will not need to be updated normally.
     # RabbitMQ listening port
     # Default is 5672
     port = 5672
@@ -486,10 +489,8 @@ def process_docid(args, cfg, docid_dict, log):
 
     dtg = datetime.datetime.strftime(
         datetime.datetime.now(), "%Y-%m-%dT%H:%M:%SZ")
-    log_json = {"docid": docid_dict["docid"],
-                "command": docid_dict["command"],
-                "pubDate": docid_dict["pubdate"],
-                "network": cfg.enclave,
+    log_json = {"docid": docid_dict["docid"], "command": docid_dict["command"],
+                "pubDate": docid_dict["pubdate"], "network": cfg.enclave,
                 "asOf": dtg, "servers": dict()}
     log.log_info("process_docid:  Running check_log search.")
 
@@ -702,24 +703,35 @@ def process_json(args, cfg, log, log_json):
 
     # Email entries
     elif args.arg_exist("-e"):
+        log.log_info("process_json:  Email log entries to: %s, Subject: %s"
+                     % (cfg.to_addr, cfg.subj))
+
         if args.arg_exist("-b"):
             write_summary(cfg, log, log_json)
 
-        log.log_info("process_json:  Email log entries to: %s, Subject: %s"
-                     % (cfg.to_addr, cfg.subj))
-        msg = MIMEMultipart()
-        msg["From"] = getpass.getuser() + "@" + socket.gethostname()
-        msg["To"] = cfg.to_addr
-        msg["Subject"] = cfg.subj
-        fname = log_json["docid"] + "_docid"
-        part = MIMEBase("application", "json")
-        part.set_payload(str(log_json))
-        encoders.encode_base64(part)
-        part.add_header("Content-Disposition", "attachment", filename=fname)
-        msg.attach(part)
-        text = msg.as_string()
-        mail = smtplib.SMTP("localhost")
-        mail.sendmail(msg["From"], msg["To"], text)
+        if args.arg_exist("-g"):
+            log.log_info("process_json:  Email data in body")
+            mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
+            mail.add_2_msg(log_json)
+            mail.send_mail()
+
+        else:
+            log.log_info("process_json:  Email data as attachment")
+            msg = MIMEMultipart()
+            msg["From"] = getpass.getuser() + "@" + socket.gethostname()
+            msg["To"] = cfg.to_addr
+            msg["Subject"] = cfg.subj
+            fname = log_json["docid"] + "_docid"
+            part = MIMEBase("application", "json")
+            part.set_payload(str(log_json))
+            encoders.encode_base64(part)
+            part.add_header(
+                "Content-Disposition", "attachment", filename=fname)
+            msg.attach(part)
+            text = msg.as_string()
+            mail = smtplib.SMTP("localhost")
+            mail.sendmail(msg["From"], msg["To"], text)
+
         status = True
 
     # Publish entries to RabbitMQ
