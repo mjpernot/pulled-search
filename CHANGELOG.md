@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.9] - 2024-06-20
+- Parse the data before it is email, inserted or published.
+
+
 ## [0.2.8] - 2024-05-28
 - Add ability to send Mongo inserts via email body instead of as an attachment.
 
