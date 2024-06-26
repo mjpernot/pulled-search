@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 ## [0.2.9] - 2024-06-20
-- Parse the data before it is email, inserted or published.
+- Parse the data before it is email, inserted into Mongo or published to RabbitMQ.
+
+### Added
+- filter_data: Filter out non-required data entries.
+
+### Changed
+- process_json: Added call to filter_data to remove non-required entries.
+- config/search.py.TEMPLATE: Added raw_archive_dir and unparsable_dir entries.
 
 
 ## [0.2.8] - 2024-05-28
