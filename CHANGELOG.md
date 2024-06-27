@@ -10,7 +10,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - filter_data: Filter out non-required data entries.
 
 ### Changed
-- process_json: Added call to filter_data to remove non-required entries.
+- insert_mongo: 
+- parse_data: Removed the filtering of data from the process, done in filter_data function.
+- process_json: Added call to filter_data to remove non-required entries, add check to email to send data via email body or attachement.
 - config/search.py.TEMPLATE: Added raw_archive_dir and unparsable_dir entries.
 
 

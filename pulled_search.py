@@ -19,7 +19,7 @@
     Usage:
         pulled_search.py -c file -d path
             {-P [-m path] [-a] [-i | -e [-b] | -r] |
-             -F /path/filename [-a] [-i | -e [-b] | -r] |
+             -F /path/filename [-a] [-i | -e [-b -g] | -r] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -466,14 +466,13 @@ def insert_mongo(args, cfg, log, data, **kwargs):
     return status
 
 
-def filter_data(args, cfg, log, log_json):
+def filter_data(cfg, log, log_json):
 
     """Function:  filter_data
 
     Description:  Filter out non-required data entries.
 
     Arguments:
-        (input) args -> ArgParser class instance
         (input) cfg -> Configuration setup
         (input) log -> Log class instance
         (input) log_json -> Dictionary log document
@@ -492,7 +491,7 @@ def filter_data(args, cfg, log, log_json):
 
     # Loop on servers
     for svr in log_json["servers"]:
-        ufname = os.path.join(
+        uname = os.path.join(
             cfg.unparsable_dir, log_json["docid"] + "." + svr +
             log_json["asOf"] + ".unparsable")
         parsed_list = list()
@@ -515,7 +514,7 @@ def filter_data(args, cfg, log, log_json):
 
             else:
                 log.log_warn("filter_data:  Unparsable data written to %s." %
-                             (ufname))
+                             (uname))
                 gen_libs.write_file(fname=uname, mode="a", data=line)
 
         log_json["servers"][svr] = parsed_list
@@ -558,42 +557,37 @@ def parse_data(args, cfg, log, log_json):
         second_stage["server"] = svr
         third_stage = dict(second_stage)
 
-#        print("LENGTH_LIST", len(log_json["servers"][svr]))
         # Loop on log entries for each server
         for line in log_json["servers"][svr]:
             third_stage["entry"] = line
             parsed_line = re.match(cfg.regex, line)
 
             # Parse the log entry
-            if parsed_line:
-                parsed_line = parsed_line.groupdict()
+#            if parsed_line:
+            parsed_line = parsed_line.groupdict()
 
-                # Filter out non-related entries
-                if log_json["docid"] in parsed_line["url"]      \
-                   and "transformer" in parsed_line["url"]      \
-                   and "2ndReview" not in parsed_line["url"]    \
-                   and parsed_line["status"] == "200"           \
-                   and ".ic.gov" not in parsed_line["userid"]:
+#                # Filter out non-related entries
+#                if log_json["docid"] in parsed_line["url"]      \
+#                   and "transformer" in parsed_line["url"]      \
+#                   and "2ndReview" not in parsed_line["url"]    \
+#                   and parsed_line["status"] == "200"           \
+#                   and ".ic.gov" not in parsed_line["userid"]:
 
-                    for entry in parsed_line:
-#                        print("ENTRY", entry)
-                        if entry in cfg.allowable and entry == "url":
-                            third_stage[entry] = \
-                                "https://" + parsed_line[entry]
+            for entry in parsed_line:
+                if entry in cfg.allowable and entry == "url":
+                    third_stage[entry] = \
+                        "https://" + parsed_line[entry]
 
-                        elif entry in cfg.allowable:
-                            third_stage[entry] = parsed_line[entry]
+                elif entry in cfg.allowable:
+                    third_stage[entry] = parsed_line[entry]
 
-                    #status = status & insert_mongo(args, cfg, log, third_stage)
-                    #print('PROCESSED')
-                    print('PROCESSED', len(str(third_stage)))
-                    #print(third_stage)
+            status = status & insert_mongo(args, cfg, log, third_stage)
 
-            else:
-                log.log_err("parse_data:  Unable to parse log entry: %s."
-                            % (third_stage))
-                status = status & insert_mongo(
-                    args, cfg, log, third_stage, unparsed=True)
+#            else:
+#                log.log_err("parse_data:  Unable to parse log entry: %s."
+#                            % (third_stage))
+#                status = status & insert_mongo(
+#                    args, cfg, log, third_stage, unparsed=True)
 
             third_stage = dict(second_stage)
 
@@ -654,7 +648,7 @@ def process_json(args, cfg, log, log_json):
     status = False
 
     # Filter the raw data
-    log_json = filter_data(args, cfg, log, log_json)
+    log_json = filter_data(cfg, log, log_json)
 
     # Insert entries into Mongo
     if args.arg_exist("-i"):
@@ -672,7 +666,7 @@ def process_json(args, cfg, log, log_json):
         if args.arg_exist("-g"):
             log.log_info("process_json:  Email data in body")
             mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
-            mail.add_2_msg(log_json)
+            mail.add_2_msg(json.dumps(log_json))
             mail.send_mail()
 
         else:
@@ -683,7 +677,7 @@ def process_json(args, cfg, log, log_json):
             msg["Subject"] = cfg.subj
             fname = log_json["docid"] + "_docid"
             part = MIMEBase("application", "json")
-            part.set_payload(str(log_json))
+            part.set_payload(json.dumps(log_json))
             encoders.encode_base64(part)
             part.add_header(
                 "Content-Disposition", "attachment", filename=fname)
