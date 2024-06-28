@@ -166,13 +166,16 @@ class UnitTest(unittest.TestCase):
             "docid": "09109uosdhf", "command": "COMMAND",
             "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
             "servers": {"server_name": [self.entry7]}}
-        self.log_json9 = {
+        self.log_json10 = {
             "docid": "09109uosdhf", "command": "COMMAND",
             "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
             "servers": {"server_name": [self.entry8]}}
 
         self.results = list()
         self.results2 = [self.entry8]
+        self.results3 = [self.entry1]
+        self.results4 = [self.entry1, self.entry1]
+        self.results5 = [self.entry1]
 
     @mock.patch("pulled_search.gen_libs.write_file",
                 mock.Mock(return_value=True))
@@ -191,7 +194,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(
             pulled_search.filter_data(
-                self.cfg, mock_log, self.log_json9)["servers"]["server_name"],
+                self.cfg, mock_log, self.log_json10)["servers"]["server_name"],
             self.results2)
 
     @mock.patch("pulled_search.gen_libs.write_file",
@@ -353,7 +356,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.filter_data(
                 self.cfg, mock_log, self.log_json3)["servers"]["server_name"],
-            self.results)
+            self.results5)
 
     @mock.patch(
         "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
@@ -373,7 +376,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.filter_data(
                 self.cfg, mock_log, self.log_json2)["servers"]["server_name"],
-            self.results)
+            self.results4)
 
     @mock.patch(
         "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
@@ -393,7 +396,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.filter_data(
                 self.cfg, mock_log, self.log_json)["servers"]["server_name"],
-            self.results)
+            self.results3)
 
 
 if __name__ == "__main__":
