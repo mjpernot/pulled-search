@@ -563,15 +563,7 @@ def parse_data(args, cfg, log, log_json):
             parsed_line = re.match(cfg.regex, line)
 
             # Parse the log entry
-#            if parsed_line:
             parsed_line = parsed_line.groupdict()
-
-#                # Filter out non-related entries
-#                if log_json["docid"] in parsed_line["url"]      \
-#                   and "transformer" in parsed_line["url"]      \
-#                   and "2ndReview" not in parsed_line["url"]    \
-#                   and parsed_line["status"] == "200"           \
-#                   and ".ic.gov" not in parsed_line["userid"]:
 
             for entry in parsed_line:
                 if entry in cfg.allowable and entry == "url":
@@ -582,12 +574,6 @@ def parse_data(args, cfg, log, log_json):
                     third_stage[entry] = parsed_line[entry]
 
             status = status & insert_mongo(args, cfg, log, third_stage)
-
-#            else:
-#                log.log_err("parse_data:  Unable to parse log entry: %s."
-#                            % (third_stage))
-#                status = status & insert_mongo(
-#                    args, cfg, log, third_stage, unparsed=True)
 
             third_stage = dict(second_stage)
 
