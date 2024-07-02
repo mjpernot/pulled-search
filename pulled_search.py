@@ -135,12 +135,12 @@
     monitor_dir = "MONITOR_DIR_PATH"
     # Regular expression for search for Insert/Mongodb file names.
     mfile_regex = "_mongo.json"
-    # Directory path to where Insert/Mongodb error and non-processed files are
-    # saved to.
-    merror_dir = "BASE_PATH/mongo_error"
 
     # Directory path to where Insert/Mongodb archived files are saved to.
     marchive_dir = "BASE_PATH/mongo_archive"
+    # Directory path to where Insert/Mongodb error and non-processed files are
+    # saved to.
+    merror_dir = "BASE_PATH/mongo_error"
     # The config file is saved to the same location as the -d option.
     mconfig = "mongo"
 
@@ -426,7 +426,7 @@ def process_docid(args, cfg, docid_dict, log):
     return status
 
 
-def insert_mongo(args, cfg, log, data, **kwargs):
+def insert_mongo(args, cfg, log, data):
 
     """Function:  insert_mongo
 
@@ -437,16 +437,13 @@ def insert_mongo(args, cfg, log, data, **kwargs):
         (input) cfg -> Configuration setup
         (input) log -> Log class instance
         (input) log_json -> JSON log document
-        (input) kwargs:
-            unparsed -> True|False - This is an unparsed entry
         (output) status -> True|False - Successful insertion into Mongo
 
     """
 
     status = True
     mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
-    tbl = mcfg.unparsed if kwargs.get("unparsed", False) else mcfg.tbl
-    mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, tbl, data)
+    mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, data)
 
     if not mongo_stat[0]:
         log.log_err("insert_mongo:  Insertion into Mongo failed.")
@@ -1371,14 +1368,14 @@ def main():
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
-        sys.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
-        do_parse=True)
+        sys.argv, opt_val=opt_val_list, multi_val=opt_multi_list)
 
-    if not gen_libs.help_func(args, __version__, help_message)   \
-       and args.arg_require(opt_req=opt_req_list)                           \
-       and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)                \
-       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
-       and args.arg_xor_dict(opt_xor_val=opt_xor_dict)                      \
+    if args.arg_parse2()                                            \
+       and not gen_libs.help_func(args, __version__, help_message)  \
+       and args.arg_require(opt_req=opt_req_list)                   \
+       and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)        \
+       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)            \
+       and args.arg_xor_dict(opt_xor_val=opt_xor_dict)              \
        and args.arg_file_chk(file_perm_chk=file_perms_chk):
 
         try:

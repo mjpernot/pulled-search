@@ -10,10 +10,12 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - filter_data: Filter out non-required data entries.
 
 ### Changed
-- insert_mongo: 
+- insert_mongo: Removed any reference to unparsed.
+- main: Removed parsing from gen_class.ArgParser call and called arg_parse2 as part of "if" statement.
 - parse_data: Removed the filtering of data from the process, done in filter_data function.
 - process_json: Added call to filter_data to remove non-required entries, add check to email to send data via email body or attachement.
 - config/search.py.TEMPLATE: Added raw_archive_dir and unparsable_dir entries.
+- Documentation updates.
 
 
 ## [0.2.8] - 2024-05-28

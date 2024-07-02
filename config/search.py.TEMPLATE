@@ -104,8 +104,6 @@ auto_delete = False
 monitor_dir = "MONITOR_DIR_PATH"
 # Regular expression for search for Insert/Mongodb file names.
 mfile_regex = "_mongo.json"
-# Directory path to where Insert/Mongodb error and non-processed files are saved to.
-merror_dir = "BASE_PATH/mongo_error"
 
 ################################################################################
 # Name of Mongo configuration file.  (Do not include the ".py" in the name.)
@@ -113,6 +111,8 @@ merror_dir = "BASE_PATH/mongo_error"
 #
 # Directory path to where Insert/Mongodb archived files are saved to.
 marchive_dir = "BASE_PATH/mongo_archive"
+# Directory path to where Insert/Mongodb error and non-processed files are saved to.
+merror_dir = "BASE_PATH/mongo_error"
 # Do not change unless changing the name of the external Mongo config file.
 # The config file is saved to the same location as the -d option.
 mconfig = "mongo"
