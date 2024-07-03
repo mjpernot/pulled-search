@@ -35,8 +35,8 @@
                 -b => Summary count of docid findings written to file.
                 -g => Sends data via email body instead of as an attachment.
             -r => Publish log entries to RabbitMQ.
-            -m dir_path => Directory to monitor for doc ID files.  This
-                overrides the config file setting.
+            -m dir_path => Directory to monitor for doc ID files.
+                NOTE: This will override the config file setting.
             -a => This is an archive log search.
 
         -F /path/filename => Process DocIDs from an input file.
@@ -71,10 +71,8 @@
         NOTE 5:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
-        NOTE 6: The -i, -e and -r options are XOR options under the -F and -P
-            options.
-        NOTE 7: -b option writes file to base directory of processed_file in
-            the configuration file.  File is named: docid_transfer.YYYYMM
+        NOTE 6: The -b option writes file to base directory of processed_file
+            in the configuration file.  File is named: docid_transfer.YYYYMM
 
     Input files:
         The file for the -F option must be in the following layout in ACSII
@@ -1160,8 +1158,7 @@ def validate_dirs(cfg):
 
     """Function:  validate_dirs
 
-    Description:  Validate the directories in the configuration file for the
-        -P option.
+    Description:  Validate a subset of directories in the configuration file.
 
     Arguments:
         (input) cfg -> Configuration setup
@@ -1171,20 +1168,13 @@ def validate_dirs(cfg):
 
     msg_dict = dict()
 
-    # Directory where Docid Pulled Html files are located at
-    for entry in cfg.doc_dir:
-        status, msg = gen_libs.chk_crt_dir(entry, read=True, no_print=True)
-
-        if not status:
-            msg_dict[entry] = msg
-
-    # Directory where active/archived log files to be searched are
+    # Where active/archived log files are
     status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
 
     if not status:
         msg_dict[cfg.log_dir] = msg
 
-    # Temporary file where check_log will write to
+    # Temporary file where check_log are written to
     basepath = gen_libs.get_base_dir(cfg.outfile)
     status, msg = gen_libs.chk_crt_dir(
         basepath, write=True, create=True, no_print=True)
@@ -1192,20 +1182,34 @@ def validate_dirs(cfg):
     if not status:
         msg_dict[basepath] = msg
 
-    # Directory path to where error and failed files are saved to
+    # Where error and failed files are
     status, msg = gen_libs.chk_crt_dir(
         cfg.error_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.error_dir] = msg
 
-    # Directory where files with previous processed files are stored at
+    # Where files with previous processed files are
     basepath2 = gen_libs.get_base_dir(cfg.processed_file)
     status, msg = gen_libs.chk_crt_dir(
         basepath2, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[basepath2] = msg
+
+    # Where unparsable entry files are
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.unparsable_dir, write=True, create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.unparsable_dir] = msg
+
+    # Where raw archive files are
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.raw_archive_dir, write=True, create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.raw_archive_dir] = msg
 
     return msg_dict
 
@@ -1224,12 +1228,6 @@ def mvalidate_dirs(cfg):
     """
 
     msg_dict = dict()
-
-    status, msg = gen_libs.chk_crt_dir(
-        cfg.monitor_dir, write=True, no_print=True)
-
-    if not status:
-        msg_dict[cfg.monitor_dir] = msg
 
     status, msg = gen_libs.chk_crt_dir(
         cfg.merror_dir, write=True, create=True, no_print=True)
@@ -1262,11 +1260,36 @@ def checks_dirs(args, cfg):
 
     msg_dict = dict()
 
-    if args.get_val("-P", def_val=None):
+    if args.get_val("-P", def_val=False):
         msg_dict = validate_dirs(cfg)
 
-    elif args.get_val("-I", def_val=None):
+        if args.get_val("-i", def_val=False):
+            msg_dict2 = mvalidate_dirs(cfg)
+            msg_dict, _, _ = gen_libs.merge_two_dicts(msg_dict, msg_dict2)
+
+        # Where Docid Pulled Html files are
+        for entry in cfg.doc_dir:
+            status, msg = gen_libs.chk_crt_dir(entry, read=True, no_print=True)
+
+            if not status:
+                msg_dict[entry] = msg
+
+    elif args.get_val("-I", def_val=False):
         msg_dict = mvalidate_dirs(cfg)
+
+        # Where Mongo insert files are
+        status, msg = gen_libs.chk_crt_dir(
+            cfg.monitor_dir, write=True, no_print=True)
+
+        if not status:
+            msg_dict[cfg.monitor_dir] = msg
+
+    elif args.get_val("-F", def_val=False):
+        msg_dict = validate_dirs(cfg)
+
+        if args.get_val("-i", def_val=False):
+            msg_dict2 = mvalidate_dirs(cfg)
+            msg_dict, _, _ = gen_libs.merge_two_dicts(msg_dict, msg_dict2)
 
     return msg_dict
 

@@ -10,6 +10,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - filter_data: Filter out non-required data entries.
 
 ### Changed
+- mvalidate_dirs: Refactored to only contains those options that use the Mongo insert option.
+- validate_dirs: Refactored to only contain those checks common to both -F and -P options.
+- checks_dirs: Added -F option check and unique checks for -P and and -I options.
 - insert_mongo: Removed any reference to unparsed.
 - main: Removed parsing from gen_class.ArgParser call and called arg_parse2 as part of "if" statement, removed the XOR check for the output options (-i, -e, -r) to allow for multiple outputs.
 - parse_data: Removed the filtering of data from the process, done in filter_data function.
