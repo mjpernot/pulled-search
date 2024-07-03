@@ -11,7 +11,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ### Changed
 - insert_mongo: Removed any reference to unparsed.
-- main: Removed parsing from gen_class.ArgParser call and called arg_parse2 as part of "if" statement.
+- main: Removed parsing from gen_class.ArgParser call and called arg_parse2 as part of "if" statement, removed the XOR check for the output options (-i, -e, -r) to allow for multiple outputs.
 - parse_data: Removed the filtering of data from the process, done in filter_data function.
 - process_json: Added call to filter_data to remove non-required entries, add check to email to send data via email body or attachement.
 - config/search.py.TEMPLATE: Added raw_archive_dir and unparsable_dir entries.

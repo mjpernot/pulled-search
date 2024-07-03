@@ -1362,9 +1362,7 @@ def main():
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
     opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y", "-F"]
-    opt_xor_dict = {
-        "-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"],
-        "-i": ["-e", "-r"], "-e": ["-i", "-r"], "-r": ["-e", "-i"]}
+    opt_xor_dict = {"-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"]}
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
