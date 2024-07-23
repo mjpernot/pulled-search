@@ -108,6 +108,18 @@
     # Directory where active or archive log files to be searched are.
     log_dir = "LOG_DIR_PATH"
 
+    # These options will not need to be updated normally.
+    # Regular expression for search for html file names.
+    file_regex = "-PULLED-"
+    # Regular expression for search for recalled products.
+    pattern = "JAC.pull.subtype.*.SECURITY RECALL"
+    # Type of apache log files to checked.
+    log_type = "access_log"
+    # Mapping of commands to keywords.
+    # This is for the naming of the access logs which are not always under the
+    #   command name.
+    command = {"eucom": "intelink", "acic": "usacic"}
+
     # Email Configuration section.
     # Email address to rabbitmq alias for the rmq_2_mail.py program.
     to_addr = None
@@ -129,6 +141,19 @@
     # RabbitMQ Exchange name for each instance run.
     exchange_name = "EXCHANGE_NAME"
 
+    # NOTE: These entries will not need to be updated normally.
+    # RabbitMQ listening port
+    port = 5672
+    # Type of exchange
+    # Names allowed:  direct, topic, fanout, headers
+    exchange_type = "direct"
+    # Is exchange durable: True|False
+    x_durable = True
+    # Are queues durable: True|False
+    q_durable = True
+    # Do queues automatically delete once message is processed:  True|False
+    auto_delete = False
+
     # Directory where to monitor for new files to insert into Mongodb.
     monitor_dir = "MONITOR_DIR_PATH"
     # Regular expression for search for Insert/Mongodb file names.
@@ -141,6 +166,24 @@
     merror_dir = "BASE_PATH/mongo_error"
     # The config file is saved to the same location as the -d option.
     mconfig = "mongo"
+
+    # WARNING: Do not modify this section unless you know regular expressions.
+    # Log parsing section.
+    # NOTE: These name tags are reserved and cannot be used:
+    #   ["command", "docid", "network", "pubDate", "asOf"]
+    regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>CN=.*?) \[(?P<logTime>.*?)
+    (?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?)
+    \"(?P<verb>.*?) (?P<verbUrl>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?)
+    (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\"
+    (?P<url>.*?)?$"
+    # These are the entries that will be parsed from the log entry and placed
+    #   into the document.
+    # Note 1: Name tags must match between regex and allowable and are
+    #   case-sensitive.
+    # Note 2: The "url" tag is hardcoded in the program to add "https://" to
+    #   the front of the url.
+    allowable = ["userid", "logTime", "verb", "status", "url"]
+
 
     Mongo configuration file format (config/mongo.py.TEMPLATE).  The
     configuration file format is for connecting to a Mongo database or
@@ -173,6 +216,7 @@
     db_auth = None
 
     # Authorization Type
+    # Values: TLS | SSL | None
     auth_type = None
 
     # SSL Configuration settings

@@ -18,6 +18,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - parse_data: Removed the filtering of data from the process, done in filter_data function.
 - process_json: Added call to filter_data to remove non-required entries, add check to email to send data via email body or attachement.
 - config/search.py.TEMPLATE: Added raw_archive_dir and unparsable_dir entries.
+- config/mongo.py.TEMPLATE:  Removed unparsed entry.
 - Documentation updates.
 
 
