@@ -88,7 +88,7 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.errdir = "/dir_path/error_dir"
         self.errval = "Error_dir failure"
-        self.logdir ="/dir_path/log_dir"
+        self.logdir = "/dir_path/log_dir"
         self.logval = "Log_dir failure"
 
         self.chk = (True, None)

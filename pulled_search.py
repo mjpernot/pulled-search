@@ -520,7 +520,7 @@ def filter_data(cfg, log, log_json):
     """
 
     log_json = dict(log_json)
-    log.log_info("filter_data:  Writing to raw data toarchive: %s" \
+    log.log_info("filter_data:  Writing to raw data toarchive: %s"
                  % (cfg.raw_archive_dir))
     fname = os.path.join(
         cfg.raw_archive_dir, log_json["docid"] + "." + log_json["asOf"] +
