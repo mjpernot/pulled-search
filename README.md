@@ -99,18 +99,23 @@ Make the appropriate changes to the environment.
     - log_file = "DIR_PATH/pulled_search.log"
 
   * Make the appropriate changes to Process/Search setup section.
+  * This section is for all options -F and -P options.
+    - raw_archive_dir = "BASE_PATH/raw_archive"
+    - unparsable_dir = "BASE_PATH/unparsable"
+
   * Update this section if using the -P option.
-    - doc_dir = "DOC_DIR_PATH"
+    - doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
     - processed_file = "BASE_PATH/processed/processed"
+    - outfile = "BASE_PATH/tmp/checklog.out"
+    - error_dir = "BASE_PATH/search_error"
+    - enclave = "ENCLAVE"
+    - log_dir = "LOG_DIR_PATH"
+
+  * These options will not need to be updated normally.
     - file_regex = "-PULLED-"
     - pattern = "JAC.pull.subtype.\*.SECURITY RECALL"
-    - log_dir = "LOG_DIR_PATH"
-    - archive_log_dir = "ARCHIVE_DIR_PATH"
     - log_type = "access_log"
-    - outfile = "BASE_PATH/tmp/checklog.out"
-    - enclave = "ENCLAVE"
-    - error_dir = "BASE_PATH/search_error"
-    - command = {"intelink": "eucom"}
+    - command = {"eucom": "intelink", "acic": "usacic"}
 
   * Make the appropriate changes to RabbitMQ section.
   * Update this section if using the -P option.
@@ -134,6 +139,8 @@ Make the appropriate changes to the environment.
   * Update this section if using the -I option.
     - monitor_dir = "MONITOR_DIR_PATH"
     - mfile_regex = "\_mongo.json"
+
+  * These entries are for the -i and -I options (mongo database).
     - marchive_dir = "BASE_PATH/archive
     - merror_dir = "BASE_PATH/mongo_error"
   * Do not change this section unless the Mongo configuration file is changed.

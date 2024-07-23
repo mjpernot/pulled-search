@@ -27,6 +27,31 @@ import version
 __version__ = version.__version__
 
 
+class CfgTest(object):
+
+    """Class:  CfgTest
+
+    Description:  Class which is a representation of a cfg module.
+
+    Methods:
+        __init__
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization instance of the CfgTest class.
+
+        Arguments:
+
+        """
+
+        self.merror_dir = "/dir_path/error_dir"
+        self.marchive_dir = "/dir_path/archive_dir"
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -38,7 +63,6 @@ class UnitTest(unittest.TestCase):
         test_archive_dir_failure
         test_multiple_failures
         test_error_dir_failure
-        test_monitor_dir_failure
         test_no_failures
 
     """
@@ -53,47 +77,21 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        class CfgTest(object):
-
-            """Class:  CfgTest
-
-            Description:  Class which is a representation of a cfg module.
-
-            Methods:
-                __init__
-
-            """
-
-            def __init__(self):
-
-                """Method:  __init__
-
-                Description:  Initialization instance of the CfgTest class.
-
-                Arguments:
-
-                """
-
-                self.monitor_dir = "/dir_path/monitor_dir"
-                self.merror_dir = "/dir_path/error_dir"
-                self.marchive_dir = "/dir_path/archive_dir"
-
         self.cfg = CfgTest()
-        self.monitorkey = "/dir_path/monitor_dir"
         self.errorkey = "/dir_path/error_dir"
-        self.monitorval = "Monitor_dir failure"
         self.errorval = "Error_dir failure"
-        self.results2 = {self.monitorkey: self.monitorval}
-        self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
-        self.results5 = {self.errorkey: self.errorval}
-        self.results6 = {self.monitorkey: self.monitorval,
-                         self.errorkey: self.errorval}
-        self.results7 = {"/dir_path/archive_dir": "Archive_dir failure"}
+        self.archivekey = "/dir_path/archive_dir"
+        self.archiveval = "Archive_dir failure"
+
         self.chk = (True, None)
-        self.chk2 = (False, self.monitorval)
-        self.chk4 = (False, "Outfile failure")
         self.chk5 = (False, self.errorval)
-        self.chk7 = (False, "Archive_dir failure")
+        self.chk7 = (False, self.archiveval)
+
+        self.results = dict()
+        self.results5 = {self.errorkey: self.errorval}
+        self.results6 = {self.errorkey: self.errorval,
+                         self.archivekey: self.archiveval}
+        self.results7 = {self.archivekey: self.archiveval}
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_archive_dir_failure(self, mock_chk):
@@ -106,7 +104,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk7]
+        mock_chk.side_effect = [self.chk, self.chk7]
 
         self.assertEqual(pulled_search.mvalidate_dirs(self.cfg), self.results7)
 
@@ -121,7 +119,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk2, self.chk5, self.chk]
+        mock_chk.side_effect = [self.chk5, self.chk7]
 
         self.assertEqual(pulled_search.mvalidate_dirs(self.cfg), self.results6)
 
@@ -136,24 +134,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk5, self.chk]
+        mock_chk.side_effect = [self.chk5, self.chk]
 
         self.assertEqual(pulled_search.mvalidate_dirs(self.cfg), self.results5)
-
-    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
-    def test_monitor_dir_failure(self, mock_chk):
-
-        """Function:  test_monitor_dir_failure
-
-        Description:  Test with failure on monitor_dir check.
-
-        Arguments:
-
-        """
-
-        mock_chk.side_effect = [self.chk2, self.chk, self.chk]
-
-        self.assertEqual(pulled_search.mvalidate_dirs(self.cfg), self.results2)
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_no_failures(self, mock_chk):
@@ -166,9 +149,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk]
+        mock_chk.side_effect = [self.chk, self.chk]
 
-        self.assertEqual(pulled_search.mvalidate_dirs(self.cfg), {})
+        self.assertEqual(pulled_search.mvalidate_dirs(self.cfg), self.results)
 
 
 if __name__ == "__main__":

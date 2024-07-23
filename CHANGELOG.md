@@ -3,6 +3,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.9] - 2024-06-20
+- Parse the data before it is email, inserted into Mongo or published to RabbitMQ.
+
+### Added
+- filter_data: Filter out non-required data entries.
+
+### Changed
+- mvalidate_dirs: Refactored to only contains those options that use the Mongo insert option.
+- validate_dirs: Refactored to only contain those checks common to both -F and -P options.
+- checks_dirs: Added -F option check and unique checks for -P and and -I options.
+- insert_mongo: Removed any reference to unparsed.
+- main: Removed parsing from gen_class.ArgParser call and called arg_parse2 as part of "if" statement, removed the XOR check for the output options (-i, -e, -r) to allow for multiple outputs.
+- parse_data: Removed the filtering of data from the process, done in filter_data function.
+- process_json: Added call to filter_data to remove non-required entries, add check to email to send data via email body or attachement.
+- config/search.py.TEMPLATE: Added raw_archive_dir and unparsable_dir entries.
+- config/mongo.py.TEMPLATE:  Removed unparsed entry.
+- Documentation updates.
+
+
 ## [0.2.8] - 2024-05-28
 - Add ability to send Mongo inserts via email body instead of as an attachment.
 

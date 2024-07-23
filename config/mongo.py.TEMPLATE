@@ -77,5 +77,3 @@ tls_certkey_phrase = None
 dbs = "DATABASE"
 # Name of Mongo collection
 tbl = "COLLECTION"
-# Name of Mongo collection for unparsed entries
-unparsed = "unparsed"

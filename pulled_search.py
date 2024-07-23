@@ -19,7 +19,7 @@
     Usage:
         pulled_search.py -c file -d path
             {-P [-m path] [-a] [-i | -e [-b] | -r] |
-             -F /path/filename [-a] [-i | -e [-b] | -r] |
+             -F /path/filename [-a] [-i | -e [-b -g] | -r] |
              -I [-n path]}
             [-t email {email2 email3 ...} {-s subject_line}]
             [-y flavor_id]
@@ -35,8 +35,8 @@
                 -b => Summary count of docid findings written to file.
                 -g => Sends data via email body instead of as an attachment.
             -r => Publish log entries to RabbitMQ.
-            -m dir_path => Directory to monitor for doc ID files.  This
-                overrides the config file setting.
+            -m dir_path => Directory to monitor for doc ID files.
+                NOTE: This will override the config file setting.
             -a => This is an archive log search.
 
         -F /path/filename => Process DocIDs from an input file.
@@ -71,10 +71,8 @@
         NOTE 5:  The log files can be normal flat files or compressed files
             (e.g. ending with .gz) or a combination there of.  Any other type
             of compressed file will not work.
-        NOTE 6: The -i, -e and -r options are XOR options under the -F and -P
-            options.
-        NOTE 7: -b option writes file to base directory of processed_file in
-            the configuration file.  File is named: docid_transfer.YYYYMM
+        NOTE 6: The -b option writes file to base directory of processed_file
+            in the configuration file.  File is named: docid_transfer.YYYYMM
 
     Input files:
         The file for the -F option must be in the following layout in ACSII
@@ -89,32 +87,25 @@
     Configuration file (config/search.py.TEMPLATE).  Below is the
     configuration file format for the environment setup in the program.
 
-    ###########################################################################
-    # Pulled Search General Configuration section.
-    # This section is for all options (-F, -I, -P).
-    #
     # Logger file for the storage of log entries.
-    # File name including directory path.
     log_file = "BASE_PATH/log/pulled_search.log"
 
-    ###########################################################################
-    # Pulled Search Process Configuration section.
-    # This section is for the -P option.
-    #
+    # Directory where raw data is saved to before filtering.
+    raw_archive_dir = "BASE_PATH/raw_archive"
+    # Directory where unparsable data is saved to.
+    unparsable_dir = "BASE_PATH/unparsable"
+
     # Directory where Docid Pulled Html files are located at.
-    # NOTE: Do not include the YYYY/MM as part of the path as this will be
-    #   added.
     doc_dir = ["DOC_DIR_PATH", "DOC_DIR_PATH2"]
     # Path and file name for previous processed files.
     processed_file = "BASE_PATH/processed/processed"
     # Temporary file where check_log will write to.
-    # File name including directory path.
     outfile = "BASE_PATH/tmp/checklog.out"
     # Directory path to where error and non-processed files are saved to.
     error_dir = "BASE_PATH/search_error"
     # Security enclave these files are being processed on.
     enclave = "ENCLAVE"
-    # Directory where active or archived log files to be searched are.
+    # Directory where active or archive log files to be searched are.
     log_dir = "LOG_DIR_PATH"
 
     # These options will not need to be updated normally.
@@ -127,37 +118,21 @@
     # Mapping of commands to keywords.
     # This is for the naming of the access logs which are not always under the
     #   command name.
-    command = {"intelink": "eucom"}
+    command = {"eucom": "intelink", "acic": "usacic"}
 
-    ###########################################################################
     # Email Configuration section.
-    # These entries are for the -e option under the -P and -F options.
-    #
-    # This option is normally is used in conjunction with the rmq_2_mail.py
-    #   program.
     # Email address to rabbitmq alias for the rmq_2_mail.py program.
-    # Example: to_addr = "rabbitmq@domain.name"
     to_addr = None
     # Name of the RabbitMQ queue.
-    # Note: Subject must match exactly the RabbitMQ queue name and is
-    #   case-sensitive.
-    #     Also the subject will be CamelCased when processed.
-    # Example:  subj = "Pulledsearch"
     subj = None
 
-    ###########################################################################
     # RabbitMQ Configuration section.
-    # These entries are for the -r option under the -P and -F options.
-    #
     # Login information.
     user = "USER"
     japd = "PSWORD"
     # Address to single RabbitMQ node.
     host = "HOSTNAME"
     # List of hosts along with their ports to a multiple node RabbitMQ cluster.
-    # Format of each entry is: "IP:PORT".
-    # Example: host_list = ["hostname:5672", "hostname2:5672", "hostname:5673"]
-    # Note:  If host_list is set, it will take precedence over the host entry.
     host_list = []
     # RabbitMQ Queue name.
     queue = "QUEUENAME"
@@ -166,9 +141,8 @@
     # RabbitMQ Exchange name for each instance run.
     exchange_name = "EXCHANGE_NAME"
 
-    # NOTE: These options will not need to be updated normally.
+    # NOTE: These entries will not need to be updated normally.
     # RabbitMQ listening port
-    # Default is 5672
     port = 5672
     # Type of exchange
     # Names allowed:  direct, topic, fanout, headers
@@ -180,40 +154,28 @@
     # Do queues automatically delete once message is processed:  True|False
     auto_delete = False
 
-    ###########################################################################
-    # Pulled Search Insert Configuration section.
-    # These entries are for the -I option.
-    #
     # Directory where to monitor for new files to insert into Mongodb.
     monitor_dir = "MONITOR_DIR_PATH"
     # Regular expression for search for Insert/Mongodb file names.
     mfile_regex = "_mongo.json"
-    # Directory path to where Insert/Mongodb error and non-processed files are
-    #   saved to.
-    merror_dir = "BASE_PATH/mongo_error"
 
-    ###########################################################################
-    # Name of Mongo configuration file.  (Do not include the ".py" in the
-    #   name.)
-    # These entries are for the -i and -I options (mongo database).
-    #
     # Directory path to where Insert/Mongodb archived files are saved to.
-    marchive_dir = "BASE_PATH/archive"
-    # Do not change unless changing the name of the external Mongo config file.
+    marchive_dir = "BASE_PATH/mongo_archive"
+    # Directory path to where Insert/Mongodb error and non-processed files are
+    # saved to.
+    merror_dir = "BASE_PATH/mongo_error"
+    # The config file is saved to the same location as the -d option.
     mconfig = "mongo"
 
-    ###########################################################################
+    # WARNING: Do not modify this section unless you know regular expressions.
     # Log parsing section.
-    # These entries are for the -I and -P options.
-    #
-    # Warning: Do not modify this section unless you know regular expressions.
     # NOTE: These name tags are reserved and cannot be used:
     #   ["command", "docid", "network", "pubDate", "asOf"]
     regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>CN=.*?) \[(?P<logTime>.*?)
-        (?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?)
-        (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) (?P<verbUrl>.*?)
-        HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?)
-        \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
+    (?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?)
+    \"(?P<verb>.*?) (?P<verbUrl>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?)
+    (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\"
+    (?P<url>.*?)?$"
     # These are the entries that will be parsed from the log entry and placed
     #   into the document.
     # Note 1: Name tags must match between regex and allowable and are
@@ -229,75 +191,50 @@
     be used to connect to a Mongo database or replica set to insert the
     results of the performance monitoring into.
 
-    # Pulled Search Insert/Mongo DB Configuration section.
-    # Update this file if using the -I option.
     user = "USER"
     japd = "PSWORD"
     # Mongo DB host information
     host = "HOST_IP"
     name = "HOSTNAME"
     # Mongo database port
-    # Default port for Mongo is 27017.
     port = 27017
     # Mongo configuration settings
-    # Only set if using a different Mongo configuration file.
     conf_file = None
     # Authentication required:  True|False
-    # Only set to False if no authentication is taking place.
     auth = True
     # Authentication database
-    # Name of database to authenticate the user in.
     auth_db = "admin"
     # Authentication mechanism
-    #   Current values allowed:  MONGODB-CR, SCRAM-SHA-1, SCRAM-SHA-256
-    #   NOTE 1:  SCRAM-SHA-256 only works for Mongodb 4.0 and better.
-    #   NOTE 2:  FIPS 140-2 environment requires SCRAM-SHA-1 or SCRAM-SHA-256.
-    #   NOTE 3:  MONGODB-CR is not suppoerted in Mongodb 4.0 and better.
     auth_mech = "SCRAM-SHA-1"
 
-    # Replica Set Mongo configuration settings.
-    # By default all settings are set to None.
-    #    None means the Mongo database is not part of a replica set.
-    #
     # Replica set name.
     # Format:  repset = "REPLICA_SET_NAME"
     repset = None
     # Replica host listing.
-    # Format:  repset_hosts = "HOST1:PORT, HOST2:PORT, [...]"
     repset_hosts = None
     # Database to authentication to.
-    # Format:  db_auth = "AUTHENTICATION_DATABASE"
     db_auth = None
 
     # Authorization Type
-    # If not set will connect to Mongo without using TLS or SSL connections.
     # Values: TLS | SSL | None
     auth_type = None
 
     # SSL Configuration settings
-    # If not set will connect to Mongo without using SSL connections.
     # File containing the SSL certificate authority.
-    # Example: ssl_client_ca = "/opt/mongo/certs/ca.pem"
     ssl_client_ca = None
     # File containing the SSL key.
-    # Example:  ssl_client_key = "/opt/mongo/certs/client-key.pem"
     ssl_client_key = None
     # File containing the SSL certificate file.
-    # Example: ssl_client_cert = "/opt/mongo/certs/client-cert.pem"
     ssl_client_cert = None
     # Pass phrase for the SSL Client Key, if one is set.
-    # Example:  ssl_client_phrase = "Phrase"
     ssl_client_phrase = None
 
     # TLS Configuration settings
     # File containing the TLS certificate authority.
-    # Example: tls_ca_certs = "/opt/mongo/certs/ca.pem"
     tls_ca_certs = None
     # File containing the TLS Certificate and key.
-    # Example:  tls_certkey = "/opt/mongo/certs/client-key.pem"
     tls_certkey = None
     # Pass phrase for the TLS Client Key, if one is set.
-    # Example:  tls_certkey_phrase = "Phrase"
     tls_certkey_phrase = None
 
     # Name of Mongo database for data insertion
@@ -531,7 +468,7 @@ def process_docid(args, cfg, docid_dict, log):
     return status
 
 
-def insert_mongo(args, cfg, log, data, **kwargs):
+def insert_mongo(args, cfg, log, data):
 
     """Function:  insert_mongo
 
@@ -542,16 +479,13 @@ def insert_mongo(args, cfg, log, data, **kwargs):
         (input) cfg -> Configuration setup
         (input) log -> Log class instance
         (input) log_json -> JSON log document
-        (input) kwargs:
-            unparsed -> True|False - This is an unparsed entry
         (output) status -> True|False - Successful insertion into Mongo
 
     """
 
     status = True
     mcfg = gen_libs.load_module(cfg.mconfig, args.get_val("-d"))
-    tbl = mcfg.unparsed if kwargs.get("unparsed", False) else mcfg.tbl
-    mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, tbl, data)
+    mongo_stat = mongo_libs.ins_doc(mcfg, mcfg.dbs, mcfg.tbl, data)
 
     if not mongo_stat[0]:
         log.log_err("insert_mongo:  Insertion into Mongo failed.")
@@ -569,6 +503,62 @@ def insert_mongo(args, cfg, log, data, **kwargs):
         mail.send_mail()
 
     return status
+
+
+def filter_data(cfg, log, log_json):
+
+    """Function:  filter_data
+
+    Description:  Filter out non-required data entries.
+
+    Arguments:
+        (input) cfg -> Configuration setup
+        (input) log -> Log class instance
+        (input) log_json -> Dictionary log document
+        (output) log_json -> Modified dictionary log document
+
+    """
+
+    log_json = dict(log_json)
+    log.log_info("filter_data:  Writing to raw data toarchive: %s"
+                 % (cfg.raw_archive_dir))
+    fname = os.path.join(
+        cfg.raw_archive_dir, log_json["docid"] + "." + log_json["asOf"] +
+        ".raw")
+    gen_libs.write_file(fname=fname, mode="w", data=log_json)
+    log.log_info("filter_data:  Start filtering JSON document.")
+
+    # Loop on servers
+    for svr in log_json["servers"]:
+        uname = os.path.join(
+            cfg.unparsable_dir, log_json["docid"] + "." + svr +
+            log_json["asOf"] + ".unparsable")
+        parsed_list = list()
+
+        # Loop on log entries for each server
+        for line in log_json["servers"][svr]:
+            parsed_line = re.match(cfg.regex, line)
+
+            # Parse the log entry
+            if parsed_line:
+                parsed_line = parsed_line.groupdict()
+
+                # Filter out non-related entries
+                if log_json["docid"] in parsed_line["url"]      \
+                   and "transformer" in parsed_line["url"]      \
+                   and "2ndReview" not in parsed_line["url"]    \
+                   and parsed_line["status"] == "200"           \
+                   and ".ic.gov" not in parsed_line["userid"]:
+                    parsed_list.append(line)
+
+            else:
+                log.log_warn("filter_data:  Unparsable data written to %s." %
+                             (uname))
+                gen_libs.write_file(fname=uname, mode="a", data=line)
+
+        log_json["servers"][svr] = parsed_list
+
+    return log_json
 
 
 def parse_data(args, cfg, log, log_json):
@@ -612,31 +602,17 @@ def parse_data(args, cfg, log, log_json):
             parsed_line = re.match(cfg.regex, line)
 
             # Parse the log entry
-            if parsed_line:
-                parsed_line = parsed_line.groupdict()
+            parsed_line = parsed_line.groupdict()
 
-                # Filter out non-related entries
-                if log_json["docid"] in parsed_line["url"]      \
-                   and "transformer" in parsed_line["url"]      \
-                   and "2ndReview" not in parsed_line["url"]    \
-                   and parsed_line["status"] == "200"           \
-                   and ".ic.gov" not in parsed_line["userid"]:
+            for entry in parsed_line:
+                if entry in cfg.allowable and entry == "url":
+                    third_stage[entry] = \
+                        "https://" + parsed_line[entry]
 
-                    for entry in parsed_line:
-                        if entry in cfg.allowable and entry == "url":
-                            third_stage[entry] = \
-                                "https://" + parsed_line[entry]
+                elif entry in cfg.allowable:
+                    third_stage[entry] = parsed_line[entry]
 
-                        elif entry in cfg.allowable:
-                            third_stage[entry] = parsed_line[entry]
-
-                    status = status & insert_mongo(args, cfg, log, third_stage)
-
-            else:
-                log.log_err("parse_data:  Unable to parse log entry: %s."
-                            % (third_stage))
-                status = status & insert_mongo(
-                    args, cfg, log, third_stage, unparsed=True)
+            status = status & insert_mongo(args, cfg, log, third_stage)
 
             third_stage = dict(second_stage)
 
@@ -696,6 +672,9 @@ def process_json(args, cfg, log, log_json):
     log.log_info("process_json:  Processing JSON document.")
     status = False
 
+    # Filter the raw data
+    log_json = filter_data(cfg, log, log_json)
+
     # Insert entries into Mongo
     if args.arg_exist("-i"):
         log.log_info("process_json:  Inserting JSON log entries into Mongo")
@@ -712,7 +691,7 @@ def process_json(args, cfg, log, log_json):
         if args.arg_exist("-g"):
             log.log_info("process_json:  Email data in body")
             mail = gen_class.setup_mail(cfg.to_addr, subj=cfg.subj)
-            mail.add_2_msg(log_json)
+            mail.add_2_msg(json.dumps(log_json))
             mail.send_mail()
 
         else:
@@ -723,7 +702,7 @@ def process_json(args, cfg, log, log_json):
             msg["Subject"] = cfg.subj
             fname = log_json["docid"] + "_docid"
             part = MIMEBase("application", "json")
-            part.set_payload(str(log_json))
+            part.set_payload(json.dumps(log_json))
             encoders.encode_base64(part)
             part.add_header(
                 "Content-Disposition", "attachment", filename=fname)
@@ -1223,8 +1202,7 @@ def validate_dirs(cfg):
 
     """Function:  validate_dirs
 
-    Description:  Validate the directories in the configuration file for the
-        -P option.
+    Description:  Validate a subset of directories in the configuration file.
 
     Arguments:
         (input) cfg -> Configuration setup
@@ -1234,20 +1212,13 @@ def validate_dirs(cfg):
 
     msg_dict = dict()
 
-    # Directory where Docid Pulled Html files are located at
-    for entry in cfg.doc_dir:
-        status, msg = gen_libs.chk_crt_dir(entry, read=True, no_print=True)
-
-        if not status:
-            msg_dict[entry] = msg
-
-    # Directory where active/archived log files to be searched are
+    # Where active/archived log files are
     status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
 
     if not status:
         msg_dict[cfg.log_dir] = msg
 
-    # Temporary file where check_log will write to
+    # Temporary file where check_log are written to
     basepath = gen_libs.get_base_dir(cfg.outfile)
     status, msg = gen_libs.chk_crt_dir(
         basepath, write=True, create=True, no_print=True)
@@ -1255,20 +1226,34 @@ def validate_dirs(cfg):
     if not status:
         msg_dict[basepath] = msg
 
-    # Directory path to where error and failed files are saved to
+    # Where error and failed files are
     status, msg = gen_libs.chk_crt_dir(
         cfg.error_dir, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[cfg.error_dir] = msg
 
-    # Directory where files with previous processed files are stored at
+    # Where files with previous processed files are
     basepath2 = gen_libs.get_base_dir(cfg.processed_file)
     status, msg = gen_libs.chk_crt_dir(
         basepath2, write=True, create=True, no_print=True)
 
     if not status:
         msg_dict[basepath2] = msg
+
+    # Where unparsable entry files are
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.unparsable_dir, write=True, create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.unparsable_dir] = msg
+
+    # Where raw archive files are
+    status, msg = gen_libs.chk_crt_dir(
+        cfg.raw_archive_dir, write=True, create=True, no_print=True)
+
+    if not status:
+        msg_dict[cfg.raw_archive_dir] = msg
 
     return msg_dict
 
@@ -1287,12 +1272,6 @@ def mvalidate_dirs(cfg):
     """
 
     msg_dict = dict()
-
-    status, msg = gen_libs.chk_crt_dir(
-        cfg.monitor_dir, write=True, no_print=True)
-
-    if not status:
-        msg_dict[cfg.monitor_dir] = msg
 
     status, msg = gen_libs.chk_crt_dir(
         cfg.merror_dir, write=True, create=True, no_print=True)
@@ -1325,11 +1304,36 @@ def checks_dirs(args, cfg):
 
     msg_dict = dict()
 
-    if args.get_val("-P", def_val=None):
+    if args.get_val("-P", def_val=False):
         msg_dict = validate_dirs(cfg)
 
-    elif args.get_val("-I", def_val=None):
+        if args.get_val("-i", def_val=False):
+            msg_dict2 = mvalidate_dirs(cfg)
+            msg_dict, _, _ = gen_libs.merge_two_dicts(msg_dict, msg_dict2)
+
+        # Where Docid Pulled Html files are
+        for entry in cfg.doc_dir:
+            status, msg = gen_libs.chk_crt_dir(entry, read=True, no_print=True)
+
+            if not status:
+                msg_dict[entry] = msg
+
+    elif args.get_val("-I", def_val=False):
         msg_dict = mvalidate_dirs(cfg)
+
+        # Where Mongo insert files are
+        status, msg = gen_libs.chk_crt_dir(
+            cfg.monitor_dir, write=True, no_print=True)
+
+        if not status:
+            msg_dict[cfg.monitor_dir] = msg
+
+    elif args.get_val("-F", def_val=False):
+        msg_dict = validate_dirs(cfg)
+
+        if args.get_val("-i", def_val=False):
+            msg_dict2 = mvalidate_dirs(cfg)
+            msg_dict, _, _ = gen_libs.merge_two_dicts(msg_dict, msg_dict2)
 
     return msg_dict
 
@@ -1425,20 +1429,18 @@ def main():
     opt_multi_list = ["-s", "-t"]
     opt_req_list = ["-c", "-d"]
     opt_val_list = ["-c", "-d", "-m", "-n", "-s", "-t", "-y", "-F"]
-    opt_xor_dict = {
-        "-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"],
-        "-i": ["-e", "-r"], "-e": ["-i", "-r"], "-r": ["-e", "-i"]}
+    opt_xor_dict = {"-I": ["-P", "-F"], "-P": ["-I", "-F"], "-F": ["-I", "-P"]}
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
-        sys.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
-        do_parse=True)
+        sys.argv, opt_val=opt_val_list, multi_val=opt_multi_list)
 
-    if not gen_libs.help_func(args, __version__, help_message)   \
-       and args.arg_require(opt_req=opt_req_list)                           \
-       and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)                \
-       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
-       and args.arg_xor_dict(opt_xor_val=opt_xor_dict)                      \
+    if args.arg_parse2()                                            \
+       and not gen_libs.help_func(args, __version__, help_message)  \
+       and args.arg_require(opt_req=opt_req_list)                   \
+       and args.arg_cond_req_or(opt_con_or=opt_con_req_dict)        \
+       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)            \
+       and args.arg_xor_dict(opt_xor_val=opt_xor_dict)              \
        and args.arg_file_chk(file_perm_chk=file_perms_chk):
 
         try:
