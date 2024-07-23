@@ -48,11 +48,12 @@ class CfgTest(object):
 
         """
 
-        self.doc_dir = ["/dir_path/doc_dir"]
         self.log_dir = "/dir_path/log_dir"
         self.outfile = "/dir_path/outfile_dir/outfile"
         self.error_dir = "/dir_path/error_dir"
         self.processed_file = "/dir_path/processed_dir/processed_file"
+        self.unparsable_dir = "/dir_path/unparsable_dir"
+        self.raw_archive_dir = "/dir_path/raw_archive_dir"
 
 
 class UnitTest(unittest.TestCase):
@@ -63,15 +64,13 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_raw_archive_dir_fail
+        test_unparsable_dir_fail
         test_process_dir_fail
-        test_doc_dir_multiple_two_fail
-        test_doc_dir_multiple_one_fail
-        test_doc_dir_multiple
         test_multiple_failures
         test_error_dir_failure
         test_outfile_failure
         test_log_dir_failure
-        test_doc_dir_failure
         test_no_failures
 
     """
@@ -87,26 +86,60 @@ class UnitTest(unittest.TestCase):
         """
 
         self.cfg = CfgTest()
-        self.dockey = "/dir_path/doc_dir"
-        self.dockey2 = "/dir_path/doc_dir2"
         self.errdir = "/dir_path/error_dir"
-        self.docval = "Doc_dir failure"
-        self.docval2 = "Doc_dir failure2"
         self.errval = "Error_dir failure"
-        self.results2 = {self.dockey: self.docval}
-        self.results2a = {self.dockey: self.docval, self.dockey2: self.docval2}
-        self.results3 = {"/dir_path/log_dir": "Log_dir failure"}
-        self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
-        self.results5 = {self.errdir: self.errval}
-        self.results6 = {self.dockey: self.docval, self.errdir: self.errval}
-        self.results8 = {"/dir_path/processed_dir": "Processed_dir failure"}
+        self.logdir = "/dir_path/log_dir"
+        self.logval = "Log_dir failure"
+
         self.chk = (True, None)
-        self.chk2 = (False, self.docval)
-        self.chk2a = (False, self.docval2)
-        self.chk3 = (False, "Log_dir failure")
+        self.chk3 = (False, self.logval)
         self.chk4 = (False, "Outfile failure")
         self.chk5 = (False, self.errval)
         self.chk8 = (False, "Processed_dir failure")
+        self.chk9 = (False, "Unparsable_dir failure")
+        self.chk10 = (False, "Raw_archive_dir failure")
+
+        self.results = dict()
+        self.results3 = {self.logdir: self.logval}
+        self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
+        self.results5 = {self.errdir: self.errval}
+        self.results6 = {self.logdir: self.logval, self.errdir: self.errval}
+        self.results8 = {"/dir_path/processed_dir": "Processed_dir failure"}
+        self.results9 = {"/dir_path/unparsable_dir": "Unparsable_dir failure"}
+        self.results10 = {
+            "/dir_path/raw_archive_dir": "Raw_archive_dir failure"}
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
+    def test_raw_archive_dir_fail(self, mock_chk):
+
+        """Function:  test_raw_archive_dir_fail
+
+        Description:  Test with failure on raw_archive_dir directory.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [
+            self.chk, self.chk, self.chk, self.chk, self.chk, self.chk10]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results10)
+
+    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
+    def test_unparsable_dir_fail(self, mock_chk):
+
+        """Function:  test_unparsable_dir_fail
+
+        Description:  Test with failure on unparsable_dir directory.
+
+        Arguments:
+
+        """
+
+        mock_chk.side_effect = [
+            self.chk, self.chk, self.chk, self.chk, self.chk9, self.chk]
+
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results9)
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_process_dir_fail(self, mock_chk):
@@ -119,64 +152,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
-                                self.chk8]
+        mock_chk.side_effect = [
+            self.chk, self.chk, self.chk, self.chk8, self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results8)
-
-    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
-    def test_doc_dir_multiple_two_fail(self, mock_chk):
-
-        """Function:  test_doc_dir_multiple_two_fail
-
-        Description:  Test with multiple directories for doc_dir, one failure.
-
-        Arguments:
-
-        """
-
-        self.cfg.doc_dir.append(self.dockey2)
-
-        mock_chk.side_effect = [self.chk2, self.chk2a, self.chk, self.chk,
-                                self.chk, self.chk]
-
-        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2a)
-
-    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
-    def test_doc_dir_multiple_one_fail(self, mock_chk):
-
-        """Function:  test_doc_dir_multiple_one_fail
-
-        Description:  Test with multiple directories for doc_dir, one failure.
-
-        Arguments:
-
-        """
-
-        self.cfg.doc_dir.append(self.dockey2)
-
-        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk,
-                                self.chk, self.chk]
-
-        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2)
-
-    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
-    def test_doc_dir_multiple(self, mock_chk):
-
-        """Function:  test_doc_dir_multiple
-
-        Description:  Test with multiple directories for doc_dir.
-
-        Arguments:
-
-        """
-
-        self.cfg.doc_dir.append("/dir_path/doc_dir2")
-
-        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
-                                self.chk, self.chk]
-
-        self.assertEqual(pulled_search.validate_dirs(self.cfg), {})
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_multiple_failures(self, mock_chk):
@@ -189,8 +168,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk5,
-                                self.chk]
+        mock_chk.side_effect = [
+            self.chk3, self.chk, self.chk5, self.chk, self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results6)
 
@@ -205,8 +184,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk5,
-                                self.chk]
+        mock_chk.side_effect = [
+            self.chk, self.chk, self.chk5, self.chk, self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results5)
 
@@ -221,8 +200,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk4, self.chk,
-                                self.chk]
+        mock_chk.side_effect = [
+            self.chk, self.chk4, self.chk, self.chk, self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results4)
 
@@ -237,26 +216,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk3, self.chk, self.chk,
-                                self.chk]
+        mock_chk.side_effect = [
+            self.chk3, self.chk, self.chk, self.chk, self.chk, self.chk]
 
         self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results3)
-
-    @mock.patch("pulled_search.gen_libs.chk_crt_dir")
-    def test_doc_dir_failure(self, mock_chk):
-
-        """Function:  test_doc_dir_failure
-
-        Description:  Test with failure on doc_dir check.
-
-        Arguments:
-
-        """
-
-        mock_chk.side_effect = [self.chk2, self.chk, self.chk, self.chk,
-                                self.chk]
-
-        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results2)
 
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_no_failures(self, mock_chk):
@@ -269,10 +232,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_chk.side_effect = [self.chk, self.chk, self.chk, self.chk,
-                                self.chk]
+        mock_chk.side_effect = [
+            self.chk, self.chk, self.chk, self.chk, self.chk, self.chk]
 
-        self.assertEqual(pulled_search.validate_dirs(self.cfg), {})
+        self.assertEqual(pulled_search.validate_dirs(self.cfg), self.results)
 
 
 if __name__ == "__main__":

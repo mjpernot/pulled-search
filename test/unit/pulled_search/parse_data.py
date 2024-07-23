@@ -94,13 +94,6 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
-        test_url_no_transformer
-        test_url_no_docid
-        test_url_contains_2ndreview
-        test_url_contains_ic_gov
-        test_bad_status_code
-        test_parsing_failed
-        test_partial_log_entry
         test_multiple_servers
         test_single_svr_multiple_entries
         test_single_svr_single_entry
@@ -124,34 +117,15 @@ class UnitTest(unittest.TestCase):
         reqid = "Y9hakjsdhfkjsfhksdfkhsddf 0/826818 "
         verb = '"GET /ddd/products?quey_here&callback=jQuerylfjksfh HTTP/1.1" '
         stats = "200 18331 "
-        stats2 = "404 18331 "
         ref = '"https://hp.on.ic.gov/transform/20220805-1436-GEN-010109.html" '
         agt = '"Moz/5.0 Win NT 10; Win64; AWK/5.6 (KHTML Geck)Chr/1.0 Saf/5.6"'
         url = " jsk.dfh/transformer/dio/source/ProductPage?docid=09109uosdhf"
-        url2 = " hp.on.ic.gov/proxy/dio/source/ProductPage?docid=09109uosdhf"
-        url3 = " hp.on.ic.gov/2ndReview/source/ProductPage?docid=09109uosdhf"
-        url4 = " jsk.dfh/transformer/dio/source/ProductPage?docid=09109abcdhf"
-        url5 = " jsk.dfh/notcorrect/dio/source/ProductPage?docid=09109uosdhf"
-        line3 = ' - - [08/Jan/2020:21:39:03 +0000] "GET / HTTP/1.1" 200 6169 '
-        line4 = '"-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-        line5 = '(KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"'
         dtg = "2020-03-06T08:45:03Z"
 
         self.args = ArgParser()
         self.cfg = CfgTest()
         self.entry1 = ip1 + proxy + user + dtg2 + reqid + verb + stats \
             + ref + agt + url
-        self.entry2 = ip1 + line3 + line4 + line5
-        self.entry3 = ip1 + proxy + user + dtg2 + reqid + verb + stats2 \
-            + ref + agt + url
-        self.entry4 = ip1 + proxy + user + dtg2 + reqid + verb + stats \
-            + ref + agt + url2
-        self.entry5 = ip1 + proxy + user + dtg2 + reqid + verb + stats \
-            + ref + agt + url3
-        self.entry6 = ip1 + proxy + user + dtg2 + reqid + verb + stats \
-            + ref + agt + url4
-        self.entry7 = ip1 + proxy + user + dtg2 + reqid + verb + stats \
-            + ref + agt + url5
         self.log_json = {
             "docid": "09109uosdhf", "command": "COMMAND",
             "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
@@ -165,166 +139,6 @@ class UnitTest(unittest.TestCase):
             "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
             "servers": {"server_name": [self.entry1],
                         "server_name2": [self.entry1]}}
-        self.log_json4 = {
-            "docid": "09109uosdhf", "command": "COMMAND",
-            "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
-            "servers": {"server_name": [self.entry2]}}
-        self.log_json5 = {
-            "docid": "09109uosdhf", "command": "COMMAND",
-            "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
-            "servers": {"server_name": [self.entry3]}}
-        self.log_json6 = {
-            "docid": "09109uosdhf", "command": "COMMAND",
-            "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
-            "servers": {"server_name": [self.entry4]}}
-        self.log_json7 = {
-            "docid": "09109uosdhf", "command": "COMMAND",
-            "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
-            "servers": {"server_name": [self.entry5]}}
-        self.log_json8 = {
-            "docid": "09109uosdhf", "command": "COMMAND",
-            "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
-            "servers": {"server_name": [self.entry6]}}
-        self.log_json9 = {
-            "docid": "09109uosdhf", "command": "COMMAND",
-            "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
-            "servers": {"server_name": [self.entry7]}}
-
-    @mock.patch("pulled_search.gen_libs.write_file",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_url_no_transformer(self, mock_log):
-
-        """Function:  test_url_no_transformer
-
-        Description:  Test with url does not contain transformer.
-
-        Arguments:
-
-        """
-
-        mock_log.return_value = True
-
-        self.assertTrue(
-            pulled_search.parse_data(
-                self.args, self.cfg, mock_log, self.log_json9))
-
-    @mock.patch("pulled_search.gen_libs.write_file",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_url_no_docid(self, mock_log):
-
-        """Function:  test_url_no_docid
-
-        Description:  Test with url does not contain the right DocID.
-
-        Arguments:
-
-        """
-
-        mock_log.return_value = True
-
-        self.assertTrue(
-            pulled_search.parse_data(
-                self.args, self.cfg, mock_log, self.log_json8))
-
-    @mock.patch("pulled_search.gen_libs.write_file",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_url_contains_2ndreview(self, mock_log):
-
-        """Function:  test_url_contains_2ndreview
-
-        Description:  Test with url that contains 2ndReview.
-
-        Arguments:
-
-        """
-
-        mock_log.return_value = True
-
-        self.assertTrue(
-            pulled_search.parse_data(
-                self.args, self.cfg, mock_log, self.log_json7))
-
-    @mock.patch("pulled_search.gen_libs.write_file",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_url_contains_ic_gov(self, mock_log):
-
-        """Function:  test_url_contains_ic_gov
-
-        Description:  Test with url that contains .ic.gov.
-
-        Arguments:
-
-        """
-
-        mock_log.return_value = True
-
-        self.assertTrue(
-            pulled_search.parse_data(
-                self.args, self.cfg, mock_log, self.log_json6))
-
-    @mock.patch("pulled_search.gen_libs.write_file",
-                mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_bad_status_code(self, mock_log):
-
-        """Function:  test_bad_status_code
-
-        Description:  Test with bad status code.
-
-        Arguments:
-
-        """
-
-        mock_log.return_value = True
-
-        self.assertTrue(
-            pulled_search.parse_data(
-                self.args, self.cfg, mock_log, self.log_json5))
-
-    @mock.patch(
-        "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.re.match", mock.Mock(return_value=None))
-    @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_parsing_failed(self, mock_log):
-
-        """Function:  test_parsing_failed
-
-        Description:  Test with a parsing error.
-
-        Arguments:
-
-        """
-
-        mock_log.return_value = True
-
-        self.assertTrue(
-            pulled_search.parse_data(
-                self.args, self.cfg, mock_log, self.log_json))
-
-    @mock.patch(
-        "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.insert_mongo", mock.Mock(return_value=True))
-    @mock.patch("pulled_search.gen_class.Logger")
-    def test_partial_log_entry(self, mock_log):
-
-        """Function:  test_partial_log_entry
-
-        Description:  Test with a partial log entry.
-
-        Arguments:
-
-        """
-
-        mock_log.return_value = True
-
-        self.assertTrue(
-            pulled_search.parse_data(
-                self.args, self.cfg, mock_log, self.log_json4))
 
     @mock.patch(
         "pulled_search.gen_libs.write_file", mock.Mock(return_value=True))

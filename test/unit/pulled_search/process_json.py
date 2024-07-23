@@ -286,10 +286,18 @@ class UnitTest(unittest.TestCase):
             "network": "ENCLAVE",
             "asOf": "20200306 084503",
             "servers": {"server_name": ["line1", "line2", "line3"]}}
+        self.log_json2 = {
+            "docid": "09109uosdhf",
+            "command": "COMMAND",
+            "pubDate": "20200102-101134",
+            "network": "ENCLAVE",
+            "asOf": "20200306 084503",
+            "servers": {"server_name": ["line1", "line3"]}}
 
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.gen_class.setup_mail")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_email_body(self, mock_log, mock_mail):
+    def test_email_body(self, mock_log, mock_mail, mock_filter):
 
         """Function:  test_email_body
 
@@ -303,6 +311,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
         mock_mail.return_value = self.mail
+        mock_filter.return_value = self.log_json2
 
         self.assertTrue(
             pulled_search.process_json(
@@ -313,9 +322,10 @@ class UnitTest(unittest.TestCase):
         "pulled_search.socket.gethostname", mock.Mock(return_value="host"))
     @mock.patch(
         "pulled_search.getpass.getuser", mock.Mock(return_value="user"))
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.smtplib.SMTP")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_email_summary(self, mock_log, mock_mail):
+    def test_email_summary(self, mock_log, mock_mail, mock_filter):
 
         """Function:  test_email_summary
 
@@ -329,13 +339,15 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
         mock_mail.return_value = Smtplib()
+        mock_filter.return_value = self.log_json2
 
         self.assertTrue(
             pulled_search.process_json(
                 self.args, self.cfg2, mock_log, self.log_json))
 
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_no_option(self, mock_log):
+    def test_no_option(self, mock_log, mock_filter):
 
         """Function:  test_no_option
 
@@ -348,14 +360,16 @@ class UnitTest(unittest.TestCase):
         self.args.args_array = self.args_array
 
         mock_log.return_value = True
+        mock_filter.return_value = self.log_json2
 
         self.assertFalse(
             pulled_search.process_json(
                 self.args, self.cfg2, mock_log, self.log_json))
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=False))
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_mongo_failed(self, mock_log):
+    def test_mongo_failed(self, mock_log, mock_filter):
 
         """Function:  test_mongo_failed
 
@@ -368,14 +382,16 @@ class UnitTest(unittest.TestCase):
         self.args.args_array = self.args_array2
 
         mock_log.return_value = True
+        mock_filter.return_value = self.log_json2
 
         self.assertFalse(
             pulled_search.process_json(
                 self.args, self.cfg2, mock_log, self.log_json))
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_mongo(self, mock_log):
+    def test_mongo(self, mock_log, mock_filter):
 
         """Function:  test_mongo
 
@@ -388,6 +404,7 @@ class UnitTest(unittest.TestCase):
         self.args.args_array = self.args_array2
 
         mock_log.return_value = True
+        mock_filter.return_value = self.log_json2
 
         self.assertTrue(
             pulled_search.process_json(
@@ -397,9 +414,10 @@ class UnitTest(unittest.TestCase):
         "pulled_search.socket.gethostname", mock.Mock(return_value="host"))
     @mock.patch(
         "pulled_search.getpass.getuser", mock.Mock(return_value="user"))
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.smtplib.SMTP")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_email(self, mock_log, mock_mail):
+    def test_email(self, mock_log, mock_mail, mock_filter):
 
         """Function:  test_email
 
@@ -413,6 +431,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
         mock_mail.return_value = Smtplib()
+        mock_filter.return_value = self.log_json2
 
         self.assertTrue(
             pulled_search.process_json(
@@ -422,8 +441,9 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
                 mock.Mock(return_value=(True, None)))
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_rabbitmq_pass(self, mock_log):
+    def test_rabbitmq_pass(self, mock_log, mock_filter):
 
         """Function:  test_rabbitmq_pass
 
@@ -436,6 +456,7 @@ class UnitTest(unittest.TestCase):
         self.args.args_array = self.args_array4
 
         mock_log.return_value = True
+        mock_filter.return_value = self.log_json2
 
         self.assertTrue(
             pulled_search.process_json(
@@ -445,8 +466,9 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
                 mock.Mock(return_value=(False, "Error Message")))
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_rabbitmq_failed(self, mock_log):
+    def test_rabbitmq_failed(self, mock_log, mock_filter):
 
         """Function:  test_rabbitmq_failed
 
@@ -459,6 +481,7 @@ class UnitTest(unittest.TestCase):
         self.args.args_array = self.args_array4
 
         mock_log.return_value = True
+        mock_filter.return_value = self.log_json2
 
         self.assertFalse(
             pulled_search.process_json(
@@ -468,9 +491,10 @@ class UnitTest(unittest.TestCase):
                 mock.Mock(return_value=True))
     @mock.patch("pulled_search.rabbitmq_class.pub_2_rmq",
                 mock.Mock(return_value=(False, "Error Message")))
+    @mock.patch("pulled_search.filter_data")
     @mock.patch("pulled_search.gen_class.setup_mail")
     @mock.patch("pulled_search.gen_class.Logger")
-    def test_rabbitmq_failed_mail(self, mock_log, mock_mail):
+    def test_rabbitmq_failed_mail(self, mock_log, mock_mail, mock_filter):
 
         """Function:  test_rabbitmq_failed_mail
 
@@ -484,6 +508,7 @@ class UnitTest(unittest.TestCase):
 
         mock_log.return_value = True
         mock_mail.return_value = self.mail
+        mock_filter.return_value = self.log_json2
 
         self.assertFalse(
             pulled_search.process_json(

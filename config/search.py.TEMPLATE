@@ -10,6 +10,12 @@
 # File name including directory path.
 log_file = "BASE_PATH/log/pulled_search.log"
 
+################################################################################
+# This section is for all options -F and -P options.
+# Directory where raw data is saved to before filtering.
+raw_archive_dir = "BASE_PATH/raw_archive"
+# Directory where unparsable data is saved to.
+unparsable_dir = "BASE_PATH/unparsable"
 
 ################################################################################
 # Pulled Search Process Configuration section.
@@ -41,10 +47,10 @@ log_type = "access_log"
 # This is for the naming of the access logs which are not always under the command name.
 command = {"eucom": "intelink", "acic": "usacic"}
 
-
 ################################################################################
-# Email Configuration section.
 # These entries are for the -e option under the -P and -F options.
+#
+# Email Configuration section.
 #
 # This option is normally is used in conjunction with the rmq_2_mail.py program.
 # Email address to rabbitmq alias for the rmq_2_mail.py program.
@@ -55,7 +61,6 @@ to_addr = None
 #     Also the subject will be CamelCased when processed.
 # Example:  subj = "Pulledsearch"
 subj = None
-
 
 ################################################################################
 # RabbitMQ Configuration section.
@@ -77,7 +82,6 @@ queue = "QUEUENAME"
 r_key = "RKEYNAME"
 # RabbitMQ Exchange name for each instance run.
 exchange_name = "EXCHANGE_NAME"
-
 # NOTE: These entries will not need to be updated normally.
 # RabbitMQ listening port
 # Default is 5672
@@ -92,7 +96,6 @@ q_durable = True
 # Do queues automatically delete once message is processed:  True|False
 auto_delete = False
 
-
 ################################################################################
 # Pulled Search Insert Configuration section.
 # These entries are for the -I option.
@@ -101,26 +104,24 @@ auto_delete = False
 monitor_dir = "MONITOR_DIR_PATH"
 # Regular expression for search for Insert/Mongodb file names.
 mfile_regex = "_mongo.json"
-# Directory path to where Insert/Mongodb error and non-processed files are saved to.
-merror_dir = "BASE_PATH/mongo_error"
-
 
 ################################################################################
 # Name of Mongo configuration file.  (Do not include the ".py" in the name.)
 # These entries are for the -i and -I options (mongo database).
 #
 # Directory path to where Insert/Mongodb archived files are saved to.
-marchive_dir = "BASE_PATH/archive"
+marchive_dir = "BASE_PATH/mongo_archive"
+# Directory path to where Insert/Mongodb error and non-processed files are saved to.
+merror_dir = "BASE_PATH/mongo_error"
 # Do not change unless changing the name of the external Mongo config file.
 # The config file is saved to the same location as the -d option.
 mconfig = "mongo"
 
-
+# WARNING: Do not modify this section unless you know regular expressions.
 ################################################################################
 # Log parsing section.
-# These entries are for the -I and -P options.
+# These entries are for the -F, -I and -P options.
 #
-# Warning: Do not modify this section unless you know regular expressions.
 # NOTE: These name tags are reserved and cannot be used: ["command", "docid", "network", "pubDate", "asOf"]
 regex = "(?P<ip>.*?) (?P<proxyid>.*?) (?P<userid>CN=.*?) \[(?P<logTime>.*?)(?= ) (?P<timeZone>.*?)\] (?P<requestid>.*?) (?P<secs>.*?)/(?P<msecs>.*?) \"(?P<verb>.*?) (?P<verbUrl>.*?) HTTP/(?P<httpVer>.*?)\" (?P<status>.*?) (?P<length>.*?) \"(?P<referrer>.*?)\" \"(?P<userAgent>.*?)\" (?P<url>.*?)?$"
 # These are the entries that will be parsed from the log entry and placed into the document.

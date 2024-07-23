@@ -164,7 +164,6 @@ class MCfgTest(object):
 
         self.dbs = "database_name"
         self.tbl = "table_name"
-        self.unparsed = "unparsed"
 
 
 class Logger(object):
@@ -231,7 +230,6 @@ class UnitTest(unittest.TestCase):
     Methods:
         setUp
         test_mongo_failed_email
-        test_mongo_unparsed
         test_mongo_failed
         test_mongo_successful
 
@@ -282,24 +280,6 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(pulled_search.insert_mongo(
             self.args, self.cfg, self.logger, self.data))
-
-    @mock.patch("pulled_search.mongo_libs.ins_doc",
-                mock.Mock(return_value=(True, None)))
-    @mock.patch("pulled_search.gen_libs.load_module")
-    def test_mongo_unparsed(self, mock_load):
-
-        """Function:  test_mongo_unparsed
-
-        Description:  Test with passing unparsed argument.
-
-        Arguments:
-
-        """
-
-        mock_load.return_value = self.mcfg
-
-        self.assertTrue(pulled_search.insert_mongo(
-            self.args, self.cfg, self.logger, self.data, unparsed=True))
 
     @mock.patch("pulled_search.gen_libs.write_file",
                 mock.Mock(return_value=True))
