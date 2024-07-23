@@ -117,17 +117,9 @@ class UnitTest(unittest.TestCase):
         reqid = "Y9hakjsdhfkjsfhksdfkhsddf 0/826818 "
         verb = '"GET /ddd/products?quey_here&callback=jQuerylfjksfh HTTP/1.1" '
         stats = "200 18331 "
-        stats2 = "404 18331 "
         ref = '"https://hp.on.ic.gov/transform/20220805-1436-GEN-010109.html" '
         agt = '"Moz/5.0 Win NT 10; Win64; AWK/5.6 (KHTML Geck)Chr/1.0 Saf/5.6"'
         url = " jsk.dfh/transformer/dio/source/ProductPage?docid=09109uosdhf"
-        url2 = " hp.on.ic.gov/proxy/dio/source/ProductPage?docid=09109uosdhf"
-        url3 = " hp.on.ic.gov/2ndReview/source/ProductPage?docid=09109uosdhf"
-        url4 = " jsk.dfh/transformer/dio/source/ProductPage?docid=09109abcdhf"
-        url5 = " jsk.dfh/notcorrect/dio/source/ProductPage?docid=09109uosdhf"
-        line3 = ' - - [08/Jan/2020:21:39:03 +0000] "GET / HTTP/1.1" 200 6169 '
-        line4 = '"-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-        line5 = '(KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"'
         dtg = "2020-03-06T08:45:03Z"
 
         self.args = ArgParser()
