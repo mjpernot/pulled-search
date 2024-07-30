@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.10] - 2024-07-30
+- Set urllib3 to 1.26.19 for Python 2 for security reasons.
+- Updated rabbitmq-lib to v2.2.4
+
+
 ## [0.2.9] - 2024-06-20
 - Parse the data before it is email, inserted into Mongo or published to RabbitMQ.
 
