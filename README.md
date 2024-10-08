@@ -86,6 +86,7 @@ python -m pip install -r requirements-checklog-python-lib.txt --target checklog/
 python -m pip install -r requirements-checklog-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 python -m pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi.appdev.proj.coe.ic.gov
 python -m pip install -r requirements-mongo-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
+python -m pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
 
