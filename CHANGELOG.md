@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
+## [0.2.12] - 2024-09-27
+- Updated pymongo==4.1.1 for Python 3.6
+- Updated simplejson==3.13.2 for Python 3
+- Updated mongo-lib to v4.3.2
+- Updated python-lib to v3.0.5
+- Updated check-log to v4.2.1
+- Updated rabbitmq-lib to v2.2.6
+
+
 ## [0.2.11] - 2024-08-07
 - Updated simplejson==3.13.2
 - Updated requests==2.25.0
