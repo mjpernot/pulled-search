@@ -5,6 +5,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [0.2.13] - 2024-11-25
+Breaking Change.
+- This version going forward will work only for Python 3.
+
 - Updated distro==1.9.0 for Python 3.
 - Added idna==2.10 for Python 3.
 - Updated pika==1.3.1 for Python 3.
@@ -17,6 +20,13 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Updated rabbitmq-lib to v2.2.7
 - Updated mongo-lib to v4.3.4
 - Updated check-log to v4.2.3
+
+### Fixed
+- is_base64: Added exception to handle incorrect buffering error for Python 3.
+
+### Changed
+- process_insert: Added decode to base64 command in ast.literal_eval check to convert bytes back to string for comparsion.
+- is_base64: Added decode to base64 command to convert bytes back to string for comparsion.
 
 ### Deprecated
 - Support for Python 2.7

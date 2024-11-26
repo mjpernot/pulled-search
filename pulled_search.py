@@ -254,10 +254,6 @@
         pulled_search.py -c search -d /opt/local/pulled/config -I
             -n /opt/local/pulled/monitor -y pulled_insert
 
-    Known Bugs:
-        The -I option will not work in Python 3.  See notes in process_insert
-        and is_base64 functions.
-
 """
 
 # Libraries and Global Variables
@@ -273,6 +269,7 @@ import json
 import re
 import base64
 import ast
+import binascii
 
 # Temporary libraries until gen_class.Mail2 is ready
 import smtplib
@@ -756,15 +753,16 @@ def is_base64(data):
         (input) data -> Data string to be checked
         (output) status -> True|False - Is base64 encoded
 
-    Known Bug:  Will not work in Python 3.
-
     """
 
     try:
         status = True if base64.b64encode(
-            base64.b64decode(data))[1:70] == data[1:70] else False
+            base64.b64decode(data))[1:70].decode() == data[1:70] else False
 
     except TypeError:
+        status = False
+
+    except binascii.Error:
         status = False
 
     return status
@@ -792,9 +790,8 @@ def process_insert(args, cfg, fname, log):
         data = f_hdr.read()
 
     # Check the first 70 chars in case the encoded is split into multiple lines
-    # Known Bug:  Will not work in Python 3.
     if is_base64(data):
-        log_json = ast.literal_eval(base64.b64decode(data))
+        log_json = ast.literal_eval(base64.b64decode(data).decode())
 
     else:
         try:
