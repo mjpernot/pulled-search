@@ -52,7 +52,7 @@ class ArgParser():                                      # pylint:disable=R0903
         self.args_array = {}
 
 
-class CfgTest():
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 

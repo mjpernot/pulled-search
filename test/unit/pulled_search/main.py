@@ -111,7 +111,7 @@ class ArgParser():
 
         """
 
-        return True if arg in self.args_array else False
+        return arg in self.args_array
 
     def arg_file_chk(self, file_perm_chk):
 

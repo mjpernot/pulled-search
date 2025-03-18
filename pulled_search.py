@@ -401,7 +401,7 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     return log_files
 
 
-def process_docid(args, cfg, docid_dict, log):
+def process_docid(args, cfg, docid_dict, log):          # pylint:disable=R0914
 
     """Function:  process_docid
 
@@ -540,16 +540,16 @@ def filter_data(cfg, log, log_json):
     log.log_info(
         f"filter_data:  Writing to raw data toarchive: {cfg.raw_archive_dir}")
     fname = os.path.join(
-        cfg.raw_archive_dir, log_json["docid"] + "." + log_json["asOf"] +
-        ".raw")
+        cfg.raw_archive_dir,
+        log_json["docid"] + "." + log_json["asOf"] + ".raw")
     gen_libs.write_file(fname=fname, mode="w", data=log_json)
     log.log_info("filter_data:  Start filtering JSON document.")
 
     # Loop on servers
     for svr in log_json["servers"]:
         uname = os.path.join(
-            cfg.unparsable_dir, log_json["docid"] + "." + svr +
-            log_json["asOf"] + ".unparsable")
+            cfg.unparsable_dir,
+            log_json["docid"] + "." + svr + log_json["asOf"] + ".unparsable")
         parsed_list = []
 
         # Loop on log entries for each server
@@ -671,7 +671,7 @@ def write_summary(cfg, log, log_json):
             fhdr.write(json.dumps(file_entry) + "\n")
 
 
-def process_json(args, cfg, log, log_json):
+def process_json(args, cfg, log, log_json):             # pylint:disable=R0915
 
     """Function:  process_json
 
@@ -752,8 +752,8 @@ def process_json(args, cfg, log, log_json):
             gen_libs.write_file(fname, mode="w", data=log_json)
 
             if args.get_val("-t", def_val=False):
-                log.log_info("process_json:  Email error to: %s"
-                             % (args.get_val("-t")))
+                log.log_info(
+                    f'process_json:  Email error to: {args.get_val("-t")}')
                 subj = args.get_val("-s", def_val="") + "Error: NonPublished"
                 mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
                 mail.add_2_msg("Unable to publish message to RabbitMQ")
@@ -776,8 +776,8 @@ def is_base64(data):
     """
 
     try:
-        status = True if base64.b64encode(
-            base64.b64decode(data))[1:70].decode() == data[1:70] else False
+        status = base64.b64encode(
+            base64.b64decode(data))[1:70].decode() == data[1:70]
 
     except TypeError:
         status = False

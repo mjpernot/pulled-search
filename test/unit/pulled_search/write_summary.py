@@ -123,7 +123,7 @@ class UnitTest(unittest.TestCase):
 
         pulled_search.write_summary(self.cfg, mock_log, self.log_json3)
 
-        with open(self.f_name, "r") as fhdr:
+        with open(self.f_name, mode="r", encoding="UTF-8") as fhdr:
             data = fhdr.read()
 
         data = json.loads(data)
@@ -162,7 +162,7 @@ class UnitTest(unittest.TestCase):
 
         pulled_search.write_summary(self.cfg, mock_log, self.log_json2)
 
-        with open(self.f_name, "r") as fhdr:
+        with open(self.f_name, mode="r", encoding="UTF-8") as fhdr:
             data = fhdr.read()
 
         data = json.loads(data)

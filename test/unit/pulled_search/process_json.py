@@ -130,7 +130,7 @@ class ArgParser():
         return arg in self.args_array
 
 
-class CfgTest2():
+class CfgTest2():                                       # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -235,8 +235,6 @@ class Smtplib():
         Arguments:
 
         """
-
-        pass
 
 
 class UnitTest(unittest.TestCase):
