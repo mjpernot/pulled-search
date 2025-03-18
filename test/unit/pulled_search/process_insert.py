@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -49,10 +49,10 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = dict()
+        self.args_array = {}
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -76,7 +76,7 @@ class CfgTest(object):
         self.mconfig = "mongo"
 
 
-class Logger(object):
+class Logger():
 
     """Class:  Logger
 
@@ -181,9 +181,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(
+        self.assertFalse(
             pulled_search.process_insert(
-                self.args, self.cfg, self.in_file, self.logger), False)
+                self.args, self.cfg, self.in_file, self.logger))
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
     def test_mongo_successful(self):
@@ -196,9 +196,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(
+        self.assertTrue(
             pulled_search.process_insert(
-                self.args, self.cfg, self.in_file, self.logger), True)
+                self.args, self.cfg, self.in_file, self.logger))
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
     def test_json_success(self):
@@ -211,9 +211,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(
+        self.assertTrue(
             pulled_search.process_insert(
-                self.args, self.cfg, self.in_file3, self.logger), True)
+                self.args, self.cfg, self.in_file3, self.logger))
 
     def test_json_failure(self):
 
@@ -225,9 +225,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(
+        self.assertFalse(
             pulled_search.process_insert(
-                self.args, self.cfg, self.in_file2, self.logger), False)
+                self.args, self.cfg, self.in_file2, self.logger))
 
     @mock.patch("pulled_search.parse_data", mock.Mock(return_value=True))
     def test_with_encoded_data(self):
@@ -240,9 +240,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertEqual(
+        self.assertTrue(
             pulled_search.process_insert(
-                self.args, self.cfg, self.in_file, self.logger), True)
+                self.args, self.cfg, self.in_file, self.logger))
 
 
 if __name__ == "__main__":

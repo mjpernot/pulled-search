@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [0.2.14] - 2025-03-18
+Breaking Changes
+
+- Removed support for Python 2.7.
+- Add pre-header check on allowable Python versions to run.
+- Updated urllib3==1.26.20
+- Added certifi==2024.12.14
+- Updated pymongo==4.10.1
+- Updated rabbitmq-lib to v2.3.0
+- Updated mongo-lib to v4.5.1
+- Updated python-lib to v4.0.0
+- Updated check-log to v5.0.0
+
+### Changed
+- Refactored open file command and added "encoding" argument to open() command.
+- Replaced dict() with {} and list() with [].
+- Converted strings to f-strings.
+- Documentation changes.
+
+### Removed
+- Mongo 3.4 support.
+
+
 ## [0.2.13] - 2024-11-25
 Breaking Change.
 - This version going forward will work only for Python 3.

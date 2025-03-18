@@ -21,9 +21,9 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import lib.gen_libs as gen_libs
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import lib.gen_libs as gen_libs             # pylint:disable=E0401,C0413,R0402
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
@@ -46,7 +46,7 @@ def process_files(args_array, cfg, log):
     return status
 
 
-class ArgParser(object):
+class ArgParser():
 
     """Class:  ArgParser
 
@@ -70,7 +70,7 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = dict()
+        self.args_array = {}
 
     def get_val(self, skey, def_val=None):
 
@@ -97,7 +97,7 @@ class ArgParser(object):
         return list(self.args_array.keys())
 
 
-class LoggerTest(object):
+class LoggerTest():
 
     """Class:  LoggerTest
 
@@ -120,8 +120,6 @@ class LoggerTest(object):
 
         """
 
-        pass
-
     def log_info(self, data):
 
         """Method:  log_info
@@ -131,8 +129,6 @@ class LoggerTest(object):
         Arguments:
 
         """
-
-        pass
 
     def log_err(self, data):
 
@@ -144,10 +140,8 @@ class LoggerTest(object):
 
         """
 
-        pass
 
-
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 

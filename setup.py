@@ -59,5 +59,5 @@ setuptools.setup(
         "Topic :: Database :: RabbitMQ :: 3.6",
         "Topic :: Database :: RabbitMQ :: 3.8",
         "Topic :: Database :: Mongodb",
-        "Topic :: Database :: Mongodb :: 3.4",
-        "Topic :: Database :: Mongodb :: 4.2"])
+        "Topic :: Database :: Mongodb :: 4.2",
+        "Topic :: Database :: Mongodb :: 7.0"])
