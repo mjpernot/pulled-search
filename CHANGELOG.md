@@ -17,6 +17,9 @@ Breaking Changes
 - Updated python-lib to v4.0.0
 - Updated check-log to v5.0.0
 
+### Added
+- rm_file: Remove file.
+
 ### Changed
 - Refactored open file command and added "encoding" argument to open() command.
 - Replaced dict() with {} and list() with [].

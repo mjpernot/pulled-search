@@ -420,6 +420,33 @@ def rm_file(ofile, log):
             log.log_warn(f"rm_file:  {err_msg}")
 
 
+def process_data(ofile, log_json, fname, server, log):
+
+    """Function:  process_data
+
+    Description:  Convert data from file into dictionary list.
+
+    Arguments:
+        (input) ofile -> File name - containing processed log entries
+        (input) log_json -> Dictionary list of log entries
+        (input) fname -> Log file name
+        (input) server -> Server name
+        (input) log -> Log class instance
+        (output) log_json -> Dictionary list of log entries
+
+    """
+
+    if os.path.exists(ofile) and not gen_libs.is_empty_file(ofile):
+        log.log_info(f"process_docid:  Log entries detected in: {fname}")
+        file_log = gen_libs.file_2_list(ofile)
+
+        log_json["servers"][server] = \
+            log_json["servers"][server] + file_log \
+            if server in log_json["servers"] else file_log
+
+    return log_json
+
+
 def process_docid(args, cfg, docid_dict, log):          # pylint:disable=R0914
 
     """Function:  process_docid
@@ -485,22 +512,18 @@ def process_docid(args, cfg, docid_dict, log):          # pylint:disable=R0914
             cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
 
-        if os.path.exists(ofile) and not gen_libs.is_empty_file(ofile):
-            log.log_info(f"process_docid:  Log entries detected in: {fname}")
-            file_log = gen_libs.file_2_list(ofile)
-
-            log_json["servers"][server] = \
-                log_json["servers"][server] + file_log \
-                if server in log_json["servers"] else file_log
+        log_json = process_data(ofile, log_json, fname, server, log)
+######################## (ofile, log_json, fname, server, log) -> log_json
+#        if os.path.exists(ofile) and not gen_libs.is_empty_file(ofile):
+#            log.log_info(f"process_docid:  Log entries detected in: {fname}")
+#            file_log = gen_libs.file_2_list(ofile)
+#
+#            log_json["servers"][server] = \
+#                log_json["servers"][server] + file_log \
+#                if server in log_json["servers"] else file_log
+########################
 
         rm_file(ofile, log)
-#######################
-#        if os.path.exists(ofile):
-#            err_flag, err_msg = gen_libs.rm_file(ofile)
-#
-#            if err_flag:
-#                log.log_warn(f"process_docid:  {err_msg}")
-#######################
 
     status = process_json(args, cfg, log, log_json)
 
