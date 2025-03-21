@@ -401,6 +401,25 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     return log_files
 
 
+def rm_file(ofile, log):
+
+    """Function:  rm_file
+
+    Description:  Remove file.
+
+    Arguments:
+        (input) ofile -> File name to be removed
+        (input) log -> Log class instance
+
+    """
+
+    if os.path.exists(ofile):
+        err_flag, err_msg = gen_libs.rm_file(ofile)
+
+        if err_flag:
+            log.log_warn(f"rm_file:  {err_msg}")
+
+
 def process_docid(args, cfg, docid_dict, log):          # pylint:disable=R0914
 
     """Function:  process_docid
@@ -474,11 +493,14 @@ def process_docid(args, cfg, docid_dict, log):          # pylint:disable=R0914
                 log_json["servers"][server] + file_log \
                 if server in log_json["servers"] else file_log
 
-        if os.path.exists(ofile):
-            err_flag, err_msg = gen_libs.rm_file(ofile)
-
-            if err_flag:
-                log.log_warn(f"process_docid:  {err_msg}")
+        rm_file(ofile, log)
+#######################
+#        if os.path.exists(ofile):
+#            err_flag, err_msg = gen_libs.rm_file(ofile)
+#
+#            if err_flag:
+#                log.log_warn(f"process_docid:  {err_msg}")
+#######################
 
     status = process_json(args, cfg, log, log_json)
 
