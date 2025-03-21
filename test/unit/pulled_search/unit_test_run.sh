@@ -21,6 +21,7 @@ echo "Unit test:  pulled_search.py"
 /usr/bin/python ./test/unit/pulled_search/mvalidate_dirs.py
 /usr/bin/python ./test/unit/pulled_search/non_processed.py
 /usr/bin/python ./test/unit/pulled_search/parse_data.py
+/usr/bin/python ./test/unit/pulled_search/process_data.py
 /usr/bin/python ./test/unit/pulled_search/process_docid.py
 /usr/bin/python ./test/unit/pulled_search/process_failed.py
 /usr/bin/python ./test/unit/pulled_search/process_files.py
@@ -29,6 +30,7 @@ echo "Unit test:  pulled_search.py"
 /usr/bin/python ./test/unit/pulled_search/recall_search.py
 /usr/bin/python ./test/unit/pulled_search/recall_search2.py
 /usr/bin/python ./test/unit/pulled_search/remove_processed.py
+/usr/bin/python ./test/unit/pulled_search/rm_file.py
 /usr/bin/python ./test/unit/pulled_search/run_program.py
 /usr/bin/python ./test/unit/pulled_search/search_docid.py
 /usr/bin/python ./test/unit/pulled_search/update_processed.py

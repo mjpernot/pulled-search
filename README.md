@@ -7,7 +7,7 @@
 ###  This README file is broken down into the following sections:
   * Features
   * Prerequisites
-    - FIPS Environment
+    - Secure Environment
   * Installation
   * Configuration
   * Program Help Function
@@ -28,15 +28,11 @@
 # Prerequisites:
 
   * List of Linux packages that need to be installed on the server.
-    - Centos 7 (Running Python 2.7):
-      -> python-pip
-      -> python-devel
-    - Redhat 8 (Running Python 3.6):
-      -> python3-pip
-      -> python3-devel
-      -> gcc
+    - python3-pip
+    - python3-devel
+    - gcc
 
-  * FIPS Environment:  If operating in a FIPS 104-2 environment, this package will require at least a minimum of pymongo==3.8.0 or better.  It will also require a manual change to the auth.py module in the pymongo package.  See below for changes to auth.py.  In addition, other modules may require to have the same modification as the auth.py module.  If a stacktrace occurs and it states "= hashlib.md5()" is the problem, then note the module name "= hashlib.md5()" is in and make the same change as in auth.py:  "usedforsecurity=False".
+  * Secure Environment:  If operating in a secure environment, this package will require at least a minimum of pymongo==3.8.0 or better.  It will also require a manual change to the auth.py module in the pymongo package.  See below for changes to auth.py.  In addition, other modules may require to have the same modification as the auth.py module.  If a stacktrace occurs and it states "= hashlib.md5()" is the problem, then note the module name "= hashlib.md5()" is in and make the same change as in auth.py:  "usedforsecurity=False".
     - Locate the auth.py file python installed packages on the system in the pymongo package directory.
     - Edit the file and locate the \_password_digest function.
     - In the \_password_digest function there is an line that should match: "md5hash = hashlib.md5()".  Change it to "md5hash = hashlib.md5(usedforsecurity=False)".
@@ -46,40 +42,23 @@
 # Installation:
 
 Install the project using git.
-  * From here on out, any reference to **{Python_Project}** or **PYTHON_PROJECT** replace with the baseline path of the python program.
 
 ```
 git clone git@sc.appdev.proj.coe.ic.gov:JAC-DSXD/pulled-search.git
-cd pulled-search
 ```
 
 Install/upgrade system modules.
 
-Centos 7 (Running Python 2.7):
-```
-sudo pip install -r requirements.txt --upgrade --trusted-host pypi.appdev.proj.coe.ic.gov
-```
-
-Redhat 8 (Running Python 3.6):
 NOTE: Install as the user that will run the program.
 
+Redhat 8 (Running Python 3.9 and 3.12):
+
 ```
-python -m pip install --user -r requirements3.txt --upgrade --trusted-host pypi.appdev.proj.coe.ic.gov
+python -m pip install --user -r requirements39.txt --upgrade --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
 Install supporting classes and libraries.
 
-Centos 7 (Running Python 2.7):
-```
-pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-checklog-python-lib.txt --target checklog/lib --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-rabbitmq-lib.txt --target rabbit_lib --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-mongo-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
-```
-
-Redhat 8 (Running Python 3.6):
 ```
 python -m pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
 python -m pip install -r requirements-check-log.txt --target checklog --trusted-host pypi.appdev.proj.coe.ic.gov
@@ -154,10 +133,9 @@ Make the appropriate changes to the environment.
     - allowable = ["userid", "logTime", "verb", "status", "url"]
 
 ```
-cd config
-cp search.py.TEMPLATE search.py
-vim search.py
-chmod 600 search.py
+cp config/search.py.TEMPLATE config/search.py
+vim config/search.py
+chmod 600 config/search.py
 ```
 
 Create Mongodb configuration file.  Make the appropriate change to the environment.
@@ -176,8 +154,7 @@ Create Mongodb configuration file.  Make the appropriate change to the environme
 
   * Notes for auth_mech configuration entry:
     - NOTE 1:  SCRAM-SHA-256 only works for Mongodb 4.0 and better.
-    - NOTE 2:  FIPS 140-2 environment requires SCRAM-SHA-1 or SCRAM-SHA-256.
-    - NOTE 3:  MONGODB-CR is not supported in Mongodb 4.0 and better.
+    - NOTE 2:  Secure environment requires SCRAM-SHA-1 or SCRAM-SHA-256.
 
   * If connecting to a Mongo replica set, otherwise set to None.
     - repset = "REPLICA_SET_NAME"
@@ -198,20 +175,16 @@ set.
         -> tls_certkey = None
         -> tls_certkey_phrase = None 
 
-  * FIPS Environment for Mongo:  If operating in a FIPS 104-2 environment, this package will require at least a minimum of pymongo==3.8.0 or better.  It will also require a manual change to the auth.py module in the pymongo package.  See below for changes to auth.py.
-    - Locate the auth.py file python installed packages on the system in the pymongo package directory.
-    - Edit the file and locate the "\_password_digest" function.
-    - In the "\_password_digest" function there is an line that should match: "md5hash = hashlib.md5()".  Change it to "md5hash = hashlib.md5(usedforsecurity=False)".
-    - Lastly, it will require the Mongo configuration file entry auth_mech to be set to: SCRAM-SHA-1 or SCRAM-SHA-256.
+  * Secure Environment for Mongo:  See Prerequisites -> Secure Environment section for details.
 
   * Set the database and collection names where the data will be inserted into.
     - dbs = "DATABASE"
     - tbl = "COLLECTION"
 
 ```
-cp mongo.py.TEMPLATE mongo.py
-vim mongo.py
-chmod 600 mongo.py
+cp config/mongo.py.TEMPLATE config/mongo.py
+vim config/mongo.py
+chmod 600 config/mongo.py
 ```
 
 
@@ -220,7 +193,7 @@ chmod 600 mongo.py
   All of the programs, except the command and class files, will have an -h (Help option) that will show display a help message for that particular program.  The help message will usually consist of a description, usage, arugments to the program, example, notes about the program, and any known bugs not yet fixed.  To run the help command:
 
 ```
-{Python_Project}/pulled-search/pulled_search.py -h
+pulled_search.py -h
 ```
 
 
@@ -235,13 +208,7 @@ Install the project using the procedures in the Installation section.
 ### Testing:
 
 ```
-cd {Python_Project}/pulled-search
-test/unit/pulled_search/unit_test_run3.sh
-```
-
-### Code coverage:
-```
-cd {Python_Project}/pulled-search
+test/unit/pulled_search/unit_test_run.sh
 test/unit/pulled_search/code_coverage.sh
 ```
 

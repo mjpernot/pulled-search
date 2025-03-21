@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -50,7 +50,7 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = dict()
+        self.args_array = {}
 
     def get_val(self, skey, def_val=None):
 
@@ -65,7 +65,7 @@ class ArgParser(object):
         return self.args_array.get(skey, def_val)
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -91,7 +91,7 @@ class CfgTest(object):
         self.processed_file = "/dir/path/processed_dir/processed_file.txt"
 
 
-class CfgTest2(object):
+class CfgTest2():                                       # pylint:disable=R0903
 
     """Class:  CfgTest2
 
@@ -157,15 +157,15 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.cfg2 = CfgTest2()
         self.args_array = {"-m": "/dir_path/doc_dir3"}
-        self.docid_files = list()
+        self.docid_files = []
         f_name = "/path/file-1-09docid1.html"
         self.docid_files2 = [f_name]
         self.docid_files3 = [f_name, "/path/file-2-09docid2.html"]
         self.docid_files4 = [f_name, f_name]
         self.file_dict = {"09docid1": "metadata"}
         self.file_dict2 = {"09docid1": "metadata", "09docid2": "metadata"}
-        self.file_dict3 = dict()
-        self.failed_dict = list()
+        self.file_dict3 = {}
+        self.failed_dict = []
         self.failed_dict2 = {"09docid1": f_name}
 
     @mock.patch("pulled_search.os.path.isdir", mock.Mock(return_value=False))

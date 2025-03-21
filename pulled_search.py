@@ -1,7 +1,25 @@
-#!/usr/bin/python
+#!/bin/sh
 # Classification (U)
 
-"""Program:  pulled_search.py
+# Shell commands follow
+# Next line is bilingual: it starts a comment in Python & is a no-op in shell
+""":"
+
+# Find a suitable python interpreter (can adapt for specific needs)
+# NOTE: Ignore this section if passing the -h option to the program.
+#   This code must be included in the program's initial docstring.
+for cmd in python3.12 python3.9 ; do
+   command -v > /dev/null $cmd && exec $cmd $0 "$@"
+done
+
+echo "OMG Python not found, exiting...."
+
+exit 2
+
+# Previous line is bilingual: it ends a comment in Python & is a no-op in shell
+# Shell commands end here
+
+   Program:  pulled_search.py
 
     Description: The pulled_search program is designed to monitor for docids
         that have been pulled for a specific reason (i.e. security recall).
@@ -254,22 +272,26 @@
         pulled_search.py -c search -d /opt/local/pulled/config -I
             -n /opt/local/pulled/monitor -y pulled_insert
 
-"""
+":"""
+# Python program follows
+
 
 # Libraries and Global Variables
-from __future__ import print_function
-from __future__ import absolute_import
 
 # Standard
 import sys
 import os
 import socket
 import datetime
-import json
 import re
 import base64
 import ast
 import binascii
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 # Temporary libraries until gen_class.Mail2 is ready
 import smtplib
@@ -288,11 +310,11 @@ try:
     from . import version
 
 except (ValueError, ImportError) as err:
-    import lib.gen_libs as gen_libs
-    import lib.gen_class as gen_class
-    import rabbit_lib.rabbitmq_class as rabbitmq_class
-    import mongo_lib.mongo_libs as mongo_libs
-    import checklog.check_log as check_log
+    import lib.gen_libs as gen_libs                     # pylint:disable=R0402
+    import lib.gen_class as gen_class                   # pylint:disable=R0402
+    import rabbit_lib.rabbitmq_class as rabbitmq_class  # pylint:disable=R0402
+    import mongo_lib.mongo_libs as mongo_libs           # pylint:disable=R0402
+    import checklog.check_log as check_log              # pylint:disable=R0402
     import version
 
 __version__ = version.__version__
@@ -333,8 +355,7 @@ def non_processed(docid_files, error_dir, log, mail=None):
         log.log_info("non_processed:  Non-processed files detected.")
 
         for fname in docid_files:
-            log.log_info("non_processed:  File: %s moved to %s"
-                         % (fname, error_dir))
+            log.log_info(f"non_processed:  File: {fname} moved to {error_dir}")
             dtg = datetime.datetime.strftime(
                 datetime.datetime.now(), "%Y%m%d_%H%M%S")
             new_fname = os.path.basename(fname)
@@ -380,7 +401,53 @@ def get_archive_files(archive_dir, cmd, pubdate, cmd_regex, **kwargs):
     return log_files
 
 
-def process_docid(args, cfg, docid_dict, log):
+def rm_file(ofile, log):
+
+    """Function:  rm_file
+
+    Description:  Remove file.
+
+    Arguments:
+        (input) ofile -> File name to be removed
+        (input) log -> Log class instance
+
+    """
+
+    if os.path.exists(ofile):
+        err_flag, err_msg = gen_libs.rm_file(ofile)
+
+        if err_flag:
+            log.log_warn(f"rm_file:  {err_msg}")
+
+
+def process_data(ofile, log_json, fname, server, log):
+
+    """Function:  process_data
+
+    Description:  Convert data from file into dictionary list.
+
+    Arguments:
+        (input) ofile -> File name - containing processed log entries
+        (input) log_json -> Dictionary list of log entries
+        (input) fname -> Log file name
+        (input) server -> Server name
+        (input) log -> Log class instance
+        (output) log_json -> Dictionary list of log entries
+
+    """
+
+    if os.path.exists(ofile) and not gen_libs.is_empty_file(ofile):
+        log.log_info(f"process_docid:  Log entries detected in: {fname}")
+        file_log = gen_libs.file_2_list(ofile)
+
+        log_json["servers"][server] = \
+            log_json["servers"][server] + file_log \
+            if server in log_json["servers"] else file_log
+
+    return log_json
+
+
+def process_docid(args, cfg, docid_dict, log):          # pylint:disable=R0914
 
     """Function:  process_docid
 
@@ -397,7 +464,7 @@ def process_docid(args, cfg, docid_dict, log):
 
     status = True
     docid_dict = dict(docid_dict)
-    log.log_info("process_docid:  Processing docid: %s" % (docid_dict))
+    log.log_info(f"process_docid:  Processing docid: {docid_dict}")
     cmd = docid_dict["command"].lower()
     server = socket.gethostname()
 
@@ -408,16 +475,16 @@ def process_docid(args, cfg, docid_dict, log):
     cmd_regex = cmd + ".*" + cfg.log_type
 
     if args.arg_exist("-a"):
-        log.log_info("process_docid:  Searching archive directory: %s"
-                     % (cfg.log_dir))
+        log.log_info(
+            f"process_docid:  Searching archive directory: {cfg.log_dir}")
         pulldate = docid_dict["pulldate"] if "pulldate" in docid_dict else None
         log_files = get_archive_files(
             cfg.log_dir, cmd, docid_dict["pubdate"], cmd_regex,
             pulldate=pulldate)
 
     else:
-        log.log_info("process_docid:  Searching apache log directory: %s"
-                     % (cfg.log_dir))
+        log.log_info(
+            f"process_docid:  Searching apache log directory: {cfg.log_dir}")
         log_files = gen_libs.filename_search(
             cfg.log_dir, cmd_regex, add_path=True)
 
@@ -425,7 +492,7 @@ def process_docid(args, cfg, docid_dict, log):
         datetime.datetime.now(), "%Y-%m-%dT%H:%M:%SZ")
     log_json = {"docid": docid_dict["docid"], "command": docid_dict["command"],
                 "pubDate": docid_dict["pubdate"], "network": cfg.enclave,
-                "asOf": dtg, "servers": dict()}
+                "asOf": dtg, "servers": {}}
     log.log_info("process_docid:  Running check_log search.")
 
     for fname in log_files:
@@ -444,21 +511,8 @@ def process_docid(args, cfg, docid_dict, log):
         chk_args = gen_class.ArgParser(
             cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
-
-        if os.path.exists(ofile) and not gen_libs.is_empty_file(ofile):
-            log.log_info(
-                "process_docid:  Log entries detected in: %s." % (fname))
-            file_log = gen_libs.file_2_list(ofile)
-
-            log_json["servers"][server] = \
-                log_json["servers"][server] + file_log \
-                if server in log_json["servers"] else file_log
-
-        if os.path.exists(ofile):
-            err_flag, err_msg = gen_libs.rm_file(ofile)
-
-            if err_flag:
-                log.log_warn("process_docid:  %s" % (err_msg))
+        log_json = process_data(ofile, log_json, fname, server, log)
+        rm_file(ofile, log)
 
     status = process_json(args, cfg, log, log_json)
 
@@ -486,7 +540,7 @@ def insert_mongo(args, cfg, log, data):
 
     if not mongo_stat[0]:
         log.log_err("insert_mongo:  Insertion into Mongo failed.")
-        log.log_err("Mongo error message:  %s" % (mongo_stat[1]))
+        log.log_err(f"Mongo error message:  {mongo_stat[1]}")
         fname = os.path.join(
             cfg.merror_dir, data["docid"] + ".failed_to_insert.json")
         gen_libs.write_file(fname=fname, mode="a", data=data)
@@ -517,20 +571,20 @@ def filter_data(cfg, log, log_json):
     """
 
     log_json = dict(log_json)
-    log.log_info("filter_data:  Writing to raw data toarchive: %s"
-                 % (cfg.raw_archive_dir))
+    log.log_info(
+        f"filter_data:  Writing to raw data toarchive: {cfg.raw_archive_dir}")
     fname = os.path.join(
-        cfg.raw_archive_dir, log_json["docid"] + "." + log_json["asOf"] +
-        ".raw")
+        cfg.raw_archive_dir,
+        log_json["docid"] + "." + log_json["asOf"] + ".raw")
     gen_libs.write_file(fname=fname, mode="w", data=log_json)
     log.log_info("filter_data:  Start filtering JSON document.")
 
     # Loop on servers
     for svr in log_json["servers"]:
         uname = os.path.join(
-            cfg.unparsable_dir, log_json["docid"] + "." + svr +
-            log_json["asOf"] + ".unparsable")
-        parsed_list = list()
+            cfg.unparsable_dir,
+            log_json["docid"] + "." + svr + log_json["asOf"] + ".unparsable")
+        parsed_list = []
 
         # Loop on log entries for each server
         for line in log_json["servers"][svr]:
@@ -549,8 +603,8 @@ def filter_data(cfg, log, log_json):
                     parsed_list.append(line)
 
             else:
-                log.log_warn("filter_data:  Unparsable data written to %s." %
-                             (uname))
+                log.log_warn(
+                    f"filter_data:  Unparsable data written to {uname}")
                 gen_libs.write_file(fname=uname, mode="a", data=line)
 
         log_json["servers"][svr] = parsed_list
@@ -575,18 +629,18 @@ def parse_data(args, cfg, log, log_json):
 
     log.log_info("parse_data:  Start parsing JSON document.")
     status = True
-    first_stage = dict()
+    first_stage = {}
     first_stage["command"] = log_json["command"]
     first_stage["docid"] = log_json["docid"]
     first_stage["network"] = log_json["network"]
     first_stage["pubDate"] = log_json["pubDate"]
     first_stage["asOf"] = log_json["asOf"]
     second_stage = dict(first_stage)
-    log.log_info("parse_data:  Writing to archive: %s" % (cfg.marchive_dir))
+    log.log_info(f"parse_data:  Writing to archive: {cfg.marchive_dir}")
     fname = os.path.join(
         cfg.marchive_dir, log_json["docid"] + "." + log_json["asOf"] + ".json")
     gen_libs.write_file(fname=fname, mode="w", data=log_json)
-    log.log_info("parse_data:  Parsing docid: %s" % (first_stage["docid"]))
+    log.log_info(f'parse_data:  Parsing docid: {first_stage["docid"]}')
 
     # Loop on servers
     for svr in log_json["servers"]:
@@ -632,8 +686,8 @@ def write_summary(cfg, log, log_json):
 
     """
 
-    log.log_info("write_summary:  Updating Docid Transfer summary for %s" %
-                 (log_json["docid"]))
+    log.log_info(f'write_summary:  Updating Docid Transfer summary for'
+                 f' {log_json["docid"]}')
     yearmon = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m")
     fname = os.path.join(
         os.path.dirname(cfg.processed_file), "docid_transfer." + yearmon)
@@ -644,14 +698,14 @@ def write_summary(cfg, log, log_json):
     for svr in log_json["servers"]:
         file_entry["count"] += len(log_json["servers"][svr])
 
-    log.log_info("write_summary: %s" % (file_entry))
+    log.log_info(f"write_summary: {file_entry}")
 
     if file_entry["count"]:
-        with open(fname, "a") as fhdr:
+        with open(fname, mode="a", encoding="UTF-8") as fhdr:
             fhdr.write(json.dumps(file_entry) + "\n")
 
 
-def process_json(args, cfg, log, log_json):
+def process_json(args, cfg, log, log_json):             # pylint:disable=R0915
 
     """Function:  process_json
 
@@ -679,8 +733,8 @@ def process_json(args, cfg, log, log_json):
 
     # Email entries
     elif args.arg_exist("-e"):
-        log.log_info("process_json:  Email log entries to: %s, Subject: %s"
-                     % (cfg.to_addr, cfg.subj))
+        log.log_info(f"process_json:  Email log entries to: {cfg.to_addr},"
+                     f"Subject: {cfg.subj}")
 
         if args.arg_exist("-b"):
             write_summary(cfg, log, log_json)
@@ -722,18 +776,18 @@ def process_json(args, cfg, log, log_json):
         else:
             log.log_err(
                 "process_json:  Error detected during publication.")
-            log.log_err("process_json:  Message: %s" % (err_msg))
+            log.log_err(f"process_json:  Message: {err_msg}")
             dtg = datetime.datetime.strftime(
                 datetime.datetime.now(), "%Y%m%d_%H%M%S")
             name = "NonPublished." + log_json["docid"] + "." + dtg
             fname = os.path.join(cfg.error_dir, name)
-            log.log_err("process_json:  Writing JSON document to file: %s"
-                        % (fname))
+            log.log_err(
+                f"process_json:  Writing JSON document to file: {fname}")
             gen_libs.write_file(fname, mode="w", data=log_json)
 
             if args.get_val("-t", def_val=False):
-                log.log_info("process_json:  Email error to: %s"
-                             % (args.get_val("-t")))
+                log.log_info(
+                    f'process_json:  Email error to: {args.get_val("-t")}')
                 subj = args.get_val("-s", def_val="") + "Error: NonPublished"
                 mail = gen_class.setup_mail(args.get_val("-t"), subj=subj)
                 mail.add_2_msg("Unable to publish message to RabbitMQ")
@@ -756,8 +810,8 @@ def is_base64(data):
     """
 
     try:
-        status = True if base64.b64encode(
-            base64.b64decode(data))[1:70].decode() == data[1:70] else False
+        status = base64.b64encode(
+            base64.b64decode(data))[1:70].decode() == data[1:70]
 
     except TypeError:
         status = False
@@ -786,7 +840,7 @@ def process_insert(args, cfg, fname, log):
     log.log_info("process_insert:  Converting data to JSON.")
     status = True
 
-    with open(fname, "r") as f_hdr:
+    with open(fname, mode="r", encoding="UTF-8") as f_hdr:
         data = f_hdr.read()
 
     # Check the first 70 chars in case the encoded is split into multiple lines
@@ -831,8 +885,8 @@ def cleanup_files(docid_files, processed_list, dest_dir, log):
     processed_list = list(processed_list)
 
     for fname in processed_list:
-        log.log_info("cleanup_files:  Archiving file: %s to %s"
-                     % (os.path.basename(fname), dest_dir))
+        log.log_info(f"cleanup_files:  Archiving file:"
+                     f" {os.path.basename(fname)} to {dest_dir}")
         dtg = datetime.datetime.strftime(
             datetime.datetime.now(), "%Y%m%d_%H%M%S")
         new_fname = os.path.basename(fname)
@@ -855,12 +909,12 @@ def load_processed(processed_fname):
     """
 
     try:
-        with open(processed_fname) as fhdr:
+        with open(processed_fname, mode="r", encoding="UTF-8") as fhdr:
             processed_docids = [line.rstrip() for line in fhdr.readlines()]
 
     except IOError as msg:
         if msg.args[1] == "No such file or directory":
-            processed_docids = list()
+            processed_docids = []
 
     return processed_docids
 
@@ -878,11 +932,11 @@ def update_processed(log, processed_fname, file_dict):
 
     """
 
-    log.log_info("update_processed:  Updating processed file: %s"
-                 % (processed_fname))
+    log.log_info(
+        f"update_processed:  Updating processed file: {processed_fname}")
     file_dict = dict(file_dict)
 
-    with open(processed_fname, "a") as fhdr:
+    with open(processed_fname, mode="a", encoding="UTF-8") as fhdr:
         for item in file_dict:
             fhdr.write(item + "\n")
 
@@ -905,7 +959,7 @@ def process_failed(args, cfg, log, failed_dict):
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
     failed_file = os.path.join(cfg.error_dir, "failed_process." + dtg)
 
-    with open(failed_file, "a") as fhdr:
+    with open(failed_file, mode="a", encoding="UTF-8") as fhdr:
         fhdr.write(json.dumps(failed_dict, indent=4))
 
     # Send email if set
@@ -931,12 +985,11 @@ def search_docid(args, cfg, docid_dict, log):
 
     """
 
-    docid_status = dict()
+    docid_status = {}
     status = process_docid(args, cfg, docid_dict, log)
 
     if not status:
-        log.log_err("search_docid: Error detected for docid: %s"
-                    % (docid_dict))
+        log.log_err(f"search_docid: Error detected for docid: {docid_dict}")
         docid_status[docid_dict["docid"]] = "Failed the process_docid process"
 
     return docid_status
@@ -984,23 +1037,24 @@ def recall_search(args, cfg, log, file_dict):
     """
 
     log.log_info("recall_search:  Processing new pulled files.")
-    lines = list()
-    docid_dict = dict()
-    failed_dict = dict()
+    lines = []
+    docid_dict = {}
+    failed_dict = {}
     file_dict = dict(file_dict)
 
     for docid in file_dict:
-        log.log_info("recall_search:  Docid: %s File: %s"
-                     % (docid, file_dict[docid]))
+        log.log_info(
+            f"recall_search:  Docid: {docid} File: {file_dict[docid]}")
+
         try:
-            with open(file_dict[docid], "r") as fhdr:
+            with open(file_dict[docid], mode="r", encoding="UTF-8") as fhdr:
                 data = fhdr.readlines()
                 lines = [line.rstrip() for line in data]
 
         except IOError as msg:
             log.log_err("recall_search: Failed to open file!")
             failed_dict[docid] = msg.args[1]
-            lines = list()
+            lines = []
 
         if lines:
             log.log_info("recall_search:  Searching for security recall.")
@@ -1016,10 +1070,10 @@ def recall_search(args, cfg, log, file_dict):
                 break
 
         if docid_dict:
-            log.log_info("recall_search:  Security recall product found in: %s"
-                         % (file_dict[docid]))
+            log.log_info(f"recall_search:  Security recall product found in:"
+                         f" {file_dict[docid]}")
             failed_dict.update(search_docid(args, cfg, docid_dict, log))
-            docid_dict = dict()
+            docid_dict = {}
 
     return failed_dict
 
@@ -1040,17 +1094,17 @@ def recall_search2(args, cfg, log, docid_dict):
     """
 
     docid_dict = dict(docid_dict)
-    t_docid = dict()
-    failed_dict = dict()
+    t_docid = {}
+    failed_dict = {}
 
     for docid in docid_dict:
-        log.log_info("recall_search2:  Processing docid: %s" % (docid))
+        log.log_info(f"recall_search2:  Processing docid: {docid}")
         t_docid["docid"] = docid
         t_docid["command"] = docid_dict[docid]["command"]
         t_docid["pubdate"] = docid_dict[docid]["pubdate"]
         t_docid["pulldate"] = docid_dict[docid]["pulldate"]
         failed_dict.update(search_docid(args, cfg, t_docid, log))
-        t_docid = dict()
+        t_docid = {}
 
     return failed_dict
 
@@ -1069,9 +1123,9 @@ def process_files(args, cfg, log):
     """
 
     log.log_info("process_files:  Locating pulled files.")
-    docid_files = list()
+    docid_files = []
     yearmon = datetime.date.strftime(datetime.datetime.now(), "%Y/%m")
-    search_dir = list()
+    search_dir = []
 
     if args.get_val("-m", def_val=None):
         search_dir.append(args.get_val("-m"))
@@ -1084,10 +1138,10 @@ def process_files(args, cfg, log):
                 search_dir.append(dir_path)
 
             else:
-                log.log_warn("process_files: %s does not exist" % (dir_path))
+                log.log_warn(f"process_files: {dir_path} does not exist")
 
     for docdir in search_dir:
-        log.log_info("process_files:  Searching directory: %s" % (docdir))
+        log.log_info(f"process_files:  Searching directory: {docdir}")
         tmp_list = gen_libs.filename_search(
             docdir, cfg.file_regex, add_path=True)
         docid_files.extend(tmp_list)
@@ -1127,7 +1181,7 @@ def file_input(args, cfg, log):
     """
 
     log.log_info("file_input:  Processing docids from input file.")
-    docid_dict = dict()
+    docid_dict = {}
     file_list = gen_libs.file_2_list(args.get_val("-F"))
 
     for line in file_list:
@@ -1142,9 +1196,9 @@ def file_input(args, cfg, log):
 
         else:
             log.log_warn("file_input: Duplicate lines detected in file.")
-            log.log_warn("Docid: %s" % (docid))
-            log.log_want("Line 1: %s" % (docid_dict[docid]))
-            log.log_want("Line 2: %s" % (metadata))
+            log.log_warn(f"Docid: {docid}")
+            log.log_want(f"Line 1: {docid_dict[docid]}")
+            log.log_want(f"Line 2: {metadata}")
 
     docid_dict = remove_processed(cfg, log, docid_dict)
     failed_dict = recall_search2(args, cfg, log, docid_dict)
@@ -1170,7 +1224,7 @@ def insert_data(args, cfg, log):
     """
 
     log.log_info("insert_data:  Processing files to insert.")
-    processed_list = list()
+    processed_list = []
     mail = None
 
     if args.get_val("-t", def_val=False):
@@ -1182,7 +1236,7 @@ def insert_data(args, cfg, log):
         cfg.monitor_dir, cfg.mfile_regex, add_path=True)
 
     for fname in insert_list:
-        log.log_info("insert_data:  Processing file: %s" % (fname))
+        log.log_info(f"insert_data:  Processing file: {fname}")
         status = process_insert(args, cfg, fname, log)
 
         if status:
@@ -1207,7 +1261,7 @@ def validate_dirs(cfg):
 
     """
 
-    msg_dict = dict()
+    msg_dict = {}
 
     # Where active/archived log files are
     status, msg = gen_libs.chk_crt_dir(cfg.log_dir, read=True, no_print=True)
@@ -1268,7 +1322,7 @@ def mvalidate_dirs(cfg):
 
     """
 
-    msg_dict = dict()
+    msg_dict = {}
 
     status, msg = gen_libs.chk_crt_dir(
         cfg.merror_dir, write=True, create=True, no_print=True)
@@ -1299,7 +1353,7 @@ def checks_dirs(args, cfg):
 
     """
 
-    msg_dict = dict()
+    msg_dict = {}
 
     if args.get_val("-P", def_val=False):
         msg_dict = validate_dirs(cfg)
@@ -1387,7 +1441,7 @@ def run_program(args, func_dict):
 
         if msg_dict:
             log.log_err("Validation of configuration directories failed")
-            log.log_err("Message: %s" % (msg_dict))
+            log.log_err(f"Message: {msg_dict}")
 
         else:
             for opt in set(args.get_args_keys()) & set(func_dict.keys()):
@@ -1395,7 +1449,7 @@ def run_program(args, func_dict):
 
     else:
         print("Error:  Logger Directory Check Failure")
-        print("Error Message: %s" % (err_msg))
+        print(f"Error Message: {err_msg}")
 
 
 def main():
@@ -1447,8 +1501,8 @@ def main():
             del prog_lock
 
         except gen_class.SingleInstanceException:
-            print("WARNING:  Lock in place for pulled_search with id of: %s"
-                  % (args.get_val("-y", def_val="")))
+            print(f'WARNING:  Lock in place for pulled_search with id of:'
+                  f' {args.get_val("-y", def_val="")}')
 
 
 if __name__ == "__main__":

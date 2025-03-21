@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -99,7 +99,7 @@ class UnitTest(unittest.TestCase):
         self.chk9 = (False, "Unparsable_dir failure")
         self.chk10 = (False, "Raw_archive_dir failure")
 
-        self.results = dict()
+        self.results = {}
         self.results3 = {self.logdir: self.logval}
         self.results4 = {"/dir_path/outfile_dir": "Outfile failure"}
         self.results5 = {self.errdir: self.errval}
