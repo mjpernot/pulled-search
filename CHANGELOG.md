@@ -18,6 +18,7 @@ Breaking Changes
 - Updated check-log to v5.0.0
 
 ### Added
+- process_data: Convert data from file into dictionary list.
 - rm_file: Remove file.
 
 ### Changed
