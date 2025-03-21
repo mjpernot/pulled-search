@@ -94,8 +94,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_data(
-            self.ofile, self.log_json, self.fname, self.server, mock_log),
-                         self.results2)
+            self.ofile, self.log_json, self.fname, self.server,
+            mock_log), self.results2)
 
     @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
@@ -114,8 +114,8 @@ class UnitTest(unittest.TestCase):
         mock_log.return_value = True
 
         self.assertEqual(pulled_search.process_data(
-            self.ofile, self.log_json, self.fname, self.server, mock_log),
-                         self.results2)
+            self.ofile, self.log_json, self.fname, self.server,
+            mock_log), self.results2)
 
     @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.is_empty_file",
@@ -136,8 +136,8 @@ class UnitTest(unittest.TestCase):
         mock_list.return_value = self.file_log
 
         self.assertEqual(pulled_search.process_data(
-            self.ofile, self.log_json, self.fname, self.server, mock_log),
-                         self.results)
+            self.ofile, self.log_json, self.fname, self.server,
+            mock_log), self.results)
 
 
 if __name__ == "__main__":

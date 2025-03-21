@@ -53,7 +53,6 @@ class UnitTest(unittest.TestCase):
 
         self.ofile = "/path/filelog"
 
-
     @mock.patch("pulled_search.os.path.exists", mock.Mock(return_value=True))
     @mock.patch("pulled_search.gen_libs.rm_file",
                 mock.Mock(return_value=(True, None)))
