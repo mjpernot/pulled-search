@@ -23,13 +23,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -123,7 +123,7 @@ class UnitTest(unittest.TestCase):
 
         pulled_search.write_summary(self.cfg, mock_log, self.log_json3)
 
-        with open(self.f_name, "r") as fhdr:
+        with open(self.f_name, mode="r", encoding="UTF-8") as fhdr:
             data = fhdr.read()
 
         data = json.loads(data)
@@ -162,7 +162,7 @@ class UnitTest(unittest.TestCase):
 
         pulled_search.write_summary(self.cfg, mock_log, self.log_json2)
 
-        with open(self.f_name, "r") as fhdr:
+        with open(self.f_name, mode="r", encoding="UTF-8") as fhdr:
             data = fhdr.read()
 
         data = json.loads(data)

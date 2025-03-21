@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class Mail(object):
+class Mail():
 
     """Class:  Mail
 
@@ -79,7 +79,7 @@ class Mail(object):
         return True
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -116,7 +116,7 @@ class ArgParser(object):
         return self.args_array.get(skey, def_val)
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -141,7 +141,7 @@ class CfgTest(object):
         self.merror_dir = "/dir/path"
 
 
-class MCfgTest(object):
+class MCfgTest():                                       # pylint:disable=R0903
 
     """Class:  MCfgTest
 
@@ -166,7 +166,7 @@ class MCfgTest(object):
         self.tbl = "table_name"
 
 
-class Logger(object):
+class Logger():
 
     """Class:  Logger
 
@@ -179,7 +179,8 @@ class Logger(object):
 
     """
 
-    def __init__(self, job_name, job_log, log_type, log_format, log_time):
+    def __init__(                                       # pylint:disable=R0913
+            self, job_name, job_log, log_type, log_format, log_time):
 
         """Method:  __init__
 

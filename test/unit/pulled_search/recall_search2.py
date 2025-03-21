@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -49,10 +49,10 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = dict()
+        self.args_array = {}
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -122,12 +122,12 @@ class UnitTest(unittest.TestCase):
                 "command": "socom",
                 "pubdate": "20230120",
                 "pulldate": "20230302"}}
-        self.results = dict()
+        self.results = {}
         self.results2 = {docid: "Failed the process_docid process"}
-        self.docid_results = dict()
+        self.docid_results = {}
         self.docid_results2 = {docid: "Failed the process_docid process"}
 
-    @mock.patch("pulled_search.search_docid", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.search_docid", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_process_docid_passed(self, mock_log):
 
@@ -162,7 +162,7 @@ class UnitTest(unittest.TestCase):
                 self.args, self.cfg, mock_log, self.docid_dict2),
             self.results2)
 
-    @mock.patch("pulled_search.search_docid", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.search_docid", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_multiple_docid_dict(self, mock_log):
 
@@ -178,7 +178,7 @@ class UnitTest(unittest.TestCase):
             pulled_search.recall_search2(
                 self.args, self.cfg, mock_log, self.docid_dict3), self.results)
 
-    @mock.patch("pulled_search.search_docid", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.search_docid", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_single_docid_dict(self, mock_log):
 
@@ -194,7 +194,7 @@ class UnitTest(unittest.TestCase):
             pulled_search.recall_search2(
                 self.args, self.cfg, mock_log, self.docid_dict2), self.results)
 
-    @mock.patch("pulled_search.search_docid", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.search_docid", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_class.Logger")
     def test_empty_docid_dict(self, mock_log):
 

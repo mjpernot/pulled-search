@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -49,10 +49,10 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = dict()
+        self.args_array = {}
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -125,10 +125,10 @@ class UnitTest(unittest.TestCase):
         self.file_dict4 = {self.docid: self.fname}
         self.file_dict5 = {self.docid: self.fname0}
         self.file_dict6 = {self.docid: self.fname3}
-        self.results = dict()
+        self.results = {}
         self.results2 = {self.docid: "No such file or directory"}
         self.results3 = {self.docid: "Failed the process_docid process"}
-        self.docid_results = dict()
+        self.docid_results = {}
         self.docid_results2 = {self.docid: "Failed the process_docid process"}
 
     @mock.patch("pulled_search.search_docid")

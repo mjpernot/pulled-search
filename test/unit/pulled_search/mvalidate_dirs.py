@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -87,7 +87,7 @@ class UnitTest(unittest.TestCase):
         self.chk5 = (False, self.errorval)
         self.chk7 = (False, self.archiveval)
 
-        self.results = dict()
+        self.results = {}
         self.results5 = {self.errorkey: self.errorval}
         self.results6 = {self.errorkey: self.errorval,
                          self.archivekey: self.archiveval}

@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -50,7 +50,7 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = dict()
+        self.args_array = {}
 
     def get_val(self, skey, def_val=None):
 
@@ -65,7 +65,7 @@ class ArgParser(object):
         return self.args_array.get(skey, def_val)
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -151,7 +151,7 @@ class UnitTest(unittest.TestCase):
         self.args_array5 = {"-t": self.name, "-P": True, "-i": True}
         self.args_array6 = {"-t": self.name, "-F": True, "-i": True}
 
-        self.results = dict()
+        self.results = {}
         self.results2 = {self.dockey: self.docval}
         self.results2a = {self.dockey: self.docval, self.dockey2: self.docval2}
         self.results3 = {self.monitorkey: self.monitorval}
@@ -225,7 +225,7 @@ class UnitTest(unittest.TestCase):
             pulled_search.checks_dirs(self.args, self.cfg), self.results5a)
 
     @mock.patch("pulled_search.mvalidate_dirs")
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     def test_f_option_mongo(self, mock_mongo):
 
         """Function:  test_f_option_mongo
@@ -243,7 +243,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.checks_dirs(self.args, self.cfg), self.results4)
 
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     def test_f_option(self):
 
         """Function:  test_f_option
@@ -259,7 +259,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.checks_dirs(self.args, self.cfg), self.results)
 
-    @mock.patch("pulled_search.mvalidate_dirs", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.mvalidate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_monitor_dir_failure(self, mock_chk):
 
@@ -278,7 +278,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.checks_dirs(self.args, self.cfg), self.results3)
 
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_doc_dir_multiple_two_fail(self, mock_chk):
 
@@ -298,7 +298,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.checks_dirs(self.args, self.cfg), self.results2a)
 
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_doc_dir_multiple_one_fail(self, mock_chk):
 
@@ -318,7 +318,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.checks_dirs(self.args, self.cfg), self.results2)
 
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_doc_dir_multiple(self, mock_chk):
 
@@ -338,7 +338,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.checks_dirs(self.args, self.cfg), self.results)
 
-    @mock.patch("pulled_search.mvalidate_dirs", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.mvalidate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_i_option(self, mock_chk):
 
@@ -357,7 +357,7 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(
             pulled_search.checks_dirs(self.args, self.cfg), self.results)
 
-    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value=dict()))
+    @mock.patch("pulled_search.validate_dirs", mock.Mock(return_value={}))
     @mock.patch("pulled_search.gen_libs.chk_crt_dir")
     def test_p_option(self, mock_chk):
 

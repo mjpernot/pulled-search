@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -171,7 +171,7 @@ class UnitTest(unittest.TestCase):
             "pubDate": "20200102-101134", "network": "ENCLAVE", "asOf": dtg,
             "servers": {"server_name": [self.entry8]}}
 
-        self.results = list()
+        self.results = []
         self.results2 = [self.entry8]
         self.results3 = [self.entry1]
         self.results4 = [self.entry1, self.entry1]

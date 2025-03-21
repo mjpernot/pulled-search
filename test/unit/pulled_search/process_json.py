@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class Mail(object):
+class Mail():
 
     """Class:  Mail
 
@@ -79,7 +79,7 @@ class Mail(object):
         return True
 
 
-class ArgParser(object):
+class ArgParser():
 
     """Class:  ArgParser
 
@@ -103,7 +103,7 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = dict()
+        self.args_array = {}
 
     def get_val(self, skey, def_val=None):
 
@@ -127,10 +127,10 @@ class ArgParser(object):
 
         """
 
-        return True if arg in self.args_array else False
+        return arg in self.args_array
 
 
-class CfgTest2(object):
+class CfgTest2():                                       # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -156,7 +156,7 @@ class CfgTest2(object):
         self.error_dir = "/dir/path/error_dir"
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -182,7 +182,7 @@ class CfgTest(object):
         self.error_dir = "/dir/path/error_dir"
 
 
-class Smtplib(object):
+class Smtplib():
 
     """Class:  SubProcess
 
@@ -235,8 +235,6 @@ class Smtplib(object):
         Arguments:
 
         """
-
-        pass
 
 
 class UnitTest(unittest.TestCase):

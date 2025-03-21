@@ -22,8 +22,8 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
@@ -40,7 +40,7 @@ def file_to_list(fname):
 
     """
 
-    with open(fname) as fhdr:
+    with open(fname, mode="r", encoding="UTF-8") as fhdr:
         filelist = fhdr.readlines()
         filelist = [line.rstrip() for line in filelist]
 

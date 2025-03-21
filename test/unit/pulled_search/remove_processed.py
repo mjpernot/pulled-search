@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -80,7 +80,7 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.docid_files = {"09docid": "metadata", "09docid2": "metadata",
                             "09docid3": "metadata"}
-        self.processed_file = list()
+        self.processed_file = []
         self.processed_file2 = ["09docid4"]
         self.processed_file3 = ["09docid2"]
         self.results = {"09docid": "metadata", "09docid2": "metadata",

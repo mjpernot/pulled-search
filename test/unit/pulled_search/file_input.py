@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import pulled_search
-import version
+import pulled_search                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -50,7 +50,7 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = dict()
+        self.args_array = {}
 
     def get_val(self, skey, def_val=None):
 
@@ -65,7 +65,7 @@ class ArgParser(object):
         return self.args_array.get(skey, def_val)
 
 
-class CfgTest(object):
+class CfgTest():                                        # pylint:disable=R0903
 
     """Class:  CfgTest
 
@@ -122,11 +122,11 @@ class UnitTest(unittest.TestCase):
         self.cfg = CfgTest()
         self.args_array = {"-F": "/dir_path/input_file"}
         docid = "09docid1 eucom 20230212 20230325"
-        self.file_list = list()
+        self.file_list = []
         self.file_list2 = [docid]
         self.file_list3 = [docid, "09docid2 eucom 20230214 20230401"]
         self.file_list4 = [docid, docid]
-        self.docid_dict = dict()
+        self.docid_dict = {}
         self.docid_dict2 = {
             "09docid1": {
                 "command": "eucom",
@@ -141,7 +141,7 @@ class UnitTest(unittest.TestCase):
                 "command": "eucom",
                 "pubdate": "20230214",
                 "pulldate": "20230401"}}
-        self.failed_dict = list()
+        self.failed_dict = []
         self.failed_dict2 = {"09docid1": "error_message"}
 
     @mock.patch("pulled_search.update_processed", mock.Mock(return_value=True))
