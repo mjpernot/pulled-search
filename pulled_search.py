@@ -511,18 +511,7 @@ def process_docid(args, cfg, docid_dict, log):          # pylint:disable=R0914
         chk_args = gen_class.ArgParser(
             cmdline, opt_val=chk_opt_val, multi_val=multi_val, do_parse=True)
         check_log.run_program(chk_args)
-
         log_json = process_data(ofile, log_json, fname, server, log)
-######################## (ofile, log_json, fname, server, log) -> log_json
-#        if os.path.exists(ofile) and not gen_libs.is_empty_file(ofile):
-#            log.log_info(f"process_docid:  Log entries detected in: {fname}")
-#            file_log = gen_libs.file_2_list(ofile)
-#
-#            log_json["servers"][server] = \
-#                log_json["servers"][server] + file_log \
-#                if server in log_json["servers"] else file_log
-########################
-
         rm_file(ofile, log)
 
     status = process_json(args, cfg, log, log_json)
