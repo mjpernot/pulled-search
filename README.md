@@ -183,8 +183,8 @@ set.
 
 ```
 cp config/mongo.py.TEMPLATE config/mongo.py
-vim config/mongo.py
 chmod 600 config/mongo.py
+vim config/mongo.py
 ```
 
 

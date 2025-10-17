@@ -51,9 +51,9 @@ setuptools.setup(
         "Operating System :: Linux :: Fedora",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Database :: RabbitMQ",
         "Topic :: Database :: RabbitMQ :: 3.6",
         "Topic :: Database :: RabbitMQ :: 3.8",
         "Topic :: Database :: Mongodb",
-        "Topic :: Database :: Mongodb :: 4.2",
         "Topic :: Database :: Mongodb :: 7.0"])
